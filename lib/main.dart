@@ -27,20 +27,31 @@ class MenuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(backgroundColor: Theme.of(context).colorScheme.inversePrimary),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Aca irá algun widget de control'),
-          ],
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Ñawi Menu", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+          centerTitle: true,
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: "Estudiantes", icon: Icon(Icons.group)),
+              Tab(text: "Registros", icon: Icon(Icons.assignment_ind))
+            ]
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'None',
-        child: const Icon(Icons.add),
+        body: TabBarView(
+          children: [
+            Center(child: const Text("Vista de estudiantes")),
+            Center(child: const Text("Vista de registros"))
+          ]
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          tooltip: 'None',
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
