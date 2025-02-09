@@ -12,6 +12,9 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
+  animated_floating_buttons: ^0.0.2
+  intl: ^0.20.2
+  grouped_list: ^6.0.0
 
 dev_dependencies:
   flutter_test:
