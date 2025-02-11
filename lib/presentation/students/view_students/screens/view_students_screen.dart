@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:nawiapp/presentation/students/utils/nawi_utils.dart';
 
 //* lista de datos de prueba
 
@@ -14,12 +15,6 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
 
   //TODO: Cambiar por origen de datos real
   final List<Map<String, dynamic>> students = List.filled(10, [{"name":"Lorem Ipsum Dolor Sit","age": 5},{"name":"Sit Deset Lorem Al","age": 4},{"name":"Amet Lorem Dolor At","age": 3}]).expand((x) => x).toList();
-
-  final Map<int, Color> iconColorMap = {
-    3: Colors.blue,
-    4: Colors.orange.shade700,
-    5: Colors.purple
-  };
 
   Widget? _studentsList(_, int i){
     final item = students[i];
@@ -57,10 +52,10 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
           child: ListTile(
             title: Text(item["name"]),
             subtitle: Text('${item["age"]} años'),
-            tileColor: i % 2 == 0 ?Colors.grey.shade200 : Colors.grey.shade100,
+            tileColor: i % 2 == 0 ?Colors.grey.shade200.withAlpha(80) : Colors.grey.shade200.withAlpha(100),
             leading: CircleAvatar(
-              backgroundColor: Colors.grey.shade300,
-              child: Icon(Icons.person, color: iconColorMap[item["age"]],),
+              backgroundColor: NawiColor.iconColorMap(item["age"], withOpacity: true),
+              child: Icon(Icons.person, color: NawiColor.iconColorMap(item["age"])),
             ),
           ),
         ),
@@ -74,7 +69,7 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
       body: RefreshIndicator(
         onRefresh: () async {},
         child: students.isNotEmpty ? ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse}),
+          behavior: ScrollConfiguration.of(context).copyWith(overscroll: true, dragDevices: {PointerDeviceKind.mouse}),
           child: ListView.builder(
             padding: EdgeInsets.all(8.0),
             itemCount: students.length,

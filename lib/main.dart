@@ -1,6 +1,8 @@
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:nawiapp/presentation/registration_book/view_registers_book/screens/view_registers_book_screen.dart';
+import 'package:nawiapp/presentation/students/add_students/screens/add_students_screen.dart';
+import 'package:nawiapp/presentation/students/view_students/screens/view_students_filter_modal.dart';
 import 'package:nawiapp/presentation/students/view_students/screens/view_students_screen.dart';
 
 void main() {
@@ -25,8 +27,27 @@ class NawiApp extends StatelessWidget {
   }
 }
 
-class MenuApp extends StatelessWidget {
+class MenuApp extends StatefulWidget {
   const MenuApp({super.key});
+
+  @override
+  State<MenuApp> createState() => _MenuAppState();
+}
+
+class _MenuAppState extends State<MenuApp> with SingleTickerProviderStateMixin {
+  
+  late TabController _tabController;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+
+    _tabController.addListener(() {
+      if(_tabController.indexIsChanging == false) setState(() => _currentIndex = _tabController.index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +58,16 @@ class MenuApp extends StatelessWidget {
           title: const Text("Ñawi Menu", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
           centerTitle: true,
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          bottom: const TabBar(
-            tabs: [
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const [
               Tab(text: "Estudiantes", icon: Icon(Icons.group)),
               Tab(text: "Registros", icon: Icon(Icons.assignment_ind))
             ]
           ),
         ),
         body: TabBarView(
+          controller: _tabController,
           children: [
             ViewStudentsScreen(),
             ViewRegistersBookScreen()
@@ -52,10 +75,12 @@ class MenuApp extends StatelessWidget {
         ),
         floatingActionButton: AnimatedFloatingActionButton(
           fabButtons: [
+            //TODO Cambiar los null por las pantallas que correspondan al siguiente modulo
             //* Create
             FloatingActionButton(
-              onPressed: () {},
-              
+              onPressed: () => _currentIndex == 0 ?
+                Navigator.push(context, MaterialPageRoute(builder: (_) => AddStudentsScreen())) :
+                null,
               heroTag: "Create",
               tooltip: "Crear nuevo elemento",
               child: const Icon(Icons.add),
@@ -63,7 +88,9 @@ class MenuApp extends StatelessWidget {
 
             //* Filter
             FloatingActionButton(
-              onPressed: () {},
+              onPressed: () => _currentIndex == 0 ?
+                showDialog(context: context, builder: (_) => ViewStudentsFilterModal()) :
+                null,
               heroTag: "Filter",
               tooltip: "Filtrar elementos",
               child: const Icon(Icons.sort),
@@ -77,5 +104,11 @@ class MenuApp extends StatelessWidget {
         )
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }

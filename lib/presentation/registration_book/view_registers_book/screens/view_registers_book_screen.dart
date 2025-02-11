@@ -86,7 +86,7 @@ class _ViewRegistersBookScreenState extends State<ViewRegistersBookScreen> {
       body: RefreshIndicator(
         onRefresh: () async { },
         child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse}),
+          behavior: ScrollConfiguration.of(context).copyWith(overscroll: true, dragDevices: {PointerDeviceKind.mouse}),
 
           //TODO: Cambiar Map por el tipo de dato real.
           child: GroupedListView< Map<String, dynamic> , DateTime>(
