@@ -15,6 +15,7 @@ dependencies:
   animated_floating_buttons: ^0.0.2
   intl: ^0.20.2
   grouped_list: ^6.0.0
+  rounded_loading_button_plus: ^3.0.1
 
 dev_dependencies:
   flutter_test:
