@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nawiapp/presentation/students/utils/nawi_utils.dart';
 
@@ -68,13 +67,11 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {},
-        child: students.isNotEmpty ? ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(overscroll: true, dragDevices: {PointerDeviceKind.mouse}),
-          child: ListView.builder(
-            padding: EdgeInsets.all(8.0),
-            itemCount: students.length,
-            itemBuilder: _studentsList
-          ),
+        child: students.isNotEmpty ? ListView.builder(
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.all(8.0),
+          itemCount: students.length,
+          itemBuilder: _studentsList
         ) : 
         GridView.count(crossAxisCount: 1, children: [Center(child: Text("No hay estudiantes registrados"))],),
       ),
