@@ -16,6 +16,8 @@ dependencies:
   intl: ^0.20.2
   grouped_list: ^6.0.0
   rounded_loading_button_plus: ^3.0.1
+  multi_dropdown: ^3.0.1
+  manual_speech_to_text: ^1.0.0
 
 dev_dependencies:
   flutter_test:
