@@ -17,19 +17,19 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
   final _ageKey = GlobalKey<FormFieldState<int>>();
   final _btnController = RoundedLoadingButtonController();
 
+  Future<void> onSubmit() async {
+    if(_formKey.currentState!.validate()) {
+      debugPrint(_nameKey.currentState!.value ?? "no data");
+      debugPrint('${_ageKey.currentState!.value ?? "no data"}');
+      _btnController.success();
+      return;
+    }
+    _btnController.error();
+  }
+  
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    Future<void> onSubmit() async {
-      if(_formKey.currentState!.validate()) {
-        debugPrint(_nameKey.currentState!.value ?? "no data");
-        debugPrint('${_ageKey.currentState!.value ?? "no data"}');
-        _btnController.success();
-        return;
-      }
-
-      _btnController.error();
-    }
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -50,7 +50,6 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                 Center(
                   child: CircleAvatar(
                     radius: screenWidth / 9,
-                    // backgroundColor: Colors.grey.shade300,
                     backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value ?? 0, withOpacity: true),
                     child: Icon(
                       Icons.person,
