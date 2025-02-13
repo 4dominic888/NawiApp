@@ -1,5 +1,6 @@
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
 import 'package:flutter/material.dart';
+import 'package:nawiapp/presentation/registration_book/add_registers_book/screens/add_register_book_screen.dart';
 import 'package:nawiapp/presentation/registration_book/view_registers_book/screens/view_registers_book_screen.dart';
 import 'package:nawiapp/presentation/students/add_students/screens/add_students_screen.dart';
 import 'package:nawiapp/presentation/students/view_students/screens/view_students_filter_modal.dart';
@@ -80,7 +81,7 @@ class _MenuAppState extends State<MenuApp> with SingleTickerProviderStateMixin {
             FloatingActionButton(
               onPressed: () => _currentIndex == 0 ?
                 Navigator.push(context, MaterialPageRoute(builder: (_) => AddStudentsScreen())) :
-                null,
+                Navigator.push(context, MaterialPageRoute(builder: (_) => AddRegisterBookScreen())),
               heroTag: "Create",
               tooltip: "Crear nuevo elemento",
               child: const Icon(Icons.add),
