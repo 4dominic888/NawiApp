@@ -19,6 +19,10 @@ dependencies:
   manual_speech_to_text: ^1.0.0
   group_list_view: ^1.1.1
   collection: ^1.19.0
+  permission_handler: ^11.3.1
+  avatar_glow: ^3.0.1
+  linkfy_text: ^1.1.6
+  flutter_taggable: ^1.1.1
 
 dev_dependencies:
   flutter_test:
