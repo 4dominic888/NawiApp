@@ -23,4 +23,15 @@ class Student {
     this.notes
   });
   
+  String get mentionLabel => name.replaceAll(' ', '_').toLowerCase();
+
+  @override
+  bool operator ==(Object other) {
+    if(identical(this, other)) return true;
+    return other is Student && other.name == name && other.age == age;
+  }
+
+  @override
+  int get hashCode => name.hashCode ^ age.hashCode;
+  
 }

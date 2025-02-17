@@ -10,14 +10,19 @@ enum RegisterBookType {
 }
 
 class RegisterBook {
-  final String action;
-  final List<Student> mentions;
+  String action;
+  Set<Student> _mentions = {};
   final RegisterBookType? type;
   final String? notes;
   final DateTime timestamp = DateTime.now();
 
+  List<Student> get mentions => _mentions.toList();
+  set mentions(List<Student>? value) => _mentions = Set<Student>.from(value ?? []);
+
   RegisterBook({
-    required this.action, required this.mentions,
+    required this.action, List<Student>? mentions,
     this.type = RegisterBookType.register, this.notes
-  });
+  }) { this.mentions = mentions; }
+
+  factory RegisterBook.empty() => RegisterBook(action: "", mentions: []);
 }
