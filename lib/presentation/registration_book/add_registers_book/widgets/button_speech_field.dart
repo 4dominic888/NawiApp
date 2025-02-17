@@ -1,33 +1,46 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:manual_speech_to_text/manual_speech_to_text.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class ButtonSpeechFormField extends StatefulWidget {
-  const ButtonSpeechFormField({super.key, required this.actionKey});
+class ButtonSpeechField extends StatefulWidget {
+  const ButtonSpeechField({super.key, required this.controller, this.onPlay});
 
-  final GlobalKey<FormFieldState<String>> actionKey;
+  final TextEditingController controller;
+  final void Function()? onPlay;
 
   @override
-  State<ButtonSpeechFormField> createState() => _ButtonSpeechFormFieldState();
+  State<ButtonSpeechField> createState() => _ButtonSpeechFieldState();
 }
 
-class _ButtonSpeechFormFieldState extends State<ButtonSpeechFormField> {
+class _ButtonSpeechFieldState extends State<ButtonSpeechField> {
 
   late ManualSttController _sttController;
   bool _isListening = false;
-  double _soundLevel = 0.0;
   late ManualSttState _currentState;
-
-  final _textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _currentState = ManualSttState.stopped;
     _sttController = ManualSttController(context)..listen(
-      onListeningStateChanged: (state) => setState(() => _currentState = state),
-      onListeningTextChanged: (str) => setState(() => _textController.text = str),
-      onSoundLevelChanged: (sound) => setState(() => _soundLevel = sound),
+      onListeningTextChanged: (str) => setState(() => widget.controller.text = str),
+      onListeningStateChanged: (state) => setState(() => _currentState = state)
+    )
+    ..permanentDenialDialogTitle = "Permisos del micrófono requerido"
+    ..permanentDenialDialogContent = "La función de voz a texto necesita permisos del micrófono para funcionar"
+    ..handlePermanentlyDeniedPermission(() async {
+      await showDialog(context: context, builder: (context) => AlertDialog(
+        
+        title: const Text("Los permisos del micrófono estan desactivados permanentemente"),
+        content: const Text(
+          "Es necesario activarlo en las configuraciones del dispositivo, para acceder a la funcionalidad de voz a texto.\n\n¿Le gustaría activarlo ahora?"),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Cancelar")),
+          TextButton(onPressed: () { Navigator.of(context).pop(); openAppSettings(); }, child: const Text("Aceptar"))
+        ],
+      ));
+    }
     );
   }
 
@@ -35,36 +48,19 @@ class _ButtonSpeechFormFieldState extends State<ButtonSpeechFormField> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextFormField(
-          key: widget.actionKey,
-          controller: _textController,
-          decoration: const InputDecoration(
-            labelText: "Acción realizada",
-            prefixIcon: Icon(Icons.attractions),
-            border: OutlineInputBorder()
-          ),
-          validator: (value) {
-            if(value == null || value.trim().isEmpty) return "No se ha proporcionado una acción";
-            value = value.trim();
-            if(value.length <= 2) return "El nombre es demasiado corto";
-            return null;
-          },
-        ),
-
-        const SizedBox(height: 30),
-
+        
         GestureDetector(
           onTap: () {
             setState(() {
               _isListening = !_isListening;
         
-              if(_isListening){
+              if(_isListening) {
+                widget.onPlay?.call();
                 if(_currentState == ManualSttState.stopped) _sttController.startStt();
                 if(_currentState == ManualSttState.paused) _sttController.resumeStt();
               }
-              else{
+              else {
                 _sttController.pauseStt();
-                _soundLevel = 0;
               }
             });
           },
@@ -87,11 +83,6 @@ class _ButtonSpeechFormFieldState extends State<ButtonSpeechFormField> {
             ),
           ),
         ),
-
-        const SizedBox(height: 16),
-
-        LinearProgressIndicator(value: _soundLevel),
-
       ],
     );
   }
@@ -99,7 +90,6 @@ class _ButtonSpeechFormFieldState extends State<ButtonSpeechFormField> {
   @override
   void dispose() {
     _sttController.dispose();
-    _textController.dispose();
     super.dispose();
   }
 }
