@@ -22,7 +22,7 @@ dependencies:
   permission_handler: ^11.3.1
   avatar_glow: ^3.0.1
   linkfy_text: ^1.1.6
-  flutter_taggable: ^1.1.1
+  mention_tag_text_field: ^0.0.7
 
 dev_dependencies:
   flutter_test:

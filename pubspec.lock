@@ -86,14 +86,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
-  flutter_taggable:
-    dependency: "direct main"
-    description:
-      name: flutter_taggable
-      sha256: db5e36cd44aedf4dec6c9fd967ccfbe7cd2639721412fda79a834a78fa63e1ff
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -192,6 +184,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.1"
+  mention_tag_text_field:
+    dependency: "direct main"
+    description:
+      name: mention_tag_text_field
+      sha256: a75af557af3abd116b46098affd68f3c61b155c5bd5bb7f252107d237837b1a3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.7"
   meta:
     dependency: transitive
     description:
