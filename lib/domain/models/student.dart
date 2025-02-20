@@ -13,12 +13,14 @@ enum StudentAge {
 }
 
 class Student {
-  final String name;
+  final String id;
+  String name;
   final StudentAge age;
-  final String? notes;
+  String? notes;
   final DateTime timestamp = DateTime.now();
 
   Student({
+    this.id = '*',
     required this.name, required this.age,
     this.notes
   });

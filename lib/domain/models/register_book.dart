@@ -10,16 +10,19 @@ enum RegisterBookType {
 }
 
 class RegisterBook {
+  final String id;
   String action;
+  DateTime timestamp = DateTime.now();
+  RegisterBookType? type;
+  String? notes;
+
   Set<Student> _mentions = {};
-  final RegisterBookType? type;
-  final String? notes;
-  final DateTime timestamp = DateTime.now();
 
   List<Student> get mentions => _mentions.toList();
   set mentions(List<Student>? value) => _mentions = Set<Student>.from(value ?? []);
 
   RegisterBook({
+    this.id = '*',
     required this.action, List<Student>? mentions,
     this.type = RegisterBookType.register, this.notes
   }) { this.mentions = mentions; }
