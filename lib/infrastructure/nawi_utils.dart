@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
+
+class NawiTools {
+  static Uuid uuid = Uuid();
+}
 
 /// Clase para seleccionar colores recurrentes en la aplicación Ñawi
 class NawiColor {

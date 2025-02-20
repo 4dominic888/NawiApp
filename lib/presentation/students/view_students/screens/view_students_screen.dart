@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nawiapp/presentation/students/utils/nawi_utils.dart';
+import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 //* lista de datos de prueba
 

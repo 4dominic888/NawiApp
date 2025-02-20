@@ -3,7 +3,7 @@ import 'package:mention_tag_text_field/mention_tag_text_field.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/widgets/button_speech_field.dart';
-import 'package:nawiapp/presentation/students/utils/nawi_utils.dart';
+import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 // extension PorVerse on MentionTextEditingController{
 //   List<Mentionable> get storedMentionables {

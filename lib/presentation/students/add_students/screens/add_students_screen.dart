@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nawiapp/presentation/students/utils/nawi_utils.dart';
+import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
