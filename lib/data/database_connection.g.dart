@@ -847,6 +847,309 @@ class StudentRegisterBookTableCompanion
   }
 }
 
+class StudentViewDAOVersionData extends DataClass {
+  final String id;
+  final String name;
+  final StudentAge age;
+  const StudentViewDAOVersionData(
+      {required this.id, required this.name, required this.age});
+  factory StudentViewDAOVersionData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return StudentViewDAOVersionData(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      age: $StudentTableTable.$converterage
+          .fromJson(serializer.fromJson<int>(json['age'])),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'age':
+          serializer.toJson<int>($StudentTableTable.$converterage.toJson(age)),
+    };
+  }
+
+  StudentViewDAOVersionData copyWith(
+          {String? id, String? name, StudentAge? age}) =>
+      StudentViewDAOVersionData(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        age: age ?? this.age,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('StudentViewDAOVersionData(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('age: $age')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, age);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is StudentViewDAOVersionData &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.age == this.age);
+}
+
+class $StudentViewDAOVersionView
+    extends ViewInfo<$StudentViewDAOVersionView, StudentViewDAOVersionData>
+    implements HasResultSet {
+  final String? _alias;
+  @override
+  final _$NawiDatabase attachedDatabase;
+  $StudentViewDAOVersionView(this.attachedDatabase, [this._alias]);
+  $StudentTableTable get student =>
+      attachedDatabase.studentTable.createAlias('t0');
+  @override
+  List<GeneratedColumn> get $columns => [id, name, age];
+  @override
+  String get aliasedName => _alias ?? entityName;
+  @override
+  String get entityName => 'student_view_d_a_o_version';
+  @override
+  Map<SqlDialect, String>? get createViewStatements => null;
+  @override
+  $StudentViewDAOVersionView get asDslTable => this;
+  @override
+  StudentViewDAOVersionData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return StudentViewDAOVersionData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      age: $StudentTableTable.$converterage.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}age'])!),
+    );
+  }
+
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      generatedAs: GeneratedAs(student.id, false), type: DriftSqlType.string);
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      generatedAs: GeneratedAs(student.name, false), type: DriftSqlType.string);
+  late final GeneratedColumnWithTypeConverter<StudentAge, int> age =
+      GeneratedColumn<int>('age', aliasedName, false,
+              generatedAs: GeneratedAs(student.age, false),
+              type: DriftSqlType.int)
+          .withConverter<StudentAge>($StudentTableTable.$converterage);
+  @override
+  $StudentViewDAOVersionView createAlias(String alias) {
+    return $StudentViewDAOVersionView(attachedDatabase, alias);
+  }
+
+  @override
+  Query? get query =>
+      (attachedDatabase.selectOnly(student)..addColumns($columns));
+  @override
+  Set<String> get readTables => const {'student'};
+}
+
+class RegisterBookViewDAOVersionData extends DataClass {
+  final String id;
+  final String action;
+  final String? hourCreatedAt;
+  final DateTime createdAt;
+  final RegisterBookType type;
+  final String name;
+  final StudentAge age;
+  const RegisterBookViewDAOVersionData(
+      {required this.id,
+      required this.action,
+      this.hourCreatedAt,
+      required this.createdAt,
+      required this.type,
+      required this.name,
+      required this.age});
+  factory RegisterBookViewDAOVersionData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RegisterBookViewDAOVersionData(
+      id: serializer.fromJson<String>(json['id']),
+      action: serializer.fromJson<String>(json['action']),
+      hourCreatedAt: serializer.fromJson<String?>(json['hourCreatedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      type: $RegisterBookTableTable.$convertertype
+          .fromJson(serializer.fromJson<int>(json['type'])),
+      name: serializer.fromJson<String>(json['name']),
+      age: $StudentTableTable.$converterage
+          .fromJson(serializer.fromJson<int>(json['age'])),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'action': serializer.toJson<String>(action),
+      'hourCreatedAt': serializer.toJson<String?>(hourCreatedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'type': serializer
+          .toJson<int>($RegisterBookTableTable.$convertertype.toJson(type)),
+      'name': serializer.toJson<String>(name),
+      'age':
+          serializer.toJson<int>($StudentTableTable.$converterage.toJson(age)),
+    };
+  }
+
+  RegisterBookViewDAOVersionData copyWith(
+          {String? id,
+          String? action,
+          Value<String?> hourCreatedAt = const Value.absent(),
+          DateTime? createdAt,
+          RegisterBookType? type,
+          String? name,
+          StudentAge? age}) =>
+      RegisterBookViewDAOVersionData(
+        id: id ?? this.id,
+        action: action ?? this.action,
+        hourCreatedAt:
+            hourCreatedAt.present ? hourCreatedAt.value : this.hourCreatedAt,
+        createdAt: createdAt ?? this.createdAt,
+        type: type ?? this.type,
+        name: name ?? this.name,
+        age: age ?? this.age,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('RegisterBookViewDAOVersionData(')
+          ..write('id: $id, ')
+          ..write('action: $action, ')
+          ..write('hourCreatedAt: $hourCreatedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('type: $type, ')
+          ..write('name: $name, ')
+          ..write('age: $age')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, action, hourCreatedAt, createdAt, type, name, age);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RegisterBookViewDAOVersionData &&
+          other.id == this.id &&
+          other.action == this.action &&
+          other.hourCreatedAt == this.hourCreatedAt &&
+          other.createdAt == this.createdAt &&
+          other.type == this.type &&
+          other.name == this.name &&
+          other.age == this.age);
+}
+
+class $RegisterBookViewDAOVersionView extends ViewInfo<
+    $RegisterBookViewDAOVersionView,
+    RegisterBookViewDAOVersionData> implements HasResultSet {
+  final String? _alias;
+  @override
+  final _$NawiDatabase attachedDatabase;
+  $RegisterBookViewDAOVersionView(this.attachedDatabase, [this._alias]);
+  $StudentTableTable get student =>
+      attachedDatabase.studentTable.createAlias('t0');
+  $RegisterBookTableTable get registerBook =>
+      attachedDatabase.registerBookTable.createAlias('t1');
+  $StudentRegisterBookTableTable get studentRegisterBookTable =>
+      attachedDatabase.studentRegisterBookTable.createAlias('t2');
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, action, hourCreatedAt, createdAt, type, name, age];
+  @override
+  String get aliasedName => _alias ?? entityName;
+  @override
+  String get entityName => 'register_book_view_d_a_o_version';
+  @override
+  Map<SqlDialect, String>? get createViewStatements => null;
+  @override
+  $RegisterBookViewDAOVersionView get asDslTable => this;
+  @override
+  RegisterBookViewDAOVersionData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RegisterBookViewDAOVersionData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      action: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}action'])!,
+      hourCreatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}hour_created_at']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      type: $RegisterBookTableTable.$convertertype.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}type'])!),
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      age: $StudentTableTable.$converterage.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}age'])!),
+    );
+  }
+
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      generatedAs: GeneratedAs(registerBook.id, false),
+      type: DriftSqlType.string);
+  late final GeneratedColumn<String> action = GeneratedColumn<String>(
+      'action', aliasedName, false,
+      generatedAs: GeneratedAs(registerBook.action, false),
+      type: DriftSqlType.string);
+  late final GeneratedColumn<String> hourCreatedAt = GeneratedColumn<String>(
+      'hour_created_at', aliasedName, true,
+      generatedAs: GeneratedAs(
+          DateTimeExpressions(registerBook.createdAt).strftime("%H:%M"), false),
+      type: DriftSqlType.string);
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      generatedAs: GeneratedAs(registerBook.createdAt, false),
+      type: DriftSqlType.dateTime);
+  late final GeneratedColumnWithTypeConverter<RegisterBookType, int> type =
+      GeneratedColumn<int>('type', aliasedName, false,
+              generatedAs: GeneratedAs(registerBook.type, false),
+              type: DriftSqlType.int)
+          .withConverter<RegisterBookType>(
+              $RegisterBookTableTable.$convertertype);
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      generatedAs: GeneratedAs(student.name, false), type: DriftSqlType.string);
+  late final GeneratedColumnWithTypeConverter<StudentAge, int> age =
+      GeneratedColumn<int>('age', aliasedName, false,
+              generatedAs: GeneratedAs(student.age, false),
+              type: DriftSqlType.int)
+          .withConverter<StudentAge>($StudentTableTable.$converterage);
+  @override
+  $RegisterBookViewDAOVersionView createAlias(String alias) {
+    return $RegisterBookViewDAOVersionView(attachedDatabase, alias);
+  }
+
+  @override
+  Query? get query => (attachedDatabase.selectOnly(studentRegisterBookTable)
+            ..addColumns($columns))
+          .join([
+        innerJoin(
+            student, student.id.equalsExp(studentRegisterBookTable.student)),
+        innerJoin(registerBook,
+            registerBook.id.equalsExp(studentRegisterBookTable.registerBook))
+      ]);
+  @override
+  Set<String> get readTables =>
+      const {'student', 'register_book', 'student_register_book'};
+}
+
 abstract class _$NawiDatabase extends GeneratedDatabase {
   _$NawiDatabase(QueryExecutor e) : super(e);
   $NawiDatabaseManager get managers => $NawiDatabaseManager(this);
@@ -855,6 +1158,10 @@ abstract class _$NawiDatabase extends GeneratedDatabase {
       $RegisterBookTableTable(this);
   late final $StudentRegisterBookTableTable studentRegisterBookTable =
       $StudentRegisterBookTableTable(this);
+  late final $StudentViewDAOVersionView studentViewDAOVersion =
+      $StudentViewDAOVersionView(this);
+  late final $RegisterBookViewDAOVersionView registerBookViewDAOVersion =
+      $RegisterBookViewDAOVersionView(this);
   late final Index name = Index('name', 'CREATE INDEX name ON student (name)');
   late final Index age = Index('age', 'CREATE INDEX age ON student (age)');
   late final Index timestamp =
@@ -863,6 +1170,12 @@ abstract class _$NawiDatabase extends GeneratedDatabase {
       'created_at', 'CREATE INDEX created_at ON register_book (created_at)');
   late final Index type =
       Index('type', 'CREATE INDEX type ON register_book (type)');
+  late final StudentRepository studentRepository =
+      StudentRepository(this as NawiDatabase);
+  late final RegisterBookRepository registerBookRepository =
+      RegisterBookRepository(this as NawiDatabase);
+  late final StudentRegisterBookRepository studentRegisterBookRepository =
+      StudentRegisterBookRepository(this as NawiDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -871,6 +1184,8 @@ abstract class _$NawiDatabase extends GeneratedDatabase {
         studentTable,
         registerBookTable,
         studentRegisterBookTable,
+        studentViewDAOVersion,
+        registerBookViewDAOVersion,
         name,
         age,
         timestamp,
