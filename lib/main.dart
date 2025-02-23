@@ -6,6 +6,7 @@ import 'package:nawiapp/presentation/registration_book/view_registers_book/scree
 import 'package:nawiapp/presentation/students/add_students/screens/add_students_screen.dart';
 import 'package:nawiapp/presentation/students/view_students/screens/view_students_filter_modal.dart';
 import 'package:nawiapp/presentation/students/view_students/screens/view_students_screen.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 void main() {
 
@@ -22,13 +23,15 @@ class NawiApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Menu principal',
-      debugShowCheckedModeBanner: false,
-      home: const MenuApp(),
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 178, 134, 254)),
-        useMaterial3: true,
+    return OverlaySupport.global(
+      child: MaterialApp(
+        title: 'Menu principal',
+        debugShowCheckedModeBanner: false,
+        home: const MenuApp(),
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 178, 134, 254)),
+          useMaterial3: true,
+        ),
       ),
     );
   }
@@ -50,7 +53,6 @@ class _MenuAppState extends State<MenuApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-
     _tabController.addListener(() {
       if(_tabController.indexIsChanging == false) setState(() => _currentIndex = _tabController.index);
     });
