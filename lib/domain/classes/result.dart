@@ -1,12 +1,11 @@
 enum ErrorOrigin{
   repository,
   service,
-  database,
   presentation,
   other
 }
 
-abstract class Error extends Result {
+interface class Error<T> extends Result<T> {
   final ErrorOrigin origin;
   final StackTrace? stackTrace;
 
@@ -18,9 +17,6 @@ abstract class Error extends Result {
   Error.onService({required String message, StackTrace? stackTrace}) : 
     this._(message: message, stackTrace: stackTrace, origin: ErrorOrigin.service);
 
-  Error.onDatabase({required String message, StackTrace? stackTrace}) : 
-    this._(message: message, stackTrace: stackTrace, origin: ErrorOrigin.database);
-
   Error.onPresentation({required String message, StackTrace? stackTrace}) : 
     this._(message: message, stackTrace: stackTrace, origin: ErrorOrigin.presentation);
     
@@ -28,16 +24,21 @@ abstract class Error extends Result {
     this._(message: message, stackTrace: stackTrace, origin: ErrorOrigin.other);
 }
 
-abstract class Success<T> extends Result {
+interface class Success<T> extends Result<T> {
   final T data;
 
   Success({super.message = "Operación exitosa", required this.data});
 }
 
-class Result {
+class Result<T> {
   final String message;
 
-  void getValue<T>({
+  T? get getValue {
+    if(this is Success<T>) return (this as Success<T>).data;
+    return null;
+  }
+
+  void onValue({
     void Function(T data, String message)? onSuccessfully,
     void Function(Error error, String message)? onError
     }) {
