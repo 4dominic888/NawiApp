@@ -13,7 +13,16 @@ class ViewStudentsScreen extends StatefulWidget {
 class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
 
   //TODO: Cambiar por origen de datos real
-  final List<Map<String, dynamic>> students = List.filled(10, [{"name":"Lorem Ipsum Dolor Sit","age": 5},{"name":"Sit Deset Lorem Al","age": 4},{"name":"Amet Lorem Dolor At","age": 3}]).expand((x) => x).toList();
+  final List<Map<String, dynamic>> students = List.filled(3, [
+    {"name":"Jose Pablo","age": 5},
+    {"name":"Maria Fernanda","age": 4},
+    {"name":"Joel","age": 3},
+    {"name":"Mario","age": 4},
+    {"name":"Raul","age": 3},
+    {"name":"Anita","age": 5},
+    {"name":"Julio Jose","age": 3},
+    {"name":"Mahite","age": 4},
+  ]).expand((x) => x).toList();
 
   Widget? _studentsList(_, int i){
     final item = students[i];
