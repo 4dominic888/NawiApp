@@ -1,5 +1,6 @@
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
 import 'package:flutter/material.dart';
+import 'package:nawiapp/locator.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/screens/add_register_book_screen.dart';
 import 'package:nawiapp/presentation/registration_book/view_registers_book/screens/view_registers_book_screen.dart';
 import 'package:nawiapp/presentation/students/add_students/screens/add_students_screen.dart';
@@ -7,6 +8,11 @@ import 'package:nawiapp/presentation/students/view_students/screens/view_student
 import 'package:nawiapp/presentation/students/view_students/screens/view_students_screen.dart';
 
 void main() {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  setupLocator();
+
   //* Originalmente llamado Ñawi, pero para evitar futuros errores con caracteres especiales, se reemplaza la Ñ por N.
   runApp(const NawiApp());
 }
