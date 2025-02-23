@@ -5,7 +5,7 @@ abstract class StudentViewDAOVersion extends View {
   StudentTable get student; 
 
   @override Query as() => 
-    select([student.id, student.name, student.age]).from(student);
+    select([student.id, student.name, student.age, student.timestamp]).from(student);
 }
 
 enum StudentViewOrderByType {

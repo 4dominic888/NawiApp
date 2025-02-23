@@ -27,6 +27,8 @@ LazyDatabase _openConnection() {
     final folder = await getApplicationDocumentsDirectory();
     final file = File(p.join(folder.path, 'nawidb.sqlite'));
 
+    // if(await file.exists()) await file.delete();; //! Resetea la base de datos
+
     if(Platform.isAndroid) await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
 
     sqlite3.tempDirectory = (await getTemporaryDirectory()).path;

@@ -851,8 +851,12 @@ class StudentViewDAOVersionData extends DataClass {
   final String id;
   final String name;
   final StudentAge age;
+  final DateTime timestamp;
   const StudentViewDAOVersionData(
-      {required this.id, required this.name, required this.age});
+      {required this.id,
+      required this.name,
+      required this.age,
+      required this.timestamp});
   factory StudentViewDAOVersionData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -861,6 +865,7 @@ class StudentViewDAOVersionData extends DataClass {
       name: serializer.fromJson<String>(json['name']),
       age: $StudentTableTable.$converterage
           .fromJson(serializer.fromJson<int>(json['age'])),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
     );
   }
   @override
@@ -871,35 +876,39 @@ class StudentViewDAOVersionData extends DataClass {
       'name': serializer.toJson<String>(name),
       'age':
           serializer.toJson<int>($StudentTableTable.$converterage.toJson(age)),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
     };
   }
 
   StudentViewDAOVersionData copyWith(
-          {String? id, String? name, StudentAge? age}) =>
+          {String? id, String? name, StudentAge? age, DateTime? timestamp}) =>
       StudentViewDAOVersionData(
         id: id ?? this.id,
         name: name ?? this.name,
         age: age ?? this.age,
+        timestamp: timestamp ?? this.timestamp,
       );
   @override
   String toString() {
     return (StringBuffer('StudentViewDAOVersionData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('age: $age')
+          ..write('age: $age, ')
+          ..write('timestamp: $timestamp')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, age);
+  int get hashCode => Object.hash(id, name, age, timestamp);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is StudentViewDAOVersionData &&
           other.id == this.id &&
           other.name == this.name &&
-          other.age == this.age);
+          other.age == this.age &&
+          other.timestamp == this.timestamp);
 }
 
 class $StudentViewDAOVersionView
@@ -912,7 +921,7 @@ class $StudentViewDAOVersionView
   $StudentTableTable get student =>
       attachedDatabase.studentTable.createAlias('t0');
   @override
-  List<GeneratedColumn> get $columns => [id, name, age];
+  List<GeneratedColumn> get $columns => [id, name, age, timestamp];
   @override
   String get aliasedName => _alias ?? entityName;
   @override
@@ -932,6 +941,8 @@ class $StudentViewDAOVersionView
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       age: $StudentTableTable.$converterage.fromSql(attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}age'])!),
+      timestamp: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}timestamp'])!,
     );
   }
 
@@ -946,6 +957,10 @@ class $StudentViewDAOVersionView
               generatedAs: GeneratedAs(student.age, false),
               type: DriftSqlType.int)
           .withConverter<StudentAge>($StudentTableTable.$converterage);
+  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
+      'timestamp', aliasedName, false,
+      generatedAs: GeneratedAs(student.timestamp, false),
+      type: DriftSqlType.dateTime);
   @override
   $StudentViewDAOVersionView createAlias(String alias) {
     return $StudentViewDAOVersionView(attachedDatabase, alias);

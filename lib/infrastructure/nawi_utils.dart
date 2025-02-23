@@ -52,11 +52,11 @@ class NawiRepositoryTools {
   static SimpleSelectStatement<T, R> orderByStudent<T extends HasResultSet, R>(dynamic query, Map<String, dynamic> params) {
     final orderBy = params['orderByStudent'] as StudentViewOrderByType?;
     query = switch (orderBy) {
-      StudentViewOrderByType.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.student.timestamp)]),
-      StudentViewOrderByType.timestampOldy => query..orderBy([(u) => OrderingTerm.asc(u.student.timestamp)]),
+      StudentViewOrderByType.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.timestamp)]),
+      StudentViewOrderByType.timestampOldy => query..orderBy([(u) => OrderingTerm.asc(u.timestamp)]),
       StudentViewOrderByType.nameAsc => query..orderBy([(u) => OrderingTerm.asc(u.name)]),
       StudentViewOrderByType.nameDesc => query..orderBy([(u) => OrderingTerm.desc(u.name)]),
-      null => query..orderBy([(u) => OrderingTerm.desc(u.student.timestamp)])
+      null => query..orderBy([(u) => OrderingTerm.desc(u.timestamp)])
     };
     return query;
   }
