@@ -51,5 +51,5 @@ class StudentDAO{
 
   StudentDAO({required this.id, required this.name, required this.age});
 
-  StudentDAO.fromDAOView(dynamic data) : this(id: data.id, name: data.name, age: data.age);
+  StudentDAO.fromDAOView(StudentViewDAOVersionData data) : this(id: data.id, name: data.name, age: data.age);
 }

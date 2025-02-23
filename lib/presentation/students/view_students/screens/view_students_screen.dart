@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:get_it/get_it.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/services/student_service_base.dart';
+import 'package:nawiapp/presentation/students/view_students/widgets/student_element.dart';
 
 //* lista de datos de prueba
 
@@ -12,62 +16,26 @@ class ViewStudentsScreen extends StatefulWidget {
 
 class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
 
-  //TODO: Cambiar por origen de datos real
-  final List<Map<String, dynamic>> students = List.filled(3, [
-    {"name":"Jose Pablo","age": 5},
-    {"name":"Maria Fernanda","age": 4},
-    {"name":"Joel","age": 3},
-    {"name":"Mario","age": 4},
-    {"name":"Raul","age": 3},
-    {"name":"Anita","age": 5},
-    {"name":"Julio Jose","age": 3},
-    {"name":"Mahite","age": 4},
-  ]).expand((x) => x).toList();
+  final _studentService = GetIt.I<StudentServiceBase>();
+  final _pagingController = PagingController<int, StudentDAO>(firstPageKey: 0);
+  static const int _pageSize = 10;
 
-  Widget? _studentsList(_, int i){
-    final item = students[i];
-    return InkWell(
-      onLongPress: () { },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        child: Dismissible(
-          key: Key("-"),
-          direction: DismissDirection.horizontal,
-          confirmDismiss: (direction) async {
-            if(direction == DismissDirection.startToEnd) {
-              //* Action when edit
-              return false;
-            }
-            if(direction == DismissDirection.endToStart) {
-              //* Action when delete
-              //TODO: agregar un modal para confirmar la eliminacion.
-              return true;
-            }
-            return false;
-          },
-          background: Container(
-            color: Colors.cyan.shade300,
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(left: 20),
-            child: Icon(Icons.edit, color: Colors.white)
-          ),
-          secondaryBackground: Container(
-            color: Colors.red.shade400,
-            alignment: Alignment.centerRight,
-            padding: EdgeInsets.only(left: 20),
-            child: Icon(Icons.delete, color: Colors.white)              
-          ),
-          child: ListTile(
-            title: Text(item["name"]),
-            subtitle: Text('${item["age"]} años'),
-            tileColor: i % 2 == 0 ?Colors.grey.shade200.withAlpha(80) : Colors.grey.shade200.withAlpha(100),
-            leading: CircleAvatar(
-              backgroundColor: NawiColor.iconColorMap(item["age"], withOpacity: true),
-              child: Icon(Icons.person, color: NawiColor.iconColorMap(item["age"])),
-            ),
-          ),
-        ),
-      ),
+  @override
+  void initState() {
+    super.initState();
+    _pagingController.addPageRequestListener((pageKey) => _fetchPage(pageKey));
+  }
+
+  Future<void> _fetchPage(int pageKey) async {
+    final result = await _studentService.getAllPaginated(curretPage: pageKey, pageSize: _pageSize, params: {}).first;
+
+    result.onValue(
+      onError: (_, message) => _pagingController.error = message,
+      onSuccessfully: (data, message) {
+        final items = data.data;
+        if(items.length < _pageSize) { _pagingController.appendLastPage(items); }
+        else { _pagingController.appendPage(items, pageKey+1); }
+      },
     );
   }
 
@@ -75,15 +43,30 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async {},
-        child: students.isNotEmpty ? ListView.builder(
-          scrollDirection: Axis.vertical,
-          padding: EdgeInsets.all(8.0),
-          itemCount: students.length,
-          itemBuilder: _studentsList
-        ) : 
-        GridView.count(crossAxisCount: 1, children: [Center(child: Text("No hay estudiantes registrados"))],),
+        onRefresh: () async {
+          _pagingController.value = PagingState();
+          _pagingController.refresh();
+          await _fetchPage(0);
+        },
+        child: PagedListView(
+          pagingController: _pagingController,
+          builderDelegate: PagedChildBuilderDelegate<StudentDAO>(
+            itemBuilder: (context, item, index) => StudentElement(context: context, item: item, index: index),
+            firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+            newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+            noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay estudiantes registrados")),
+            noMoreItemsIndicatorBuilder: (_) => const Center(child: Text("No más estudiantes a cargar")),
+            firstPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información")),
+            newPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información"))
+          )
+        )
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 }
