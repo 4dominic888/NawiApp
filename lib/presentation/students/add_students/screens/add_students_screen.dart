@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
+import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class AddStudentsScreen extends StatefulWidget {
@@ -12,15 +16,24 @@ class AddStudentsScreen extends StatefulWidget {
 
 class _AddStudentsScreenState extends State<AddStudentsScreen> {
 
+  final _studentService = GetIt.I<StudentServiceBase>();
+
   final _formKey = GlobalKey<FormState>();
   final _nameKey = GlobalKey<FormFieldState<String>>();
-  final _ageKey = GlobalKey<FormFieldState<int>>();
+  final _ageKey = GlobalKey<FormFieldState<StudentAge>>();
   final _btnController = RoundedLoadingButtonController();
 
   Future<void> onSubmit() async {
     if(_formKey.currentState!.validate()) {
-      debugPrint(_nameKey.currentState!.value ?? "no data");
-      debugPrint('${_ageKey.currentState!.value ?? "no data"}');
+      final result = await _studentService.addOne(
+        Student(name: _nameKey.currentState!.value!, age: _ageKey.currentState!.value!
+      ));
+
+      result.onValue(
+        onError: (_, message) => NotificationMessage.showErrorNotification(message),
+        onSuccessfully: (_, message) => NotificationMessage.showSuccessNotification(message),
+      );
+
       _btnController.success();
       return;
     }
@@ -52,11 +65,11 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                   Center(
                     child: CircleAvatar(
                       radius: screenWidth / 9,
-                      backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value ?? 0, withOpacity: true),
+                      backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? 0, withOpacity: true),
                       child: Icon(
                         Icons.person,
                         size: screenWidth / 9,
-                        color: NawiColor.iconColorMap(_ageKey.currentState?.value ?? 0)
+                        color: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? 0)
                       )
                     )
                   ),
@@ -80,7 +93,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
               
                   const SizedBox(height: 30),
               
-                  DropdownButtonFormField<int>(
+                  DropdownButtonFormField<StudentAge>(
                     key: _ageKey,
                     decoration: const InputDecoration(
                       labelText: "Selecciona la edad",
@@ -88,9 +101,9 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                       border: OutlineInputBorder()
                     ),
                     items: [
-                      DropdownMenuItem(value: 3, child: const Text("3 años")),
-                      DropdownMenuItem(value: 4, child: const Text("4 años")),
-                      DropdownMenuItem(value: 5, child: const Text("5 años"))
+                      DropdownMenuItem(value: StudentAge.threeYears, child: const Text("3 años")),
+                      DropdownMenuItem(value: StudentAge.fourYears, child: const Text("4 años")),
+                      DropdownMenuItem(value: StudentAge.fiveYears, child: const Text("5 años"))
                     ],
                     onChanged: (value) => setState(() {}),
                     validator: (value) {

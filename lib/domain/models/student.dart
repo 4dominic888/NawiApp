@@ -1,3 +1,5 @@
+import 'package:nawiapp/data/database_connection.dart';
+
 enum StudentAge {
   threeYears(3, "3 años", alterName: "tres años"),
   fourYears(4, "4 años", alterName: "cuatro años"),
@@ -17,14 +19,18 @@ class Student {
   String name;
   final StudentAge age;
   String? notes;
-  final DateTime timestamp = DateTime.now();
+  final DateTime timestamp;
 
   Student({
     this.id = '*',
     required this.name, required this.age,
-    this.notes
-  });
-  
+    this.notes, DateTime? timestamp
+  }) : timestamp = timestamp ?? DateTime.now();
+
+  //* Drift convertors
+  Student.fromTableData(StudentTableData data) : 
+    this(id: data.id, name: data.name,age: data.age, notes: data.notes);
+
   String get mentionLabel => name.replaceAll(' ', '_').toLowerCase();
 
   @override
@@ -36,4 +42,14 @@ class Student {
   @override
   int get hashCode => name.hashCode ^ age.hashCode;
   
+}
+
+class StudentDAO{
+  final String id;
+  String name;
+  final StudentAge age;
+
+  StudentDAO({required this.id, required this.name, required this.age});
+
+  StudentDAO.fromDAOView(StudentViewDAOVersionData data) : this(id: data.id, name: data.name, age: data.age);
 }

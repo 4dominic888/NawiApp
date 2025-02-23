@@ -13,10 +13,12 @@ class ViewRegistersBookScreen extends StatefulWidget {
 class _ViewRegistersBookScreenState extends State<ViewRegistersBookScreen> {
 
   //TODO: Cambiar por origen de datos real
-  final List<Map<String, dynamic>> registersBook = List.filled(4, [
-    {"action": "Lorem Ipsum Dolor sit amet Asit aabbss", "date": DateTime(2025, 1, 15), "emisors": ["Pepe", "Pablo"]},
-    {"action": "Amet Silli dolor Awe Dea Cajl", "date": DateTime(2025, 1, 15), "emisors": ["María José"]},
-    {"action": "Sit Ipsum Lorem Amet Siti Coja", "date": DateTime(2025, 1, 13), "emisors": ["Mario", "Fernanda", "Julian", "Pepe", "Jose"]},
+  final List<Map<String, dynamic>> registersBook = List.filled(1, [
+    {"action": "Jose Pablo ha dicho su nombre", "date": DateTime(2025, 1, 15), "emisors": ["Jose Pablo"]},
+    {"action": "Raul ha jugado a las escondidas con Anita", "date": DateTime(2025, 1, 15), "emisors": ["Anita", "Raul"]},
+    {"action": "Mario ha pegado a Mahite y Joel", "date": DateTime(2025, 1, 13), "emisors": ["Mario", "Mahite", "Joel"]},
+    {"action": "Anita y Joel han aprendido a contar hasta 3", "date": DateTime(2025, 1, 16), "emisors": ["Anita", "Joel"]},
+    {"action": "Maria Fernanda dice como es ella y se compara con su mama", "date": DateTime(2025, 1, 16), "emisors": ["Maria Fernanda"]},
   ]).expand((x) => x).toList();
 
   Widget _registersBookList(_, Map<String, dynamic> item){
