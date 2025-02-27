@@ -18,12 +18,23 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
 
   final _studentService = GetIt.I<StudentServiceBase>();
   final _pagingController = PagingController<int, StudentDAO>(firstPageKey: 0);
+  bool _isLoadingStarted = false;
+  late final bool _paggingStatusCondition;
   static const int _pageSize = 10;
 
   @override
   void initState() {
+    _paggingStatusCondition = (
+          _pagingController.value.status == PagingStatus.loadingFirstPage ||
+          _pagingController.value.status == PagingStatus.ongoing
+    ) && _isLoadingStarted;
+
     super.initState();
-    _pagingController.addPageRequestListener((pageKey) => _fetchPage(pageKey));
+    _pagingController.addPageRequestListener((pageKey) {
+      if(_paggingStatusCondition) return; 
+      _isLoadingStarted = true;
+      _fetchPage(pageKey);
+    });
   }
 
   Future<void> _fetchPage(int pageKey) async {
@@ -44,9 +55,8 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
-          _pagingController.value = PagingState();
+          if(_paggingStatusCondition) return;
           _pagingController.refresh();
-          await _fetchPage(0);
         },
         child: PagedListView(
           pagingController: _pagingController,
