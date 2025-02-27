@@ -54,7 +54,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
   Future<Result<bool>> deleteOne(RegisterBookWithEmisorsTableData data) async {
     return await transaction<Result<bool>>(() async {
       try {
-        final registerBookId = data.registerBook.id;;
+        final registerBookId = data.registerBook.id;
         await batch((batch) => batch.deleteWhere(studentRegisterBookTable, (tbl) => tbl.registerBook.equals(registerBookId)));
 
         return Success(data: true);

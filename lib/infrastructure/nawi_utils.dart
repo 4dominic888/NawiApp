@@ -14,8 +14,8 @@ class NawiTools {
 class NawiServiceTools{
   static Function defaultErrorFunction = (e, stackTrace) => Error.onService(message: e, stackTrace: stackTrace);
 
-  static StudentTableCompanion toStudentTableCompanion(Student data) => StudentTableCompanion(
-    id: Value(data.id),
+  static StudentTableCompanion toStudentTableCompanion(Student data, {bool withId = false}) => StudentTableCompanion(
+    id: withId ? Value(data.id) : Value.absent(),
     age: Value(data.age),
     name: Value(data.name),
     notes: Value(data.notes),
