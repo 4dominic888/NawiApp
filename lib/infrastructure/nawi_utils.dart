@@ -23,7 +23,7 @@ class NawiServiceTools{
   );
 
   static Success<T> resultConverter<T, E>(Result<E> result, T Function(E value) converter) {
-    return Success(data: converter(result.getValue as E));
+    return Success(data: converter(result.getValue as E), message: result.message);
   }
 }
 
