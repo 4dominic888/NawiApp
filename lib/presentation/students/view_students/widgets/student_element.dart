@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/presentation/students/add_students/screens/add_students_screen.dart';
 
 class StudentElement extends StatelessWidget {
   const StudentElement({
@@ -17,7 +18,6 @@ class StudentElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onLongPress: () { },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: Dismissible(
@@ -25,7 +25,7 @@ class StudentElement extends StatelessWidget {
           direction: DismissDirection.horizontal,
           confirmDismiss: (direction) async {
             if(direction == DismissDirection.startToEnd) {
-              //* Action when edit
+              Navigator.push(context, MaterialPageRoute(builder: (_) => AddStudentsScreen(idToEdit: item.id)));
               return false;
             }
             if(direction == DismissDirection.endToStart) {
