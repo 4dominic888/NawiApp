@@ -9,6 +9,7 @@ import 'package:nawiapp/domain/classes/result.dart';
 
 class NawiTools {
   static Uuid uuid = Uuid();
+  static String clearText(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
 }
 
 class NawiServiceTools{
