@@ -36,8 +36,8 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   @override
-  Future<Result<StudentTableData>> getOne(String id) async {
-    return (select(studentTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull().then(
+  Future<Result<StudentTableData>> getOne(String? id) async {
+    return (select(studentTable)..where((tbl) => tbl.id.equals(id ?? '*'))).getSingleOrNull().then(
       (result) => result != null ? Success(data: result) : Error.onRepository(message: "No encontrado"),
       onError: NawiRepositoryTools.defaultErrorFunction
     );

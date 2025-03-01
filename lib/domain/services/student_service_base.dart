@@ -7,7 +7,7 @@ abstract class StudentServiceBase {
   Future<Result<Student>> addOne(Student data);
   Stream<Result<PaginatedData<StudentDAO>>> getAllPaginated({required int pageSize, required int curretPage, required Map<String, dynamic> params});
   Stream<Result<List<StudentDAO>>> getAll(Map<String, dynamic> params);
-  Future<Result<Student>> getOne(String id);
+  Future<Result<Student>> getOne(String? id);
   Future<Result<bool>> updateOne(Student data);
   //* Delete coming soon
   
