@@ -44,7 +44,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   }
 
   @override
-  Future<Result<Student>> getOne(String id) {
+  Future<Result<Student>> getOne(String? id) {
     return repo.getOne(id).then(
       (result) => NawiServiceTools.resultConverter(result, (value) => Student.fromTableData(result.getValue!)),
       onError: NawiServiceTools.defaultErrorFunction
