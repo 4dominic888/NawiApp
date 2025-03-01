@@ -20,8 +20,8 @@ interface class StudentServiceImplement extends StudentServiceBase {
 
   @override
   Stream<Result<List<StudentDAO>>> getAll(Map<String, dynamic> params) {
-    return repo.getAll(params).map((event) {
-      try { return NawiServiceTools.resultConverter(event, 
+    return repo.getAll(params).map((result) {
+      try { return NawiServiceTools.resultConverter(result, 
         (value) => value.map((e) => StudentDAO.fromDAOView(e)).toList()); 
       }
       catch (e) { return Error.onService(message: e.toString()); }
@@ -31,9 +31,9 @@ interface class StudentServiceImplement extends StudentServiceBase {
   @override
   Stream<Result<PaginatedData<StudentDAO>>> getAllPaginated({required int pageSize, required int curretPage, required Map<String, dynamic> params}){
     params.addAll({"pageSize": pageSize, "currentPage": curretPage});
-    return repo.getAll(params).map((event) {
+    return repo.getAll(params).map((result) {
       try {
-        return NawiServiceTools.resultConverter(event, 
+        return NawiServiceTools.resultConverter(result, 
           (value) => PaginatedData.build(
             currentPage: curretPage,
             pageSize: pageSize,
@@ -45,14 +45,17 @@ interface class StudentServiceImplement extends StudentServiceBase {
 
   @override
   Future<Result<Student>> getOne(String id) {
-    // TODO: implement getOne
-    throw UnimplementedError();
+    return repo.getOne(id).then(
+      (result) => NawiServiceTools.resultConverter(result, (value) => Student.fromTableData(result.getValue!)),
+      onError: NawiServiceTools.defaultErrorFunction
+    );
   }
 
   @override
   Future<Result<bool>> updateOne(Student data) {
-    // TODO: implement updateOne
-    throw UnimplementedError();
+    return repo.updateOne(data.toTableData).then(
+      (result) => Success(data: true, message: result.message), onError: NawiRepositoryTools.defaultErrorFunction
+    );
   }
 
 }
