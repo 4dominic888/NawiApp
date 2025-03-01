@@ -1,3 +1,5 @@
+import 'package:nawiapp/presentation/widgets/notification_message.dart';
+
 enum ErrorOrigin{
   repository,
   service,
@@ -40,13 +42,16 @@ class Result<T> {
 
   void onValue({
     void Function(T data, String message)? onSuccessfully,
-    void Function(Error error, String message)? onError
+    void Function(Error error, String message)? onError,
+    bool withPopup = true
     }) {
 
     if(this is Success<T>) {
+      if(withPopup) NotificationMessage.showSuccessNotification(message);
       onSuccessfully?.call((this as Success<T>).data, message);
     }
     else {
+      if(withPopup) NotificationMessage.showSuccessNotification(message);
       onError?.call(this as Error, message);
     }
   }
