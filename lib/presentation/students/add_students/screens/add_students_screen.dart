@@ -28,12 +28,9 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
   final _ageKey = GlobalKey<FormFieldState<StudentAge>>();
   final _btnController = RoundedLoadingButtonController();
 
-  Future<void> onSubmit() async {
-    if(_isUpdatable && widget.idToEdit != null) {
-      _btnController.error();
-      return;
-    }
+  late final Future<Result<Student>> _future;
 
+  Future<void> onSubmit() async {
     if(_formKey.currentState!.validate()) {
 
       final Result<Object> result;
@@ -60,29 +57,36 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
   }
   
   @override
+  void initState() {
+    super.initState();
+    _future = _studentService.getOne(widget.idToEdit);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return FutureBuilder<Result<Student>>(
-      future: _studentService.getOne(widget.idToEdit),
-      builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
-        final data = snapshot.data?.getValue;
-        _isUpdatable = data != null;
-        return GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Scaffold(
-            appBar: AppBar(
-              leading: const BackButton(),
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              title: Text("${_isUpdatable ? "Editar" : "Crear"} estudiante")
-            ),
-            body: Form(
-              key: _formKey,
+    return Scaffold(
+      appBar: AppBar(
+        leading: const BackButton(),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text("${_isUpdatable ? "Editar" : "Crear"} estudiante")
+      ),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: FutureBuilder<Result<Student>>(
+          future: _future,
+          builder: (_, snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          final data = snapshot.data?.getValue;
+          _isUpdatable = data != null;              
+            return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16,32,16,16),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
+                child: Form(
+                  key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -150,12 +154,12 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                       )
                     ],
                   ),
-                ),
-              ),
-            ),
-          ),
-        );
-      }
+                        ),
+                      ),
+            );
+          }
+        ),
+      ),
     );
   }
 }
