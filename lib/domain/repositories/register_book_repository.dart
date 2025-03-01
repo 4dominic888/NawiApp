@@ -52,9 +52,9 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   }
 
   @override
-  Future<Result<RegisterBookTableData>> deleteOne(RegisterBookTableData data) async {
-    return delete(registerBookTable).deleteReturning(data).then(
-      (result) => result != null ? Success(data: result) : Error.onRepository(message: "No eliminado"),
+  Future<Result<RegisterBookTableData>> deleteOne(String id) async {
+    return (delete(registerBookTable)..where((tbl) => tbl.id.equals(id))).goAndReturn().then(
+      (result) => Success(data: result.first),
       onError: NawiRepositoryTools.defaultErrorFunction
     );
   }
