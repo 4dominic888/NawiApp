@@ -27,6 +27,15 @@ class Student {
     this.notes, DateTime? timestamp
   }) : timestamp = timestamp ?? DateTime.now();
 
+  StudentTableData get toTableData => StudentTableData(
+    id: id,
+    name: name,
+    age: age,
+    timestamp: timestamp,
+    notes: notes
+  );
+
+
   //* Drift convertors
   Student.fromTableData(StudentTableData data) : 
     this(id: data.id, name: data.name,age: data.age, notes: data.notes);
