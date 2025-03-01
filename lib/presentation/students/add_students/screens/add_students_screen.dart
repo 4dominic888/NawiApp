@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/student.dart';
@@ -67,7 +66,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
     return FutureBuilder<Result<Student>>(
       future: _studentService.getOne(widget.idToEdit),
       builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.waiting) SmartDialog.showLoading(animationType: SmartAnimationType.scale);
+        if(snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
         final data = snapshot.data?.getValue;
         _isUpdatable = data != null;
         return GestureDetector(
@@ -91,11 +90,11 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                       Center(
                         child: CircleAvatar(
                           radius: screenWidth / 9,
-                          backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? 0, withOpacity: true),
+                          backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? data?.age.value ?? 0, withOpacity: true),
                           child: Icon(
                             Icons.person,
                             size: screenWidth / 9,
-                            color: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? 0)
+                            color: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? data?.age.value ?? 0)
                           )
                         )
                       ),
@@ -146,7 +145,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                         controller: _btnController,
                         width: screenWidth,
                         label: Text("${_isUpdatable ? "Editar" : "Crear"} estudiante"),
-                        color: _isUpdatable ? Colors.blue : Theme.of(context).colorScheme.inversePrimary,
+                        color: _isUpdatable ? Colors.lightBlueAccent.shade100 : Theme.of(context).colorScheme.inversePrimary,
                         proccess: onSubmit,
                       )
                     ],
