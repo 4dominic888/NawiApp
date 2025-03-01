@@ -1,6 +1,5 @@
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:nawiapp/locator.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/screens/add_register_book_screen.dart';
 import 'package:nawiapp/presentation/registration_book/view_registers_book/screens/view_registers_book_screen.dart';
@@ -29,8 +28,6 @@ class NawiApp extends StatelessWidget {
         title: 'Menu principal',
         debugShowCheckedModeBanner: false,
         home: const MenuApp(),
-        navigatorObservers: [FlutterSmartDialog.observer],
-        builder: FlutterSmartDialog.init(),
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 178, 134, 254)),
           useMaterial3: true,
