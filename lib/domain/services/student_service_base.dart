@@ -9,6 +9,6 @@ abstract class StudentServiceBase {
   Stream<Result<List<StudentDAO>>> getAll(Map<String, dynamic> params);
   Future<Result<Student>> getOne(String? id);
   Future<Result<bool>> updateOne(Student data);
-  //* Delete coming soon
+  Future<Result<Student>> deleteOne(Student student);
   
 }

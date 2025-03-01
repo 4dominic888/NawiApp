@@ -57,5 +57,12 @@ interface class StudentServiceImplement extends StudentServiceBase {
       (result) => Success(data: true, message: result.message), onError: NawiRepositoryTools.defaultErrorFunction
     );
   }
+  
+  @override
+  Future<Result<Student>> deleteOne(Student student) {
+    return repo.deleteOne(student.toTableData).then(
+      (result) => Success(data: student), onError: NawiServiceTools.defaultErrorFunction
+    );
+  }
 
 }
