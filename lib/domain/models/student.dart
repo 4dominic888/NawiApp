@@ -35,6 +35,19 @@ class Student {
     notes: notes
   );
 
+  Student copyWith({
+    String? id,
+    String? name,
+    StudentAge? age,
+    String? notes,
+    DateTime? timestamp
+  }) => Student(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    age: age ?? this.age,
+    notes: notes ?? this.notes,
+    timestamp: timestamp ?? this.timestamp
+  );
 
   //* Drift convertors
   Student.fromTableData(StudentTableData data) : 
