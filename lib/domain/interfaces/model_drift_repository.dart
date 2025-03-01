@@ -29,5 +29,5 @@ abstract class ModelDriftRepository<T extends DataClass, R extends UpdateCompani
   Stream<Result<List<S>>> getAll(Map<String, dynamic> params);
   Future<Result<T>> getOne(String id);
   Future<Result<bool>> updateOne(T data);
-  Future<Result<T>> deleteOne(T data);
+  Future<Result<T>> deleteOne(String id);
 }

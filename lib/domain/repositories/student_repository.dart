@@ -51,9 +51,9 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   @override
-  Future<Result<StudentTableData>> deleteOne(StudentTableData data) async {
-    return delete(studentTable).deleteReturning(data).then(
-      (result) => result != null ? Success(data: result) : Error.onRepository(message: "No eliminado"),
+  Future<Result<StudentTableData>> deleteOne(String id) async {
+    return (delete(studentTable)..where((tbl) => tbl.id.equals(id))).goAndReturn().then(
+      (result) => Success(data: result.first),
       onError: NawiRepositoryTools.defaultErrorFunction
     );
   }
