@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
@@ -9,11 +10,15 @@ class StudentElement extends StatelessWidget {
     required this.context,
     required this.item,
     required this.index,
+    required this.deleteButton,
+    required this.archiveButton
   });
 
   final BuildContext context;
   final StudentDAO item;
   final int index;
+  final Widget deleteButton;
+  final Widget archiveButton;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +34,19 @@ class StudentElement extends StatelessWidget {
               return false;
             }
             if(direction == DismissDirection.endToStart) {
-              //* Action when delete
-              //TODO: agregar un modal para confirmar la eliminacion.
-              return true;
+              await AwesomeDialog(
+                context: context,
+                dialogType: DialogType.warning,
+                headerAnimationLoop: false,
+                showCloseIcon: true,
+                closeIcon: const Icon(Icons.close),
+                animType: AnimType.scale,
+                title: "Confirmación de eliminación",
+                desc: "¿Estás seguro que deseas eliminar este estudiante? (Esta acción eliminará todos los registros relacionados) \n\nCaso contrario, ¿Archivarlo?",
+                btnOk: deleteButton,
+                btnCancel: archiveButton
+              ).show();
+              return false;
             }
             return false;
           },

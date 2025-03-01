@@ -4,6 +4,8 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/presentation/students/view_students/widgets/student_element.dart';
+import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 //* lista de datos de prueba
 
@@ -18,6 +20,9 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
 
   final _studentService = GetIt.I<StudentServiceBase>();
   final _pagingController = PagingController<int, StudentDAO>(firstPageKey: 0);
+  final _btnDeleteElementController = RoundedLoadingButtonController();
+  final _btnArchiveElementController = RoundedLoadingButtonController();
+
   bool _isLoadingStarted = false;
   late final bool _paggingStatusCondition;
   static const int _pageSize = 10;
@@ -41,6 +46,7 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
     final result = await _studentService.getAllPaginated(curretPage: pageKey, pageSize: _pageSize, params: {}).first;
 
     result.onValue(
+      withPopup: false,
       onError: (_, message) => _pagingController.error = message,
       onSuccessfully: (data, message) {
         final items = data.data;
@@ -50,18 +56,50 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
     );
   }
 
+  Future<void> _refresh() async {
+    if(_paggingStatusCondition) return;
+    _pagingController.refresh();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async {
-          if(_paggingStatusCondition) return;
-          _pagingController.refresh();
-        },
+        onRefresh: _refresh,
         child: PagedListView(
           pagingController: _pagingController,
           builderDelegate: PagedChildBuilderDelegate<StudentDAO>(
-            itemBuilder: (context, item, index) => StudentElement(context: context, item: item, index: index),
+            itemBuilder: (context, item, index) => StudentElement(
+              context: context,
+              item: item,
+              index: index,
+              deleteButton: LoadingProcessButton(
+                controller: _btnDeleteElementController,
+                label: Text("Eliminar", style: TextStyle(color: Colors.white)),
+                color: Colors.redAccent.shade200,
+                proccess: () async {
+                  _btnDeleteElementController.start();
+                  final result = await _studentService.deleteOne(item.id);
+                  result.onValue(
+                    onSuccessfully: (data, message) => _btnDeleteElementController.success(),
+                    onError: (error, message) => _btnDeleteElementController.error(),
+                    withPopup: false
+                  );
+                  if(context.mounted) Navigator.of(context).pop();
+                  _refresh();
+                },
+              ),
+              archiveButton: LoadingProcessButton(
+                controller: _btnArchiveElementController,
+                label: Text("Archivar", style: TextStyle(color: Colors.white)),
+                color: Colors.orangeAccent.shade200,
+                proccess: () async {
+                  _btnArchiveElementController.start();
+                  Future.delayed(const Duration(seconds: 3));; //TODO temporal
+                  _btnArchiveElementController.success();
+                },
+              ),
+            ),
             firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
             newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
             noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay estudiantes registrados")),

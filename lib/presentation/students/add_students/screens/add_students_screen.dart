@@ -5,7 +5,6 @@ import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
-import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class AddStudentsScreen extends StatefulWidget {
@@ -46,11 +45,10 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
       }
 
       result.onValue(
-        onError: (_, message) => NotificationMessage.showErrorNotification(message),
-        onSuccessfully: (_, message) => NotificationMessage.showSuccessNotification(message),
+        onError: (_, message) => _btnController.error(),
+        onSuccessfully: (_, message) => _btnController.success(),
       );
 
-      _btnController.success();
       return;
     }
     _btnController.error();
