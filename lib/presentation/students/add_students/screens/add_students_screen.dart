@@ -71,7 +71,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
       appBar: AppBar(
         leading: const BackButton(),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("${_isUpdatable ? "Editar" : "Crear"} estudiante")
+        title: Text("${widget.idToEdit != null ? "Editar" : "Crear"} estudiante")
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
