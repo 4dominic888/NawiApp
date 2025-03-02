@@ -51,7 +51,7 @@ class Student {
 
   //* Drift convertors
   Student.fromTableData(StudentTableData data) : 
-    this(id: data.id, name: data.name,age: data.age, notes: data.notes);
+    this(id: data.id, name: data.name,age: data.age, notes: data.notes, timestamp: data.timestamp);
 
   String get mentionLabel => name.replaceAll(' ', '_').toLowerCase();
 
