@@ -27,6 +27,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
   final _ageKey = GlobalKey<FormFieldState<StudentAge>>();
   final _btnController = RoundedLoadingButtonController();
 
+  Student? _studentforEditing;
   late final Future<Result<Student>> _future;
 
   Future<void> onSubmit() async {
@@ -35,7 +36,9 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
       final Result<Object> result;
       final Student student = Student(
         name: _nameKey.currentState!.value!,
-        age: _ageKey.currentState!.value!
+        age: _ageKey.currentState!.value!,
+        notes: _studentforEditing?.notes,
+        timestamp: _studentforEditing?.timestamp
       );
 
       if(!_isUpdatable) { //* Crear
@@ -75,11 +78,11 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
         child: FutureBuilder<Result<Student>>(
           future: _future,
           builder: (_, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          final data = snapshot.data?.getValue;
-          _isUpdatable = data != null;              
+            if(snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
+            
+            _studentforEditing = snapshot.data?.getValue;
+            _isUpdatable = _studentforEditing != null;
+
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16,32,16,16),
@@ -92,11 +95,11 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                       Center(
                         child: CircleAvatar(
                           radius: screenWidth / 9,
-                          backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? data?.age.value ?? 0, withOpacity: true),
+                          backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? _studentforEditing?.age.value ?? 0, withOpacity: true),
                           child: Icon(
                             Icons.person,
                             size: screenWidth / 9,
-                            color: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? data?.age.value ?? 0)
+                            color: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? _studentforEditing?.age.value ?? 0)
                           )
                         )
                       ),
@@ -105,7 +108,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                   
                       TextFormField(
                         key: _nameKey,
-                        initialValue: data?.name,
+                        initialValue: _studentforEditing?.name,
                         decoration: const InputDecoration(
                           labelText: "Nombre",
                           prefixIcon: Icon(Icons.accessibility_new_rounded),
@@ -123,7 +126,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                   
                       DropdownButtonFormField<StudentAge>(
                         key: _ageKey,
-                        value: data?.age,
+                        value: _studentforEditing?.age,
                         decoration: const InputDecoration(
                           labelText: "Selecciona la edad",
                           prefixIcon: Icon(Icons.apple),
@@ -152,8 +155,8 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                       )
                     ],
                   ),
-                        ),
-                      ),
+                ),
+              ),
             );
           }
         ),
