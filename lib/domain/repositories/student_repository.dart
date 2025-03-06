@@ -8,9 +8,10 @@ import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 part 'student_repository.g.dart';
 
-@DriftAccessor(tables: [StudentTable], views: [StudentViewDAOVersion])
+@DriftAccessor(tables: [StudentTable], views: [StudentViewDAOVersion, HiddenStudentViewDAOVersion])
 class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRepositoryMixin 
   implements ModelDriftRepository<StudentTableData, StudentTableCompanion, StudentViewDAOVersionData> {
+
   StudentRepository(super.db);
 
   @override
@@ -57,5 +58,28 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
       onError: NawiRepositoryTools.defaultErrorFunction
     );
   }
+
+  /// Estudiantes ocultos del registro
+  Future<Result<HiddenStudentTableData?>> archiveOne(HiddenStudentTableData data) {
+    return into(hiddenStudentTable).insertReturningOrNull(data).then(
+      (result) => Success(data: result), onError: NawiRepositoryTools.defaultErrorFunction
+    );
+  }
+
+  /// Lista oculta de estudiantes
+  Stream<Result<List<StudentViewDAOVersionData>>> getAllHidden(Map<String, dynamic> params) {
+    var query = select(hiddenStudentViewDAOVersion);
+
+    query = NawiRepositoryTools.ageFilter(query, params);
+    query = NawiRepositoryTools.nameStudentFilter(query, params);
+    query = NawiRepositoryTools.orderByStudent(query, params);
+
+    query = NawiRepositoryTools.infiniteScrollFilter(query, params);    
+
+    return query.watch().map((event) {
+      try { return Success(data: event.map((e) => NawiRepositoryTools.hiddenToPublic(e) ).toList() ); }
+      catch (e) { return Error.onRepository(message: e.toString()); }
+    });
+  }  
 
 }

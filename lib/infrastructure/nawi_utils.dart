@@ -10,6 +10,10 @@ import 'package:nawiapp/domain/classes/result.dart';
 class NawiTools {
   static Uuid uuid = Uuid();
   static String clearText(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
+
+  static Success<T> resultConverter<T, E>(Result<E> result, T Function(E value) converter) 
+    => Success(data: converter(result.getValue as E), message: result.message);
+  
 }
 
 class NawiServiceTools{
@@ -22,14 +26,19 @@ class NawiServiceTools{
     notes: Value(data.notes),
     timestamp: Value(data.timestamp)
   );
-
-  static Success<T> resultConverter<T, E>(Result<E> result, T Function(E value) converter) {
-    return Success(data: converter(result.getValue as E), message: result.message);
-  }
 }
 
 class NawiRepositoryTools {
+  
   static Function defaultErrorFunction = (e, stackTrace) => Error.onRepository(message: e, stackTrace: stackTrace);
+
+  static StudentViewDAOVersionData hiddenToPublic(HiddenStudentViewDAOVersionData data) => StudentViewDAOVersionData(
+    id: data.id,
+    name: data.name,
+    age: data.age,
+    timestamp: data.timestamp
+  );
+  
 
   static SimpleSelectStatement<T, R> infiniteScrollFilter<T extends HasResultSet, R>(dynamic query, Map<String, dynamic> params) {
     final pageSize = params['pageSize'] as int?;

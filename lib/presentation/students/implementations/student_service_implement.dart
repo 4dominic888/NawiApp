@@ -13,7 +13,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   @override
   Future<Result<Student>> addOne(Student data) async {
     return repo.addOne(NawiServiceTools.toStudentTableCompanion(data)).then(
-      (result) => NawiServiceTools.resultConverter(result, (value) => Student.fromTableData(value!)),
+      (result) => NawiTools.resultConverter(result, (value) => Student.fromTableData(value!)),
       onError: NawiServiceTools.defaultErrorFunction
     );
   }
@@ -21,7 +21,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   @override
   Stream<Result<List<StudentDAO>>> getAll(Map<String, dynamic> params) {
     return repo.getAll(params).map((result) {
-      try { return NawiServiceTools.resultConverter(result, 
+      try { return NawiTools.resultConverter(result, 
         (value) => value.map((e) => StudentDAO.fromDAOView(e)).toList()); 
       }
       catch (e) { return Error.onService(message: e.toString()); }
@@ -33,7 +33,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
     params.addAll({"pageSize": pageSize, "currentPage": curretPage});
     return repo.getAll(params).map((result) {
       try {
-        return NawiServiceTools.resultConverter(result, 
+        return NawiTools.resultConverter(result, 
           (value) => PaginatedData.build(
             currentPage: curretPage,
             pageSize: pageSize,
@@ -46,7 +46,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   @override
   Future<Result<Student>> getOne(String? id) {
     return repo.getOne(id).then(
-      (result) => NawiServiceTools.resultConverter(result, (value) => Student.fromTableData(result.getValue!)),
+      (result) => NawiTools.resultConverter(result, (value) => Student.fromTableData(result.getValue!)),
       onError: NawiServiceTools.defaultErrorFunction
     );
   }
@@ -61,7 +61,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   @override
   Future<Result<Student>> deleteOne(String id) {
     return repo.deleteOne(id).then(
-      (result) => NawiServiceTools.resultConverter(result, (value) => Student.fromTableData(result.getValue!)),
+      (result) => NawiTools.resultConverter(result, (value) => Student.fromTableData(result.getValue!)),
       onError: NawiServiceTools.defaultErrorFunction
     );
   }
