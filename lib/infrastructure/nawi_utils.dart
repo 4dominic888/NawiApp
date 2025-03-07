@@ -39,7 +39,6 @@ class NawiRepositoryTools {
     timestamp: data.timestamp
   );
   
-
   static SimpleSelectStatement<T, R> infiniteScrollFilter<T extends HasResultSet, R>(dynamic query, Map<String, dynamic> params) {
     final pageSize = params['pageSize'] as int?;
     final currentPage = params['currentPage'] as int?;
@@ -47,16 +46,14 @@ class NawiRepositoryTools {
     return query;
   }
 
-  static SimpleSelectStatement<T, R> nameStudentFilter<T extends HasResultSet, R>(dynamic query, Map<String, dynamic> params) {
+  static void nameStudentFilter(List<Expression<bool>> expressions, Map<String, dynamic> params, dynamic tbl) {
     final nameLike = params['nameLike'] as String?;
-    if(nameLike != null && nameLike.isNotEmpty) query = query..where((tbl) => tbl.name.like("%$nameLike%"));
-    return query;
+    if(nameLike != null && nameLike.isNotEmpty) expressions.add(tbl.name.like("%$nameLike%"));
   }
 
-  static SimpleSelectStatement<T, R> actionFilter<T extends HasResultSet, R>(dynamic query, Map<String, dynamic> params) {
+  static void actionFilter(List<Expression<bool>> expressions, Map<String, dynamic> params, dynamic tbl) {
     final actionLike = params['actionLike'] as String?;
-    if(actionLike != null && actionLike.isNotEmpty) query = query..where((tbl) => tbl.action.like("%$actionLike%"));
-    return query;
+    if(actionLike != null && actionLike.isNotEmpty) expressions.add(tbl.action.like("%$actionLike%"));
   }
 
   static SimpleSelectStatement<T, R> orderByStudent<T extends HasResultSet, R>(dynamic query, Map<String, dynamic> params) {
@@ -83,12 +80,11 @@ class NawiRepositoryTools {
     return query;
   }
 
-  static SimpleSelectStatement<T, R> ageFilter<T extends HasResultSet, R>(dynamic query, Map<String, dynamic> params) {
+  static void ageFilter(List<Expression<bool>> expressions, Map<String, dynamic> params, dynamic tbl) {
     final ageEnumIndex1 = params['ageEnumIndex1'] as int?;
     final ageEnumIndex2 = params['ageEnumIndex2'] as int?;
-    if(ageEnumIndex1 != null) query = query..where((tbl) => tbl.age.equals(ageEnumIndex1));
-    if(ageEnumIndex2 != null) query = query..where((tbl) => tbl.age.equals(ageEnumIndex2));
-    return query;
+    if(ageEnumIndex1 != null) expressions.add(tbl.age.equals(ageEnumIndex1));
+    if(ageEnumIndex2 != null) expressions.add(tbl.age.equals(ageEnumIndex2));
   }
 }
 

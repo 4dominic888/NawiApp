@@ -13,4 +13,5 @@ abstract class StudentServiceBase {
   Future<Result<bool>> updateOne(Student data);
   Future<Result<Student>> deleteOne(String id);
   Future<Result<Student>> archiveOne(String id);
+  Future<Result<Student>> unarchiveOne(String id);
 }

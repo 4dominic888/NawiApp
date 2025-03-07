@@ -22,13 +22,15 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
 
   @override
   Stream<Result<List<RegisterBookViewDAOVersionData>>> getAll(Map<String, dynamic> params) {
-    var query = select(registerBookViewDAOVersion);
+    var query = select(registerBookViewDAOVersion)..where((tbl) {
+      final List<Expression<bool>> filterExpressions = [];
+      NawiRepositoryTools.actionFilter(filterExpressions, params, tbl);
+      NawiRepositoryTools.nameStudentFilter(filterExpressions, params, tbl);
+      NawiRepositoryTools.actionFilter(filterExpressions, params, tbl);
+      return Expression.and(filterExpressions);
+    });
 
-    query = NawiRepositoryTools.ageFilter(query, params);
-    query = NawiRepositoryTools.nameStudentFilter(query, params);
-    query = NawiRepositoryTools.actionFilter(query, params);
     query = NawiRepositoryTools.orderByAction(query, params);
-
     query = NawiRepositoryTools.infiniteScrollFilter(query, params);
 
     return query.watch().map((event) {
