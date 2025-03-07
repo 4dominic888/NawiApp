@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:drift/drift.dart';
-import 'package:nawiapp/data/database_connection.steps.dart';
 import 'package:nawiapp/domain/models/models_table/hidden_student_table.dart';
 import 'package:nawiapp/domain/models/models_table/register_book_table.dart';
 import 'package:nawiapp/domain/models/models_table/student_register_book_table.dart';
@@ -47,14 +46,14 @@ class NawiDatabase extends _$NawiDatabase {
   NawiDatabase([QueryExecutor? e]) : super(e ?? _openConnection());
   
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 1;
   
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async => await m.createAll(),
-    onUpgrade: stepByStep(
-      from2To3: (m, schema) async => await m.createView(hiddenStudentViewDAOVersion),
-    ),
+    // onUpgrade: stepByStep(
+    //   from2To3: (m, schema) async => await m.createView(hiddenStudentViewDAOVersion),
+    // ),
     // onUpgrade: (m, from, to) async {
     //   if(from < 2) await m.createTable(hiddenStudentTable);
     //   if(from < 3) await m.createView(hiddenStudentViewDAOVersion);
