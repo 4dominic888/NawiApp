@@ -14,7 +14,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   @override
   Future<Result<Student>> addOne(Student data) async {
     return repo.addOne(NawiServiceTools.toStudentTableCompanion(data)).then(
-      (result) => NawiTools.resultConverter(result, (value) => Student.fromTableData(value!)),
+      (result) => NawiServiceTools.resultConverter(result, (value) => Student.fromTableData(value!)),
       onError: NawiServiceTools.defaultErrorFunction
     );
   }
@@ -23,11 +23,10 @@ interface class StudentServiceImplement extends StudentServiceBase {
   Stream<Result<List<StudentDAO>>> getAll(Map<String, dynamic> params) {
     params.addAll({"hidden" : false});
     return repo.getAll(params).map((result) {
-      try {
-        return NawiTools.resultConverter(result, 
-          (value) => value.map((e) => StudentDAO.fromDAOView(e as StudentViewDAOVersionData)).toList()
-        ); 
-      } catch (e) { return Error.onService(message: e.toString()); }
+      try { return NawiServiceTools.resultConverter(result, 
+        (value) => value.map((e) => StudentDAO.fromDAOView(e)).toList()); 
+      }
+      catch (e) { return Error.onService(message: e.toString()); }
     });
   }
 
@@ -48,21 +47,12 @@ interface class StudentServiceImplement extends StudentServiceBase {
     params.addAll({"hidden" : true});
     return repo.getAll(params).map((result) {
       try {
-        return NawiTools.resultConverter(result, 
-          (value) => value.map((e) => StudentDAO.fromDAOView(e as HiddenStudentViewDAOVersionData)).toList()
-        );
-      } catch (e) { return Error.onService(message: e.toString()); }
-    });
-  }
-  
-  @override
-  Stream<Result<PaginatedData<StudentDAO>>> getAllHiddenPaginated({required int pageSize, required int currentPage, required Map<String, dynamic> params}) {
-    params.addAll({"pageSize": pageSize, "currentPage": currentPage});
-    return getAllHidden(params).map((result) {
-      try {
-        return NawiTools.resultConverter(result, 
-          (value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: value),
-        );
+        return NawiServiceTools.resultConverter(result, 
+          (value) => PaginatedData.build(
+            currentPage: curretPage,
+            pageSize: pageSize,
+            data: value.map((e) => StudentDAO.fromDAOView(e)).toList() 
+          ));
       } catch (e) { return Error.onService(message: e.toString()); }
     });
   }
@@ -70,7 +60,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   @override
   Future<Result<Student>> getOne(String? id) {
     return repo.getOne(id).then(
-      (result) => NawiTools.resultConverter(result, (value) => Student.fromTableData(result.getValue!)),
+      (result) => NawiServiceTools.resultConverter(result, (value) => Student.fromTableData(result.getValue!)),
       onError: NawiServiceTools.defaultErrorFunction
     );
   }
@@ -85,7 +75,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   @override
   Future<Result<Student>> deleteOne(String id) {
     return repo.deleteOne(id).then(
-      (result) => NawiTools.resultConverter(result, (value) => Student.fromTableData(result.getValue!)),
+      (result) => NawiServiceTools.resultConverter(result, (value) => Student.fromTableData(result.getValue!)),
       onError: NawiServiceTools.defaultErrorFunction
     );
   }

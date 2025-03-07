@@ -847,169 +847,6 @@ class StudentRegisterBookTableCompanion
   }
 }
 
-class $HiddenStudentTableTable extends HiddenStudentTable
-    with TableInfo<$HiddenStudentTableTable, HiddenStudentTableData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $HiddenStudentTableTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _hiddenIdMeta =
-      const VerificationMeta('hiddenId');
-  @override
-  late final GeneratedColumn<String> hiddenId = GeneratedColumn<String>(
-      'hidden_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES student (id)'));
-  @override
-  List<GeneratedColumn> get $columns => [hiddenId];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'hidden_student_table';
-  @override
-  VerificationContext validateIntegrity(
-      Insertable<HiddenStudentTableData> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('hidden_id')) {
-      context.handle(_hiddenIdMeta,
-          hiddenId.isAcceptableOrUnknown(data['hidden_id']!, _hiddenIdMeta));
-    } else if (isInserting) {
-      context.missing(_hiddenIdMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => const {};
-  @override
-  HiddenStudentTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HiddenStudentTableData(
-      hiddenId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}hidden_id'])!,
-    );
-  }
-
-  @override
-  $HiddenStudentTableTable createAlias(String alias) {
-    return $HiddenStudentTableTable(attachedDatabase, alias);
-  }
-}
-
-class HiddenStudentTableData extends DataClass
-    implements Insertable<HiddenStudentTableData> {
-  final String hiddenId;
-  const HiddenStudentTableData({required this.hiddenId});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['hidden_id'] = Variable<String>(hiddenId);
-    return map;
-  }
-
-  HiddenStudentTableCompanion toCompanion(bool nullToAbsent) {
-    return HiddenStudentTableCompanion(
-      hiddenId: Value(hiddenId),
-    );
-  }
-
-  factory HiddenStudentTableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HiddenStudentTableData(
-      hiddenId: serializer.fromJson<String>(json['hiddenId']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'hiddenId': serializer.toJson<String>(hiddenId),
-    };
-  }
-
-  HiddenStudentTableData copyWith({String? hiddenId}) => HiddenStudentTableData(
-        hiddenId: hiddenId ?? this.hiddenId,
-      );
-  HiddenStudentTableData copyWithCompanion(HiddenStudentTableCompanion data) {
-    return HiddenStudentTableData(
-      hiddenId: data.hiddenId.present ? data.hiddenId.value : this.hiddenId,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HiddenStudentTableData(')
-          ..write('hiddenId: $hiddenId')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => hiddenId.hashCode;
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is HiddenStudentTableData && other.hiddenId == this.hiddenId);
-}
-
-class HiddenStudentTableCompanion
-    extends UpdateCompanion<HiddenStudentTableData> {
-  final Value<String> hiddenId;
-  final Value<int> rowid;
-  const HiddenStudentTableCompanion({
-    this.hiddenId = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  HiddenStudentTableCompanion.insert({
-    required String hiddenId,
-    this.rowid = const Value.absent(),
-  }) : hiddenId = Value(hiddenId);
-  static Insertable<HiddenStudentTableData> custom({
-    Expression<String>? hiddenId,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (hiddenId != null) 'hidden_id': hiddenId,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  HiddenStudentTableCompanion copyWith(
-      {Value<String>? hiddenId, Value<int>? rowid}) {
-    return HiddenStudentTableCompanion(
-      hiddenId: hiddenId ?? this.hiddenId,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (hiddenId.present) {
-      map['hidden_id'] = Variable<String>(hiddenId.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HiddenStudentTableCompanion(')
-          ..write('hiddenId: $hiddenId, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class StudentViewDAOVersionData extends DataClass {
   final String id;
   final String name;
@@ -1134,135 +971,6 @@ class $StudentViewDAOVersionView
       (attachedDatabase.selectOnly(student)..addColumns($columns));
   @override
   Set<String> get readTables => const {'student'};
-}
-
-class HiddenStudentViewDAOVersionData extends DataClass {
-  final String id;
-  final String name;
-  final StudentAge age;
-  final DateTime timestamp;
-  const HiddenStudentViewDAOVersionData(
-      {required this.id,
-      required this.name,
-      required this.age,
-      required this.timestamp});
-  factory HiddenStudentViewDAOVersionData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HiddenStudentViewDAOVersionData(
-      id: serializer.fromJson<String>(json['id']),
-      name: serializer.fromJson<String>(json['name']),
-      age: $StudentTableTable.$converterage
-          .fromJson(serializer.fromJson<int>(json['age'])),
-      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'name': serializer.toJson<String>(name),
-      'age':
-          serializer.toJson<int>($StudentTableTable.$converterage.toJson(age)),
-      'timestamp': serializer.toJson<DateTime>(timestamp),
-    };
-  }
-
-  HiddenStudentViewDAOVersionData copyWith(
-          {String? id, String? name, StudentAge? age, DateTime? timestamp}) =>
-      HiddenStudentViewDAOVersionData(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        age: age ?? this.age,
-        timestamp: timestamp ?? this.timestamp,
-      );
-  @override
-  String toString() {
-    return (StringBuffer('HiddenStudentViewDAOVersionData(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('age: $age, ')
-          ..write('timestamp: $timestamp')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, name, age, timestamp);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is HiddenStudentViewDAOVersionData &&
-          other.id == this.id &&
-          other.name == this.name &&
-          other.age == this.age &&
-          other.timestamp == this.timestamp);
-}
-
-class $HiddenStudentViewDAOVersionView extends ViewInfo<
-    $HiddenStudentViewDAOVersionView,
-    HiddenStudentViewDAOVersionData> implements HasResultSet {
-  final String? _alias;
-  @override
-  final _$NawiDatabase attachedDatabase;
-  $HiddenStudentViewDAOVersionView(this.attachedDatabase, [this._alias]);
-  $HiddenStudentTableTable get hiddenStudent =>
-      attachedDatabase.hiddenStudentTable.createAlias('t0');
-  $StudentTableTable get student =>
-      attachedDatabase.studentTable.createAlias('t1');
-  @override
-  List<GeneratedColumn> get $columns => [id, name, age, timestamp];
-  @override
-  String get aliasedName => _alias ?? entityName;
-  @override
-  String get entityName => 'hidden_student_view_d_a_o_version';
-  @override
-  Map<SqlDialect, String>? get createViewStatements => null;
-  @override
-  $HiddenStudentViewDAOVersionView get asDslTable => this;
-  @override
-  HiddenStudentViewDAOVersionData map(Map<String, dynamic> data,
-      {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HiddenStudentViewDAOVersionData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      age: $StudentTableTable.$converterage.fromSql(attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}age'])!),
-      timestamp: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}timestamp'])!,
-    );
-  }
-
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      generatedAs: GeneratedAs(student.id, false), type: DriftSqlType.string);
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      generatedAs: GeneratedAs(student.name, false), type: DriftSqlType.string);
-  late final GeneratedColumnWithTypeConverter<StudentAge, int> age =
-      GeneratedColumn<int>('age', aliasedName, false,
-              generatedAs: GeneratedAs(student.age, false),
-              type: DriftSqlType.int)
-          .withConverter<StudentAge>($StudentTableTable.$converterage);
-  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
-      'timestamp', aliasedName, false,
-      generatedAs: GeneratedAs(student.timestamp, false),
-      type: DriftSqlType.dateTime);
-  @override
-  $HiddenStudentViewDAOVersionView createAlias(String alias) {
-    return $HiddenStudentViewDAOVersionView(attachedDatabase, alias);
-  }
-
-  @override
-  Query? get query => (attachedDatabase.selectOnly(hiddenStudent)
-        ..addColumns($columns))
-      .join([innerJoin(student, student.id.equalsExp(hiddenStudent.hiddenId))]);
-  @override
-  Set<String> get readTables => const {'hidden_student_table', 'student'};
 }
 
 class RegisterBookViewDAOVersionData extends DataClass {
@@ -1465,12 +1173,8 @@ abstract class _$NawiDatabase extends GeneratedDatabase {
       $RegisterBookTableTable(this);
   late final $StudentRegisterBookTableTable studentRegisterBookTable =
       $StudentRegisterBookTableTable(this);
-  late final $HiddenStudentTableTable hiddenStudentTable =
-      $HiddenStudentTableTable(this);
   late final $StudentViewDAOVersionView studentViewDAOVersion =
       $StudentViewDAOVersionView(this);
-  late final $HiddenStudentViewDAOVersionView hiddenStudentViewDAOVersion =
-      $HiddenStudentViewDAOVersionView(this);
   late final $RegisterBookViewDAOVersionView registerBookViewDAOVersion =
       $RegisterBookViewDAOVersionView(this);
   late final Index name = Index('name', 'CREATE INDEX name ON student (name)');
@@ -1495,9 +1199,7 @@ abstract class _$NawiDatabase extends GeneratedDatabase {
         studentTable,
         registerBookTable,
         studentRegisterBookTable,
-        hiddenStudentTable,
         studentViewDAOVersion,
-        hiddenStudentViewDAOVersion,
         registerBookViewDAOVersion,
         name,
         age,
@@ -1545,24 +1247,6 @@ final class $$StudentTableTableReferences extends BaseReferences<_$NawiDatabase,
 
     final cache =
         $_typedResult.readTableOrNull(_studentRegisterBookTableRefsTable($_db));
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
-  }
-
-  static MultiTypedResultKey<$HiddenStudentTableTable,
-      List<HiddenStudentTableData>> _hiddenStudentTableRefsTable(
-          _$NawiDatabase db) =>
-      MultiTypedResultKey.fromTable(db.hiddenStudentTable,
-          aliasName: $_aliasNameGenerator(
-              db.studentTable.id, db.hiddenStudentTable.hiddenId));
-
-  $$HiddenStudentTableTableProcessedTableManager get hiddenStudentTableRefs {
-    final manager = $$HiddenStudentTableTableTableManager(
-            $_db, $_db.hiddenStudentTable)
-        .filter((f) => f.hiddenId.id.sqlEquals($_itemColumn<String>('id')!));
-
-    final cache =
-        $_typedResult.readTableOrNull(_hiddenStudentTableRefsTable($_db));
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
@@ -1614,27 +1298,6 @@ class $$StudentTableTableFilterComposer
                   $removeJoinBuilderFromRootComposer:
                       $removeJoinBuilderFromRootComposer,
                 ));
-    return f(composer);
-  }
-
-  Expression<bool> hiddenStudentTableRefs(
-      Expression<bool> Function($$HiddenStudentTableTableFilterComposer f) f) {
-    final $$HiddenStudentTableTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.hiddenStudentTable,
-        getReferencedColumn: (t) => t.hiddenId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HiddenStudentTableTableFilterComposer(
-              $db: $db,
-              $table: $db.hiddenStudentTable,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
     return f(composer);
   }
 }
@@ -1711,28 +1374,6 @@ class $$StudentTableTableAnnotationComposer
                 ));
     return f(composer);
   }
-
-  Expression<T> hiddenStudentTableRefs<T extends Object>(
-      Expression<T> Function($$HiddenStudentTableTableAnnotationComposer a) f) {
-    final $$HiddenStudentTableTableAnnotationComposer composer =
-        $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $db.hiddenStudentTable,
-            getReferencedColumn: (t) => t.hiddenId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$HiddenStudentTableTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.hiddenStudentTable,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
-    return f(composer);
-  }
 }
 
 class $$StudentTableTableTableManager extends RootTableManager<
@@ -1746,8 +1387,7 @@ class $$StudentTableTableTableManager extends RootTableManager<
     $$StudentTableTableUpdateCompanionBuilder,
     (StudentTableData, $$StudentTableTableReferences),
     StudentTableData,
-    PrefetchHooks Function(
-        {bool studentRegisterBookTableRefs, bool hiddenStudentTableRefs})> {
+    PrefetchHooks Function({bool studentRegisterBookTableRefs})> {
   $$StudentTableTableTableManager(_$NawiDatabase db, $StudentTableTable table)
       : super(TableManagerState(
           db: db,
@@ -1796,14 +1436,11 @@ class $$StudentTableTableTableManager extends RootTableManager<
                     $$StudentTableTableReferences(db, table, e)
                   ))
               .toList(),
-          prefetchHooksCallback: (
-              {studentRegisterBookTableRefs = false,
-              hiddenStudentTableRefs = false}) {
+          prefetchHooksCallback: ({studentRegisterBookTableRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
-                if (studentRegisterBookTableRefs) db.studentRegisterBookTable,
-                if (hiddenStudentTableRefs) db.hiddenStudentTable
+                if (studentRegisterBookTableRefs) db.studentRegisterBookTable
               ],
               addJoins: null,
               getPrefetchedDataCallback: (items) async {
@@ -1820,19 +1457,6 @@ class $$StudentTableTableTableManager extends RootTableManager<
                         referencedItemsForCurrentItem: (item,
                                 referencedItems) =>
                             referencedItems.where((e) => e.student == item.id),
-                        typedResults: items),
-                  if (hiddenStudentTableRefs)
-                    await $_getPrefetchedData<StudentTableData,
-                            $StudentTableTable, HiddenStudentTableData>(
-                        currentTable: table,
-                        referencedTable: $$StudentTableTableReferences
-                            ._hiddenStudentTableRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$StudentTableTableReferences(db, table, p0)
-                                .hiddenStudentTableRefs,
-                        referencedItemsForCurrentItem: (item,
-                                referencedItems) =>
-                            referencedItems.where((e) => e.hiddenId == item.id),
                         typedResults: items)
                 ];
               },
@@ -1852,8 +1476,7 @@ typedef $$StudentTableTableProcessedTableManager = ProcessedTableManager<
     $$StudentTableTableUpdateCompanionBuilder,
     (StudentTableData, $$StudentTableTableReferences),
     StudentTableData,
-    PrefetchHooks Function(
-        {bool studentRegisterBookTableRefs, bool hiddenStudentTableRefs})>;
+    PrefetchHooks Function({bool studentRegisterBookTableRefs})>;
 typedef $$RegisterBookTableTableCreateCompanionBuilder
     = RegisterBookTableCompanion Function({
   Value<String> id,
@@ -2449,225 +2072,6 @@ typedef $$StudentRegisterBookTableTableProcessedTableManager
         ),
         StudentRegisterBookTableData,
         PrefetchHooks Function({bool student, bool registerBook})>;
-typedef $$HiddenStudentTableTableCreateCompanionBuilder
-    = HiddenStudentTableCompanion Function({
-  required String hiddenId,
-  Value<int> rowid,
-});
-typedef $$HiddenStudentTableTableUpdateCompanionBuilder
-    = HiddenStudentTableCompanion Function({
-  Value<String> hiddenId,
-  Value<int> rowid,
-});
-
-final class $$HiddenStudentTableTableReferences extends BaseReferences<
-    _$NawiDatabase, $HiddenStudentTableTable, HiddenStudentTableData> {
-  $$HiddenStudentTableTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
-
-  static $StudentTableTable _hiddenIdTable(_$NawiDatabase db) =>
-      db.studentTable.createAlias($_aliasNameGenerator(
-          db.hiddenStudentTable.hiddenId, db.studentTable.id));
-
-  $$StudentTableTableProcessedTableManager get hiddenId {
-    final $_column = $_itemColumn<String>('hidden_id')!;
-
-    final manager = $$StudentTableTableTableManager($_db, $_db.studentTable)
-        .filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_hiddenIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
-  }
-}
-
-class $$HiddenStudentTableTableFilterComposer
-    extends Composer<_$NawiDatabase, $HiddenStudentTableTable> {
-  $$HiddenStudentTableTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  $$StudentTableTableFilterComposer get hiddenId {
-    final $$StudentTableTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.hiddenId,
-        referencedTable: $db.studentTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$StudentTableTableFilterComposer(
-              $db: $db,
-              $table: $db.studentTable,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-}
-
-class $$HiddenStudentTableTableOrderingComposer
-    extends Composer<_$NawiDatabase, $HiddenStudentTableTable> {
-  $$HiddenStudentTableTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  $$StudentTableTableOrderingComposer get hiddenId {
-    final $$StudentTableTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.hiddenId,
-        referencedTable: $db.studentTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$StudentTableTableOrderingComposer(
-              $db: $db,
-              $table: $db.studentTable,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-}
-
-class $$HiddenStudentTableTableAnnotationComposer
-    extends Composer<_$NawiDatabase, $HiddenStudentTableTable> {
-  $$HiddenStudentTableTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  $$StudentTableTableAnnotationComposer get hiddenId {
-    final $$StudentTableTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.hiddenId,
-        referencedTable: $db.studentTable,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$StudentTableTableAnnotationComposer(
-              $db: $db,
-              $table: $db.studentTable,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-}
-
-class $$HiddenStudentTableTableTableManager extends RootTableManager<
-    _$NawiDatabase,
-    $HiddenStudentTableTable,
-    HiddenStudentTableData,
-    $$HiddenStudentTableTableFilterComposer,
-    $$HiddenStudentTableTableOrderingComposer,
-    $$HiddenStudentTableTableAnnotationComposer,
-    $$HiddenStudentTableTableCreateCompanionBuilder,
-    $$HiddenStudentTableTableUpdateCompanionBuilder,
-    (HiddenStudentTableData, $$HiddenStudentTableTableReferences),
-    HiddenStudentTableData,
-    PrefetchHooks Function({bool hiddenId})> {
-  $$HiddenStudentTableTableTableManager(
-      _$NawiDatabase db, $HiddenStudentTableTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$HiddenStudentTableTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$HiddenStudentTableTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$HiddenStudentTableTableAnnotationComposer(
-                  $db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<String> hiddenId = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              HiddenStudentTableCompanion(
-            hiddenId: hiddenId,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String hiddenId,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              HiddenStudentTableCompanion.insert(
-            hiddenId: hiddenId,
-            rowid: rowid,
-          ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$HiddenStudentTableTableReferences(db, table, e)
-                  ))
-              .toList(),
-          prefetchHooksCallback: ({hiddenId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic>>(state) {
-                if (hiddenId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.hiddenId,
-                    referencedTable:
-                        $$HiddenStudentTableTableReferences._hiddenIdTable(db),
-                    referencedColumn: $$HiddenStudentTableTableReferences
-                        ._hiddenIdTable(db)
-                        .id,
-                  ) as T;
-                }
-
-                return state;
-              },
-              getPrefetchedDataCallback: (items) async {
-                return [];
-              },
-            );
-          },
-        ));
-}
-
-typedef $$HiddenStudentTableTableProcessedTableManager = ProcessedTableManager<
-    _$NawiDatabase,
-    $HiddenStudentTableTable,
-    HiddenStudentTableData,
-    $$HiddenStudentTableTableFilterComposer,
-    $$HiddenStudentTableTableOrderingComposer,
-    $$HiddenStudentTableTableAnnotationComposer,
-    $$HiddenStudentTableTableCreateCompanionBuilder,
-    $$HiddenStudentTableTableUpdateCompanionBuilder,
-    (HiddenStudentTableData, $$HiddenStudentTableTableReferences),
-    HiddenStudentTableData,
-    PrefetchHooks Function({bool hiddenId})>;
 
 class $NawiDatabaseManager {
   final _$NawiDatabase _db;
@@ -2679,6 +2083,4 @@ class $NawiDatabaseManager {
   $$StudentRegisterBookTableTableTableManager get studentRegisterBookTable =>
       $$StudentRegisterBookTableTableTableManager(
           _db, _db.studentRegisterBookTable);
-  $$HiddenStudentTableTableTableManager get hiddenStudentTable =>
-      $$HiddenStudentTableTableTableManager(_db, _db.hiddenStudentTable);
 }

@@ -8,10 +8,9 @@ import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 part 'student_repository.g.dart';
 
-@DriftAccessor(tables: [StudentTable], views: [StudentViewDAOVersion, HiddenStudentViewDAOVersion])
+@DriftAccessor(tables: [StudentTable], views: [StudentViewDAOVersion])
 class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRepositoryMixin 
   implements ModelDriftRepository<StudentTableData, StudentTableCompanion, StudentViewDAOVersionData> {
-
   StudentRepository(super.db);
 
   @override
@@ -56,14 +55,6 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
     return (delete(studentTable)..where((tbl) => tbl.id.equals(id))).goAndReturn().then(
       (result) => Success(data: result.first),
       onError: NawiRepositoryTools.defaultErrorFunction
-    );
-  }
-
-  /// Estudiantes ocultos del registro
-  Future<Result<StudentTableData?>> archiveOne(String id) async {
-    final result = await getOne(id);
-    return into(hiddenStudentTable).insertReturningOrNull(HiddenStudentTableData(hiddenId: id)).then(
-      (value) => result, onError: NawiRepositoryTools.defaultErrorFunction
     );
   }
 
