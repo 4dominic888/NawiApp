@@ -27,8 +27,8 @@ abstract class ModelDriftRepository<T extends DataClass, R extends UpdateCompani
   /// 
   /// `ageEnumIndex2`: `int`, Filtrar segun la edad de 3, 4 o 5, complementario al anterior
   /// 
-  /// `hidden`: `bool`, True si se desea ocultar los registros ocultos, caso contrario lo muestra
-  Stream<Result<List<S>>> getAll(Map<String, dynamic> params);
+  /// `hidden`: `bool`, True si se desea ver los registros ocultos solamente (Tabla Student), caso contrario se oculta (Tabla HiddenStudent)
+  Stream<Result<List<DataClass>>> getAll(Map<String, dynamic> params);
   Future<Result<T>> getOne(String id);
   Future<Result<bool>> updateOne(T data);
   Future<Result<T>> deleteOne(String id);

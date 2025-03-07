@@ -5,10 +5,12 @@ import 'package:nawiapp/domain/models/student.dart';
 abstract class StudentServiceBase {
 
   Future<Result<Student>> addOne(Student data);
-  Stream<Result<PaginatedData<StudentDAO>>> getAllPaginated({required int pageSize, required int curretPage, required Map<String, dynamic> params});
+  Stream<Result<PaginatedData<StudentDAO>>> getAllPaginated({required int pageSize, required int currentPage, required Map<String, dynamic> params});
+  Stream<Result<PaginatedData<StudentDAO>>> getAllHiddenPaginated({required int pageSize, required int currentPage, required Map<String, dynamic> params});
   Stream<Result<List<StudentDAO>>> getAll(Map<String, dynamic> params);
+  Stream<Result<List<StudentDAO>>> getAllHidden(Map<String, dynamic> params);
   Future<Result<Student>> getOne(String? id);
   Future<Result<bool>> updateOne(Student data);
   Future<Result<Student>> deleteOne(String id);
-  
+  Future<Result<Student>> archiveOne(String id);
 }

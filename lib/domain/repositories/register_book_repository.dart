@@ -14,7 +14,7 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   RegisterBookRepository(super.db);
 
   @override
-  Future<Result<RegisterBookTableData?>> addOne(RegisterBookTableCompanion data) async {
+  Future<Result<RegisterBookTableData?>> addOne(RegisterBookTableCompanion data) {
     return into(registerBookTable).insertReturningOrNull(data).then(
       (result) => Success(data: result), onError: NawiRepositoryTools.defaultErrorFunction
     );
@@ -32,12 +32,13 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
     query = NawiRepositoryTools.infiniteScrollFilter(query, params);
 
     return query.watch().map((event) {
-      try { return Success(data: event); } catch (e) { return Error.onRepository(message: e.toString()); }
+      try { return Success(data: event); }
+      catch (e) { return Error.onRepository(message: e.toString()); }
     });
   }
 
   @override
-  Future<Result<RegisterBookTableData>> getOne(String id) async {
+  Future<Result<RegisterBookTableData>> getOne(String id) {
     return (select(registerBookTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull().then(
       (result) => result != null ? Success(data: result) : Error.onRepository(message: "No encontrado"),
       onError: NawiRepositoryTools.defaultErrorFunction
@@ -45,14 +46,14 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   }
 
   @override
-  Future<Result<bool>> updateOne(RegisterBookTableData data) async {
+  Future<Result<bool>> updateOne(RegisterBookTableData data) {
     return update(registerBookTable).replace(data).then(
       (result) => Success(data: result), onError: NawiRepositoryTools.defaultErrorFunction
     );
   }
 
   @override
-  Future<Result<RegisterBookTableData>> deleteOne(String id) async {
+  Future<Result<RegisterBookTableData>> deleteOne(String id) {
     return (delete(registerBookTable)..where((tbl) => tbl.id.equals(id))).goAndReturn().then(
       (result) => Success(data: result.first),
       onError: NawiRepositoryTools.defaultErrorFunction

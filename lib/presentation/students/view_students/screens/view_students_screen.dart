@@ -43,7 +43,7 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
   }
 
   Future<void> _fetchPage(int pageKey) async {
-    final result = await _studentService.getAllPaginated(curretPage: pageKey, pageSize: _pageSize, params: {}).first;
+    final result = await _studentService.getAllPaginated(currentPage: pageKey, pageSize: _pageSize, params: {}).first;
 
     result.onValue(
       withPopup: false,
