@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:nawiapp/data/database_connection.dart';
+import 'package:nawiapp/domain/classes/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_repository.dart';
 import 'package:nawiapp/domain/models/models_table/register_book_table.dart';
@@ -10,7 +11,13 @@ part 'register_book_repository.g.dart';
 
 @DriftAccessor(tables: [RegisterBookTable], views: [RegisterBookViewDAOVersion])
 class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$RegisterBookRepositoryMixin
-  implements ModelDriftRepository<RegisterBookTableData, RegisterBookTableCompanion, RegisterBookViewDAOVersionData> {
+  implements ModelDriftRepository<
+    RegisterBookTableData,
+    RegisterBookTableCompanion,
+    RegisterBookViewDAOVersionData,
+    RegisterBookFilter
+  >{
+
   RegisterBookRepository(super.db);
 
   @override
@@ -21,17 +28,27 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   }
 
   @override
-  Stream<Result<List<RegisterBookViewDAOVersionData>>> getAll(Map<String, dynamic> params) {
+  Stream<Result<List<RegisterBookViewDAOVersionData>>> getAll(RegisterBookFilter params) {
     var query = select(registerBookViewDAOVersion)..where((tbl) {
       final List<Expression<bool>> filterExpressions = [];
-      NawiRepositoryTools.actionFilter(filterExpressions, params, tbl);
-      NawiRepositoryTools.nameStudentFilter(filterExpressions, params, tbl);
-      NawiRepositoryTools.actionFilter(filterExpressions, params, tbl);
+
+      NawiRepositoryTools.actionFilter(
+        expressions: filterExpressions, table: tbl,
+        textLike: params.actionLike
+      );
+
+      NawiRepositoryTools.nameStudentFilter(
+        expressions: filterExpressions, table: tbl,
+        textLike: params.studentNameLike
+      );
+
       return Expression.and(filterExpressions);
     });
 
-    query = NawiRepositoryTools.orderByAction(query, params);
-    query = NawiRepositoryTools.infiniteScrollFilter(query, params);
+    query = NawiRepositoryTools.orderByAction(query: query, orderBy: params.orderBy);
+    query = NawiRepositoryTools.infiniteScrollFilter(
+      query: query, pageSize: params.pageSize, currentPage: params.currentPage
+    );
 
     return query.watch().map((event) {
       try { return Success(data: event); }

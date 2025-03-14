@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:nawiapp/data/database_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
+import 'package:nawiapp/domain/classes/student_filter.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_repository.dart';
 import 'package:nawiapp/domain/models/models_table/student_table.dart';
 import 'package:nawiapp/domain/models/models_views/student_view.dart';
@@ -10,7 +11,12 @@ part 'student_repository.g.dart';
 
 @DriftAccessor(tables: [StudentTable], views: [StudentViewDAOVersion, HiddenStudentViewDAOVersion])
 class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRepositoryMixin 
-  implements ModelDriftRepository<StudentTableData, StudentTableCompanion, StudentViewDAOVersionData> {
+  implements ModelDriftRepository<
+    StudentTableData,
+    StudentTableCompanion,
+    StudentViewDAOVersionData,
+    StudentFilter
+  >{
 
   StudentRepository(super.db);
 
@@ -22,7 +28,7 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   @override
-  Stream<Result<List<StudentViewDAOVersionData>>> getAll(Map<String, dynamic> params) {
+  Stream<Result<List<StudentViewDAOVersionData>>> getAll(StudentFilter params) {
     var query = select(studentViewDAOVersion)..where((tbl) {
       final List<Expression<bool>> filterExpressions = [];
 
@@ -31,14 +37,27 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
         selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])
       ));
 
-      NawiRepositoryTools.ageFilter(filterExpressions, params, tbl);
-      NawiRepositoryTools.nameStudentFilter(filterExpressions, params, tbl);
+      NawiRepositoryTools.ageFilter(
+        expressions: filterExpressions, table: tbl,
+        ageEnumIndex1: params.ageEnumIndex1?.index,
+        ageEnumIndex2: params.ageEnumIndex2?.index
+      );
+
+      NawiRepositoryTools.nameStudentFilter(
+        expressions: filterExpressions, table: tbl,
+        textLike: params.nameLike
+      );
       
       return Expression.and(filterExpressions);
     });
 
-    query = NawiRepositoryTools.orderByStudent(query, params);
-    query = NawiRepositoryTools.infiniteScrollFilter(query, params);
+    query = NawiRepositoryTools.orderByStudent(query: query, orderBy: params.orderBy);
+
+    query = NawiRepositoryTools.infiniteScrollFilter(
+      query: query,
+      pageSize: params.pageSize,
+      currentPage: params.currentPage
+    );
 
     return query.watch().map((event) {
       try { return Success(data: event); }
@@ -101,16 +120,28 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   /// Lista oculta de estudiantes
-  Stream<Result<List<StudentViewDAOVersionData>>> getAllHidden(Map<String, dynamic> params) {
+  Stream<Result<List<StudentViewDAOVersionData>>> getAllHidden(StudentFilter params) {
     var query = select(hiddenStudentViewDAOVersion)..where((tbl) {
       final List<Expression<bool>> filterExpressions = [];
-      NawiRepositoryTools.ageFilter(filterExpressions, params, tbl);
-      NawiRepositoryTools.nameStudentFilter(filterExpressions, params, tbl);
+
+      NawiRepositoryTools.ageFilter(
+        expressions: filterExpressions, table: tbl,
+        ageEnumIndex1: params.ageEnumIndex1?.index,
+        ageEnumIndex2: params.ageEnumIndex2?.index
+      );
+
+      NawiRepositoryTools.nameStudentFilter(
+        expressions: filterExpressions, table: tbl,
+        textLike: params.nameLike
+      );
       return Expression.and(filterExpressions);
     });
 
-    query = NawiRepositoryTools.orderByStudent(query, params);
-    query = NawiRepositoryTools.infiniteScrollFilter(query, params);    
+    query = NawiRepositoryTools.orderByStudent(query: query, orderBy: params.orderBy);
+
+    query = NawiRepositoryTools.infiniteScrollFilter(
+      query: query, pageSize: params.pageSize, currentPage: params.currentPage
+    );
 
     return query.watch().map((event) {
       try { return Success(data: event.map((e) => NawiRepositoryTools.hiddenToPublic(e) ).toList() ); }

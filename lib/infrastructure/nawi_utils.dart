@@ -9,11 +9,10 @@ import 'package:nawiapp/domain/classes/result.dart';
 
 class NawiTools {
   static Uuid uuid = Uuid();
-  static String clearText(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
+  static String clearSpacesOnText(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
 
   static Success<T> resultConverter<T, E>(Result<E> result, T Function(E value) converter) 
     => Success(data: converter(result.getValue as E), message: result.message);
-  
 }
 
 class NawiServiceTools{
@@ -28,6 +27,7 @@ class NawiServiceTools{
   );
 }
 
+/// Utilidades para los repositorios, que en resumen son cosas de filtros y detalles extras
 class NawiRepositoryTools {
   
   static Function defaultErrorFunction = (e, stackTrace) => Error.onRepository(message: e, stackTrace: stackTrace);
@@ -39,52 +39,49 @@ class NawiRepositoryTools {
     timestamp: data.timestamp
   );
   
-  static SimpleSelectStatement<T, R> infiniteScrollFilter<T extends HasResultSet, R>(dynamic query, Map<String, dynamic> params) {
-    final pageSize = params['pageSize'] as int?;
-    final currentPage = params['currentPage'] as int?;
-    if(pageSize != null && currentPage != null) { query = query..limit(pageSize, offset: (currentPage - 1) * pageSize); }
+  static SimpleSelectStatement<T, R> infiniteScrollFilter<T extends HasResultSet, R>({required dynamic query, int? pageSize, int? currentPage}) {
+    if(pageSize != null && currentPage != null) {
+      query = query..limit(pageSize, offset: (currentPage - 1) * pageSize);
+    }
     return query;
   }
 
-  static void nameStudentFilter(List<Expression<bool>> expressions, Map<String, dynamic> params, dynamic tbl) {
-    final nameLike = params['nameLike'] as String?;
-    if(nameLike != null && nameLike.isNotEmpty) expressions.add(tbl.name.like("%$nameLike%"));
+  /// Solo para la tabla `students` donde se filtra por nombre
+  static void nameStudentFilter({required List<Expression<bool>> expressions, String? textLike, required dynamic table}) {
+    if(textLike != null && textLike.isNotEmpty) {
+      expressions.add(table.name.like("%$textLike%"));
+    }
   }
 
-  static void actionFilter(List<Expression<bool>> expressions, Map<String, dynamic> params, dynamic tbl) {
-    final actionLike = params['actionLike'] as String?;
-    if(actionLike != null && actionLike.isNotEmpty) expressions.add(tbl.action.like("%$actionLike%"));
+  static void actionFilter({required List<Expression<bool>> expressions, String? textLike, required dynamic table}) {
+    if(textLike != null && textLike.isNotEmpty) {
+      expressions.add(table.action.like("%$textLike%"));
+    }
   }
 
-  static SimpleSelectStatement<T, R> orderByStudent<T extends HasResultSet, R>(dynamic query, Map<String, dynamic> params) {
-    final orderBy = params['orderByStudent'] as StudentViewOrderByType?;
+  static SimpleSelectStatement<T, R> orderByStudent<T extends HasResultSet, R>({required dynamic query, required StudentViewOrderByType orderBy}) {
     query = switch (orderBy) {
       StudentViewOrderByType.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.timestamp)]),
       StudentViewOrderByType.timestampOldy => query..orderBy([(u) => OrderingTerm.asc(u.timestamp)]),
       StudentViewOrderByType.nameAsc => query..orderBy([(u) => OrderingTerm.asc(u.name)]),
       StudentViewOrderByType.nameDesc => query..orderBy([(u) => OrderingTerm.desc(u.name)]),
-      null => query..orderBy([(u) => OrderingTerm.desc(u.timestamp)])
     };
     return query;
   }
 
-  static SimpleSelectStatement<T, R> orderByAction<T extends HasResultSet, R>(dynamic query, Map<String, dynamic> params) {
-    final orderBy = params['orderByAction'] as RegisterBookViewOrderByType?;
+  static SimpleSelectStatement<T, R> orderByAction<T extends HasResultSet, R>({required dynamic query, required RegisterBookViewOrderByType orderBy}) {
     query = switch (orderBy) {
       RegisterBookViewOrderByType.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.createdAt)]),
       RegisterBookViewOrderByType.timestampOldy => query..orderBy([(u) => OrderingTerm.asc(u.createdAt)]),
       RegisterBookViewOrderByType.actionAsc => query..orderBy([(u) => OrderingTerm.asc(u.action)]),
       RegisterBookViewOrderByType.actionDesc => query..orderBy([(u) => OrderingTerm.desc(u.action)]),
-      null => query..orderBy([(u) => OrderingTerm.desc(u.createdAt)])
     };
     return query;
   }
 
-  static void ageFilter(List<Expression<bool>> expressions, Map<String, dynamic> params, dynamic tbl) {
-    final ageEnumIndex1 = params['ageEnumIndex1'] as int?;
-    final ageEnumIndex2 = params['ageEnumIndex2'] as int?;
-    if(ageEnumIndex1 != null) expressions.add(tbl.age.equals(ageEnumIndex1));
-    if(ageEnumIndex2 != null) expressions.add(tbl.age.equals(ageEnumIndex2));
+  static void ageFilter({required List<Expression<bool>> expressions, int? ageEnumIndex1, int? ageEnumIndex2, required dynamic table}) {
+    if(ageEnumIndex1 != null) expressions.add(table.age.equals(ageEnumIndex1));
+    if(ageEnumIndex2 != null) expressions.add(table.age.equals(ageEnumIndex2));
   }
 }
 
