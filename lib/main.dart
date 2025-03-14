@@ -1,5 +1,6 @@
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/locator.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/screens/add_register_book_screen.dart';
 import 'package:nawiapp/presentation/registration_book/view_registers_book/screens/view_registers_book_screen.dart';
@@ -15,7 +16,7 @@ void main() {
   setupLocator();
 
   //* Originalmente llamado Ñawi, pero para evitar futuros errores con caracteres especiales, se reemplaza la Ñ por N.
-  runApp(const NawiApp());
+  runApp(ProviderScope(child: const NawiApp()));
 }
 
 class NawiApp extends StatelessWidget {
@@ -30,6 +31,9 @@ class NawiApp extends StatelessWidget {
         home: const MenuApp(),
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 178, 134, 254)),
+          scrollbarTheme: ScrollbarThemeData(
+            thumbVisibility: WidgetStateProperty.all<bool>(true)
+          ),
           useMaterial3: true,
         ),
       ),
