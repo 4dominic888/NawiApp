@@ -7,4 +7,8 @@ mixin _$StudentRepositoryMixin on DatabaseAccessor<NawiDatabase> {
   $StudentTableTable get studentTable => attachedDatabase.studentTable;
   $StudentViewDAOVersionView get studentViewDAOVersion =>
       attachedDatabase.studentViewDAOVersion;
+  $HiddenStudentTableTable get hiddenStudentTable =>
+      attachedDatabase.hiddenStudentTable;
+  $HiddenStudentViewDAOVersionView get hiddenStudentViewDAOVersion =>
+      attachedDatabase.hiddenStudentViewDAOVersion;
 }

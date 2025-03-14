@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
+import 'package:nawiapp/presentation/providers/filter_provider.dart';
 import 'package:nawiapp/presentation/students/view_students/widgets/student_element.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 //* lista de datos de prueba
 
-class ViewStudentsScreen extends StatefulWidget {
+class ViewStudentsScreen extends ConsumerStatefulWidget {
   const ViewStudentsScreen({super.key});
 
   @override
-  State<ViewStudentsScreen> createState() => _ViewStudentsScreenState();
+  ConsumerState<ViewStudentsScreen> createState() => _ViewStudentsScreenState();
 }
 
-class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
+class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
 
   final _studentService = GetIt.I<StudentServiceBase>();
   final _pagingController = PagingController<int, StudentDAO>(firstPageKey: 0);
@@ -43,7 +45,11 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
   }
 
   Future<void> _fetchPage(int pageKey) async {
-    final result = await _studentService.getAllPaginated(curretPage: pageKey, pageSize: _pageSize, params: {}).first;
+    final result = await _studentService.getAllPaginated(
+      currentPage: pageKey,
+      pageSize: _pageSize,
+      params: ref.read(studentFilterProvider)
+    ).first;
 
     result.onValue(
       withPopup: false,
@@ -95,8 +101,13 @@ class _ViewStudentsScreenState extends State<ViewStudentsScreen> {
                 color: Colors.orangeAccent.shade200,
                 proccess: () async {
                   _btnArchiveElementController.start();
-                  Future.delayed(const Duration(seconds: 3));; //TODO temporal
-                  _btnArchiveElementController.success();
+                  final result = await _studentService.archiveOne(item.id);
+                  result.onValue(
+                    onSuccessfully: (data, message) => _btnArchiveElementController.success(),
+                    onError: (error, message) => _btnArchiveElementController.error()
+                  );
+                  if(context.mounted) Navigator.of(context).pop();
+                  _refresh();
                 },
               ),
             ),
