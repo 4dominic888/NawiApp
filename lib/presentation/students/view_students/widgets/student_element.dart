@@ -11,7 +11,9 @@ class StudentElement extends StatelessWidget {
     required this.item,
     required this.index,
     required this.deleteButton,
-    required this.archiveButton
+    required this.archiveButton,
+    required this.unarchiveButton,
+    this.isArchived = false
   });
 
   final BuildContext context;
@@ -19,9 +21,12 @@ class StudentElement extends StatelessWidget {
   final int index;
   final Widget deleteButton;
   final Widget archiveButton;
+  final Widget unarchiveButton;
+  final bool isArchived;
 
   @override
   Widget build(BuildContext context) {
+    final colorTile = (!isArchived ? Colors.grey : Colors.deepOrange).shade200;
     return InkWell(
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -29,10 +34,13 @@ class StudentElement extends StatelessWidget {
           key: Key("-"),
           direction: DismissDirection.horizontal,
           confirmDismiss: (direction) async {
+            //* Edit
             if(direction == DismissDirection.startToEnd) {
               Navigator.push(context, MaterialPageRoute(builder: (_) => AddStudentsScreen(idToEdit: item.id)));
               return false;
             }
+
+            //* Delete, archive or unarchive
             if(direction == DismissDirection.endToStart) {
               await AwesomeDialog(
                 context: context,
@@ -42,9 +50,10 @@ class StudentElement extends StatelessWidget {
                 closeIcon: const Icon(Icons.close),
                 animType: AnimType.scale,
                 title: "Confirmación de eliminación",
-                desc: "¿Estás seguro que deseas eliminar este estudiante? (Esta acción eliminará todos los registros relacionados) \n\nCaso contrario, ¿Archivarlo?",
+                desc: "¿Estás seguro que deseas eliminar este estudiante? (Esta acción eliminará todos los registros relacionados)"
+                "\n\nCaso contrario, ${!isArchived ? "¿Archivarlo?" : "¿Desarchivarlo?"}",
                 btnOk: deleteButton,
-                btnCancel: archiveButton
+                btnCancel: !isArchived ? archiveButton : unarchiveButton
               ).show();
               return false;
             }
@@ -57,15 +66,15 @@ class StudentElement extends StatelessWidget {
             child: Icon(Icons.edit, color: Colors.white)
           ),
           secondaryBackground: Container(
-            color: Colors.red.shade400,
+            color: (!isArchived ? Colors.red : Colors.orange).shade400,
             alignment: Alignment.centerRight,
             padding: EdgeInsets.only(left: 20),
-            child: Icon(Icons.delete, color: Colors.white)              
+            child: Icon(!isArchived ? Icons.delete : Icons.restore, color: Colors.white)
           ),
           child: ListTile(
             title: Text(item.name),
             subtitle: Text(item.age.name),
-            tileColor: index % 2 == 0 ?Colors.grey.shade200.withAlpha(80) : Colors.grey.shade200.withAlpha(100),
+            tileColor: index % 2 == 0 ? colorTile.withAlpha(80) : colorTile.withAlpha(100),
             leading: CircleAvatar(
               backgroundColor: NawiColor.iconColorMap(item.age.value, withOpacity: true),
               child: Icon(Icons.person, color: NawiColor.iconColorMap(item.age.value)),

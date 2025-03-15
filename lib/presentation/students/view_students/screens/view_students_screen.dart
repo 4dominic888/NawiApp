@@ -24,6 +24,7 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
   final _pagingController = PagingController<int, StudentDAO>(firstPageKey: 0);
   final _btnDeleteElementController = RoundedLoadingButtonController();
   final _btnArchiveElementController = RoundedLoadingButtonController();
+  final _btnUnarchiveElementController = RoundedLoadingButtonController();
 
   bool _isLoadingStarted = false;
   late final bool _paggingStatusCondition;
@@ -79,6 +80,7 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
               context: context,
               item: item,
               index: index,
+              isArchived: ref.watch(studentFilterProvider).showHidden,
               deleteButton: LoadingProcessButton(
                 controller: _btnDeleteElementController,
                 label: Text("Eliminar", style: TextStyle(color: Colors.white)),
@@ -105,6 +107,21 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
                   result.onValue(
                     onSuccessfully: (data, message) => _btnArchiveElementController.success(),
                     onError: (error, message) => _btnArchiveElementController.error()
+                  );
+                  if(context.mounted) Navigator.of(context).pop();
+                  _refresh();
+                },
+              ),
+              unarchiveButton: LoadingProcessButton(
+                controller: _btnUnarchiveElementController,
+                label: const Text("Desarchivar", style: TextStyle(color: Colors.white)),
+                color: Colors.green.shade200,
+                proccess: () async {
+                  _btnUnarchiveElementController.start();
+                  final result = await _studentService.unarchiveOne(item.id);
+                  result.onValue(
+                    onSuccessfully: (data, message) => _btnUnarchiveElementController.success(),
+                    onError: (error, message) => _btnUnarchiveElementController.error()
                   );
                   if(context.mounted) Navigator.of(context).pop();
                   _refresh();
