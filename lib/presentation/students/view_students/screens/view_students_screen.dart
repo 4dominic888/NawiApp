@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
-import 'package:nawiapp/presentation/providers/filter_provider.dart';
+import 'package:nawiapp/infrastructure/providers/filter_provider.dart';
 import 'package:nawiapp/presentation/students/view_students/widgets/student_element.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
