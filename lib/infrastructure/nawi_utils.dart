@@ -49,13 +49,13 @@ class NawiRepositoryTools {
   /// Solo para la tabla `students` donde se filtra por nombre
   static void nameStudentFilter({required List<Expression<bool>> expressions, String? textLike, required dynamic table}) {
     if(textLike != null && textLike.isNotEmpty) {
-      expressions.add(table.name.like("%$textLike%"));
+      expressions.add((table.name as GeneratedColumn<String>).contains(textLike));
     }
   }
 
   static void actionFilter({required List<Expression<bool>> expressions, String? textLike, required dynamic table}) {
     if(textLike != null && textLike.isNotEmpty) {
-      expressions.add(table.action.like("%$textLike%"));
+      expressions.add((table.action as GeneratedColumn<String>).contains(textLike));
     }
   }
 
@@ -80,8 +80,10 @@ class NawiRepositoryTools {
   }
 
   static void ageFilter({required List<Expression<bool>> expressions, int? ageEnumIndex1, int? ageEnumIndex2, required dynamic table}) {
-    if(ageEnumIndex1 != null) expressions.add(table.age.equals(ageEnumIndex1));
-    if(ageEnumIndex2 != null) expressions.add(table.age.equals(ageEnumIndex2));
+    final List<Expression<bool>> orExpression = [];
+    if(ageEnumIndex1 != null) orExpression.add((table.age as GeneratedColumnWithTypeConverter<StudentAge, int>).equals(ageEnumIndex1));
+    if(ageEnumIndex2 != null) orExpression.add((table.age as GeneratedColumnWithTypeConverter<StudentAge, int>).equals(ageEnumIndex2));
+    if(orExpression.isNotEmpty) expressions.add(Expression.or(orExpression));
   }
 }
 
