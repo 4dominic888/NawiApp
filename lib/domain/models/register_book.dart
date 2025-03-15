@@ -16,14 +16,14 @@ class RegisterBook {
   RegisterBookType? type;
   String? notes;
 
-  Set<Student> _mentions = {};
+  Set<StudentDAO> _mentions = {};
 
-  List<Student> get mentions => _mentions.toList();
-  set mentions(List<Student>? value) => _mentions = Set<Student>.from(value ?? []);
+  List<StudentDAO> get mentions => _mentions.toList();
+  set mentions(List<StudentDAO>? value) => _mentions = Set<StudentDAO>.from(value ?? []);
 
   RegisterBook({
     this.id = '*',
-    required this.action, List<Student>? mentions,
+    required this.action, List<StudentDAO>? mentions,
     this.type = RegisterBookType.register, this.notes
   }) { this.mentions = mentions; }
 

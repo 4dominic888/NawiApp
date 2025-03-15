@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mention_tag_text_field/mention_tag_text_field.dart';
+import 'package:nawiapp/domain/classes/student_filter.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/widgets/button_speech_field.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
-
-// extension PorVerse on MentionTextEditingController{
-//   List<Mentionable> get storedMentionables {
-
-//     return _storedMentionables;
-//   }
-// }
 
 class MentionStudentFormField extends StatefulWidget {
   const MentionStudentFormField({super.key, required this.formFieldKey});
@@ -31,23 +27,17 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
   final _taggerController = MentionTagTextEditingController();
 
   Color Function(bool hasError) get errorColor => (bool hasError) => hasError ? Colors.red : Colors.black;
+  final _studentService = GetIt.I<StudentServiceBase>();
 
-  final _rawData = [
-    Student(name: "Jose Pablo", age: StudentAge.threeYears),
-    Student(name: "Maria Fernanda", age: StudentAge.fiveYears),
-    Student(name: "Joel", age: StudentAge.fourYears),
-    Student(name: "Mario", age: StudentAge.fourYears),
-    Student(name: "Raul", age: StudentAge.fiveYears),
-    Student(name: "Anita", age: StudentAge.threeYears),
-    Student(name: "Julio Jose", age: StudentAge.fiveYears),
-    Student(name: "Mariano", age: StudentAge.fourYears),
-    Student(name: "Noel", age: StudentAge.threeYears),
-    Student(name: "Pedro Manuel", age: StudentAge.threeYears),
-  ];
-
-  List<Student> requestData(String query){
-    query = query.trim().toLowerCase();
-    return _rawData.where((e) => e.mentionLabel.contains(query)).take(5).toList();
+  Future<List<StudentDAO>> requestData(String? query) async {
+    final result = await _studentService.getAllPaginated(pageSize: 5, currentPage: 0, params: StudentFilter(nameLike: query)).first;
+    late final List<StudentDAO> output;
+    result.onValue(
+      withPopup: false,
+      onSuccessfully: (data, message) => output = data.data,
+      onError: (error, message) => output = [],
+    );
+    return output;
   }
 
   void cleanController() {
@@ -61,7 +51,7 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
 
   //* Some variables
   String? mentionValue;
-  List<Student> searchResults = [];
+  List<StudentDAO> searchResults = [];
 
   @override
   void initState() {
@@ -92,20 +82,24 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
                     onTapOutside: (event) {
                       formState.didChange(_value
                         ..action = _taggerController.getText
-                        ..mentions = _taggerController.mentions.cast<Student>()
+                        ..mentions = _taggerController.mentions.cast<StudentDAO>()
                       );
                     },
-                    onMention: (value) {
+                    onMention: (value) async {
+                      //* Limpiando el widget de elementos antes de colocar los datos
                       formState.didChange(_value
                         ..action = _taggerController.getText
-                        ..mentions = _taggerController.mentions.cast<Student>()
+                        ..mentions = _taggerController.mentions.cast<StudentDAO>()
                       );
                       setState(() {
                         mentionValue = value;
                         searchResults.clear();
                       });
                       if(value == null) return;
-                      setState(() => searchResults = requestData(value.substring(1)));
+
+                      //* Request
+                      final requested = await requestData(value.substring(1));
+                      setState(() => searchResults = requested);
                     },
                     mentionTagDecoration: MentionTagDecoration(
                       mentionStart: ['@'],
