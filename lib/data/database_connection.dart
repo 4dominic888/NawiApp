@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:drift/drift.dart';
+import 'package:nawiapp/domain/models/models_table/hidden_register_book_table.dart';
 import 'package:nawiapp/domain/models/models_table/hidden_student_table.dart';
 import 'package:nawiapp/domain/models/models_table/register_book_table.dart';
 import 'package:nawiapp/domain/models/models_table/student_register_book_table.dart';
@@ -38,9 +39,9 @@ LazyDatabase _openConnection() {
 }
 
 @DriftDatabase(
-  tables: [StudentTable, RegisterBookTable, StudentRegisterBookTable, HiddenStudentTable],
+  tables: [StudentTable, RegisterBookTable, StudentRegisterBookTable, HiddenStudentTable, HiddenRegisterBookTable],
   daos: [StudentRepository, RegisterBookRepository, StudentRegisterBookRepository],
-  views: [StudentViewDAOVersion, HiddenStudentViewDAOVersion, RegisterBookViewDAOVersion]
+  views: [StudentViewDAOVersion, HiddenStudentViewDAOVersion, RegisterBookViewDAOVersion, HiddenRegisterBookViewDAOVersion]
 )
 class NawiDatabase extends _$NawiDatabase {
   NawiDatabase([QueryExecutor? e]) : super(e ?? _openConnection());

@@ -27,6 +27,7 @@ void setupLocator() {
 
   //* Services
   locator.registerLazySingleton<StudentServiceBase>(() => StudentServiceImplement(
-    locator<StudentRepository>()
+    locator<StudentRepository>(),
+    locator<StudentRegisterBookRepository>()
   ));
 }

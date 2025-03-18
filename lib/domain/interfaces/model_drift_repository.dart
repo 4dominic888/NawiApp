@@ -17,7 +17,7 @@ abstract class ModelDriftRepository<
 >{
 
   Future<Result<T?>> addOne(R data);
-  Stream<Result<List<S>>> getAll(F params);
+  Future<Result<List<S>>> getAll(F params);
   Future<Result<T>> getOne(String id);
   Future<Result<bool>> updateOne(T data);
   Future<Result<T>> deleteOne(String id);

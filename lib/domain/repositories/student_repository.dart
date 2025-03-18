@@ -28,27 +28,30 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   @override
-  Stream<Result<List<StudentViewDAOVersionData>>> getAll(StudentFilter params) {
-    var query = select(studentViewDAOVersion)..where((tbl) {
-      final List<Expression<bool>> filterExpressions = [];
+  Future<Result<List<StudentViewDAOVersionData>>> getAll(StudentFilter params) {
+    var query = (!params.showHidden ? select(studentViewDAOVersion) : select(hiddenStudentViewDAOVersion))
+      ..where((tbl) {
+        final List<Expression<bool>> filterExpressions = [];
 
-      //* Excluye estudiantes marcados como ocultos
-      filterExpressions.add(tbl.id.isNotInQuery(
-        selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])
-      ));
+        //* Excluye estudiantes marcados como ocultos
+        if(!params.showHidden) {
+          filterExpressions.add((tbl as $StudentViewDAOVersionView).id.isNotInQuery(
+            selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])
+          ));
+        }
 
-      NawiRepositoryTools.ageFilter(
-        expressions: filterExpressions, table: tbl,
-        ageEnumIndex1: params.ageEnumIndex1?.index,
-        ageEnumIndex2: params.ageEnumIndex2?.index
-      );
+        NawiRepositoryTools.ageFilter(
+          expressions: filterExpressions, table: tbl,
+          ageEnumIndex1: params.ageEnumIndex1?.index,
+          ageEnumIndex2: params.ageEnumIndex2?.index
+        );
 
-      NawiRepositoryTools.nameStudentFilter(
-        expressions: filterExpressions, table: tbl,
-        textLike: params.nameLike
-      );
-      
-      return Expression.and(filterExpressions);
+        NawiRepositoryTools.nameStudentFilter(
+          expressions: filterExpressions, table: tbl,
+          textLike: params.nameLike
+        );
+        
+        return Expression.and(filterExpressions);
     });
 
     query = NawiRepositoryTools.orderByStudent(query: query, orderBy: params.orderBy);
@@ -59,10 +62,15 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
       currentPage: params.currentPage
     );
 
-    return query.watch().map((event) {
-      try { return Success(data: event); }
-      catch (e) { return Error.onRepository(message: e.toString()); }
-    });
+    return query.get().then(
+      (result) => Success(data: !params.showHidden ? 
+        result as List<StudentViewDAOVersionData> :
+        (result as List<HiddenStudentViewDAOVersionData>).map(
+          (e) => NawiRepositoryTools.studentHiddenToPublic(e)
+        ).toList()
+      ),
+      onError: NawiRepositoryTools.defaultErrorFunction
+    );
   }
 
   @override
@@ -81,8 +89,8 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   @override
-  Future<Result<StudentTableData>> deleteOne(String id) async {
-    return await transaction<Result<StudentTableData>>(() async {
+  Future<Result<StudentTableData>> deleteOne(String id) {
+    return transaction<Result<StudentTableData>>(() async {
       try {
         //* Elimina primero el registro en la tabla de estudiantes ocultos, si es que existe
         await (delete(hiddenStudentTable)..where((tbl) => tbl.hiddenId.equals(id))).go();
@@ -96,8 +104,8 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   /// Agrega un estudiantes ocultos del registro
-  Future<Result<StudentTableData>> archiveOne(String id) async {
-    return await transaction<Result<StudentTableData>>(() async {
+  Future<Result<StudentTableData>> archiveOne(String id) {
+    return transaction<Result<StudentTableData>>(() async {
       try {
         final result = await getOne(id);
         return into(hiddenStudentTable).insertReturningOrNull(HiddenStudentTableData(hiddenId: id)).then(
@@ -108,8 +116,8 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   /// Elimina un estudiante oculto del registro
-  Future<Result<StudentTableData>> unarchiveOne(String id) async {
-    return await transaction<Result<StudentTableData>>(() async {
+  Future<Result<StudentTableData>> unarchiveOne(String id) {
+    return transaction<Result<StudentTableData>>(() async {
       try {
         final result = await getOne(id);
         return (delete(hiddenStudentTable)..where((tbl) => tbl.hiddenId.equals(id))).goAndReturn().then(
@@ -120,33 +128,33 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   /// Lista oculta de estudiantes
-  Stream<Result<List<StudentViewDAOVersionData>>> getAllHidden(StudentFilter params) {
-    var query = select(hiddenStudentViewDAOVersion)..where((tbl) {
-      final List<Expression<bool>> filterExpressions = [];
+  // Stream<Result<List<StudentViewDAOVersionData>>> getAllHidden(StudentFilter params) {
+  //   var query = select(hiddenStudentViewDAOVersion)..where((tbl) {
+  //     final List<Expression<bool>> filterExpressions = [];
 
-      NawiRepositoryTools.ageFilter(
-        expressions: filterExpressions, table: tbl,
-        ageEnumIndex1: params.ageEnumIndex1?.index,
-        ageEnumIndex2: params.ageEnumIndex2?.index
-      );
+  //     NawiRepositoryTools.ageFilter(
+  //       expressions: filterExpressions, table: tbl,
+  //       ageEnumIndex1: params.ageEnumIndex1?.index,
+  //       ageEnumIndex2: params.ageEnumIndex2?.index
+  //     );
 
-      NawiRepositoryTools.nameStudentFilter(
-        expressions: filterExpressions, table: tbl,
-        textLike: params.nameLike
-      );
-      return Expression.and(filterExpressions);
-    });
+  //     NawiRepositoryTools.nameStudentFilter(
+  //       expressions: filterExpressions, table: tbl,
+  //       textLike: params.nameLike
+  //     );
+  //     return Expression.and(filterExpressions);
+  //   });
 
-    query = NawiRepositoryTools.orderByStudent(query: query, orderBy: params.orderBy);
+  //   query = NawiRepositoryTools.orderByStudent(query: query, orderBy: params.orderBy);
 
-    query = NawiRepositoryTools.infiniteScrollFilter(
-      query: query, pageSize: params.pageSize, currentPage: params.currentPage
-    );
+  //   query = NawiRepositoryTools.infiniteScrollFilter(
+  //     query: query, pageSize: params.pageSize, currentPage: params.currentPage
+  //   );
 
-    return query.watch().map((event) {
-      try { return Success(data: event.map((e) => NawiRepositoryTools.hiddenToPublic(e) ).toList() ); }
-      catch (e) { return Error.onRepository(message: e.toString()); }
-    });
-  }  
+  //   return query.watch().map((event) {
+  //     try { return Success(data: event.map((e) => NawiRepositoryTools.studentHiddenToPublic(e) ).toList() ); }
+  //     catch (e) { return Error.onRepository(message: e.toString()); }
+  //   });
+  // }  
 
 }

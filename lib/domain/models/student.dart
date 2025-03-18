@@ -33,11 +33,12 @@ mixin _IdenticalStudent {
   int get hashCode => name.hashCode ^ age.hashCode;
 }
 
+
 class Student with _MentionLabelStudent, _IdenticalStudent {
   final String id;
   @override final StudentAge age;
-  @override String name;
-  String? notes;
+  @override final String name;
+  final String? notes;
   final DateTime timestamp;
 
   Student({
@@ -75,10 +76,10 @@ class Student with _MentionLabelStudent, _IdenticalStudent {
 
 class StudentDAO with _MentionLabelStudent, _IdenticalStudent {
   final String id;
-  @override String name;
+  @override final String name;
   @override final StudentAge age;
 
-  StudentDAO({required this.id, required this.name, required this.age});
+  const StudentDAO({required this.id, required this.name, required this.age});
 
   StudentDAO.fromDAOView(StudentViewDAOVersionData data) : this(id: data.id, name: data.name, age: data.age);
 }

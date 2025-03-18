@@ -50,7 +50,7 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
       currentPage: pageKey,
       pageSize: _pageSize,
       params: ref.read(studentFilterProvider)
-    ).first;
+    );
 
     result.onValue(
       withPopup: false,

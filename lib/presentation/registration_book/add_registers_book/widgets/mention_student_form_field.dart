@@ -30,7 +30,7 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
   final _studentService = GetIt.I<StudentServiceBase>();
 
   Future<List<StudentDAO>> requestData(String? query) async {
-    final result = await _studentService.getAllPaginated(pageSize: 5, currentPage: 0, params: StudentFilter(nameLike: query)).first;
+    final result = await _studentService.getAllPaginated(pageSize: 5, currentPage: 0, params: StudentFilter(nameLike: query));
     late final List<StudentDAO> output;
     result.onValue(
       withPopup: false,
@@ -80,21 +80,19 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
                     keyboardType: TextInputType.multiline,
                     minLines: 1, maxLines: 5, controller: _taggerController,
                     onTapOutside: (event) {
-                      formState.didChange(_value
-                        ..action = _taggerController.getText
-                        ..mentions = _taggerController.mentions.cast<StudentDAO>()
-                      );
+                      formState.didChange(_value.copyWith(
+                        action: _taggerController.getText,
+                        mentions: _taggerController.mentions.cast<StudentDAO>()
+                      ));
                     },
                     onMention: (value) async {
                       //* Limpiando el widget de elementos antes de colocar los datos
-                      formState.didChange(_value
-                        ..action = _taggerController.getText
-                        ..mentions = _taggerController.mentions.cast<StudentDAO>()
-                      );
-                      setState(() {
-                        mentionValue = value;
-                        searchResults.clear();
-                      });
+                      formState.didChange(_value.copyWith(
+                        action: _taggerController.getText,
+                        mentions: _taggerController.mentions.cast<StudentDAO>()
+                      ));
+
+                      setState(() { mentionValue = value; searchResults.clear(); });
                       if(value == null) return;
 
                       //* Request

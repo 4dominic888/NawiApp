@@ -8,4 +8,8 @@ mixin _$RegisterBookRepositoryMixin on DatabaseAccessor<NawiDatabase> {
       attachedDatabase.registerBookTable;
   $RegisterBookViewDAOVersionView get registerBookViewDAOVersion =>
       attachedDatabase.registerBookViewDAOVersion;
+  $HiddenRegisterBookTableTable get hiddenRegisterBookTable =>
+      attachedDatabase.hiddenRegisterBookTable;
+  $HiddenRegisterBookViewDAOVersionView get hiddenRegisterBookViewDAOVersion =>
+      attachedDatabase.hiddenRegisterBookViewDAOVersion;
 }

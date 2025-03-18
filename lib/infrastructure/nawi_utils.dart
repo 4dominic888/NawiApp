@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nawiapp/data/database_connection.dart';
 import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
 import 'package:nawiapp/domain/models/models_views/student_view.dart';
+import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:uuid/uuid.dart';
 import 'package:nawiapp/domain/classes/result.dart';
@@ -17,6 +18,7 @@ class NawiTools {
 
 class NawiServiceTools{
   static Function defaultErrorFunction = (e, stackTrace) => Error.onService(message: e, stackTrace: stackTrace);
+  static Error<T> errorParser<T>(Result result) => Error.onService(message: result.message, stackTrace: (result as Error).stackTrace);
 
   static StudentTableCompanion toStudentTableCompanion(Student data, {bool withId = false}) => StudentTableCompanion(
     id: withId ? Value(data.id) : Value.absent(),
@@ -25,18 +27,33 @@ class NawiServiceTools{
     notes: Value(data.notes),
     timestamp: Value(data.timestamp)
   );
+
+  static RegisterBookTableCompanion toRegisterBookTableCompanion(RegisterBook data, {bool withId = false}) => RegisterBookTableCompanion(
+    id: withId ? Value(data.id) : Value.absent(),
+    action: Value(data.action),
+    createdAt: Value(data.timestamp),
+    notes: Value(data.notes),
+    type: Value(data.type)
+  );
 }
 
 /// Utilidades para los repositorios, que en resumen son cosas de filtros y detalles extras
 class NawiRepositoryTools {
   
   static Function defaultErrorFunction = (e, stackTrace) => Error.onRepository(message: e, stackTrace: stackTrace);
-
-  static StudentViewDAOVersionData hiddenToPublic(HiddenStudentViewDAOVersionData data) => StudentViewDAOVersionData(
+  static StudentViewDAOVersionData studentHiddenToPublic(HiddenStudentViewDAOVersionData data) => StudentViewDAOVersionData(
     id: data.id,
     name: data.name,
     age: data.age,
     timestamp: data.timestamp
+  );
+
+  static RegisterBookViewDAOVersionData registerBookHiddenToPublic(HiddenRegisterBookViewDAOVersionData data) => RegisterBookViewDAOVersionData(
+    id: data.id,
+    action: data.action,
+    createdAt: data.createdAt,
+    type: data.type,
+    hourCreatedAt: data.hourCreatedAt
   );
   
   static SimpleSelectStatement<T, R> infiniteScrollFilter<T extends HasResultSet, R>({required dynamic query, int? pageSize, int? currentPage}) {
