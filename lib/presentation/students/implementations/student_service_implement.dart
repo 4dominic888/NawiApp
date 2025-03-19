@@ -62,11 +62,11 @@ interface class StudentServiceImplement extends StudentServiceBase {
     return studentRepo.transaction<Result<Student>>(() async {
       //* Eliminacion de registros relacionados de la tabla StudentRegisterBookTable
       final deleteManyToManyResult = await studentRegisterBookRepo.deleteManyByStudentID(studentId: id, deleteRegisterBooks: true);
-      if(deleteManyToManyResult is Error) Error.onRepository(message: deleteManyToManyResult.message, stackTrace: (deleteManyToManyResult as Error).stackTrace);
+      if(deleteManyToManyResult is Error) NawiServiceTools.errorParser(deleteManyToManyResult);
 
       //* Eliminación del estudiante en cuestion
       final deleteStudentResult = await studentRepo.deleteOne(id);
-      if(deleteStudentResult is Error) Error.onRepository(message: deleteStudentResult.message, stackTrace: (deleteStudentResult as Error).stackTrace);
+      if(deleteStudentResult is Error) return NawiServiceTools.errorParser(deleteStudentResult);
 
       return NawiTools.resultConverter(deleteStudentResult, (value) => Student.fromTableData(deleteStudentResult.getValue!));
     });
