@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
+import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/widgets/mention_student_form_field.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
@@ -19,7 +20,7 @@ class _AddRegisterBookScreenState extends State<AddRegisterBookScreen> {
 
   Future<void> onSubmit() async {
     if(_formKey.currentState!.validate()) {
-      print(_actionKey.currentState?.value?.action);
+      print(NawiTools.formatActionText(_actionKey.currentState!.value!.action));
       print(_actionKey.currentState?.value?.mentions.map((e) => e.mentionLabel));
       _btnController.success();
       return;
