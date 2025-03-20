@@ -9,7 +9,7 @@ import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 part 'register_book_repository.g.dart';
 
-@DriftAccessor(tables: [RegisterBookTable], views: [RegisterBookViewDAOVersion])
+@DriftAccessor(tables: [RegisterBookTable], views: [RegisterBookViewDAOVersion, HiddenRegisterBookViewDAOVersion])
 class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$RegisterBookRepositoryMixin
   implements ModelDriftRepository<
     RegisterBookTableData,
@@ -28,33 +28,77 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   }
 
   @override
-  Stream<Result<List<RegisterBookViewDAOVersionData>>> getAll(RegisterBookFilter params) {
-    var query = select(registerBookViewDAOVersion)..where((tbl) {
-      final List<Expression<bool>> filterExpressions = [];
+  Future<Result<List<RegisterBookViewDAOVersionData>>> getAll(RegisterBookFilter params) {
+    var query = (!params.showHidden ? select(registerBookViewDAOVersion) : select(hiddenRegisterBookViewDAOVersion))
+      ..where((tbl) {
+        final List<Expression<bool>> filterExpressions = [];
 
-      NawiRepositoryTools.actionFilter(
-        expressions: filterExpressions, table: tbl,
-        textLike: params.actionLike
-      );
+        if(!params.showHidden) {
+          filterExpressions.add((tbl as $RegisterBookViewDAOVersionView).id.isNotInQuery(
+            selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
+          ));
+        }
 
-      NawiRepositoryTools.nameStudentFilter(
-        expressions: filterExpressions, table: tbl,
-        textLike: params.studentNameLike
-      );
+        NawiRepositoryTools.actionFilter(
+          expressions: filterExpressions, table: tbl,
+          textLike: params.actionLike
+        );
 
-      return Expression.and(filterExpressions);
-    });
+        NawiRepositoryTools.nameStudentFilter(
+          expressions: filterExpressions, table: tbl,
+          textLike: params.studentNameLike
+        );
+
+        return Expression.and(filterExpressions);
+      });
 
     query = NawiRepositoryTools.orderByAction(query: query, orderBy: params.orderBy);
     query = NawiRepositoryTools.infiniteScrollFilter(
-      query: query, pageSize: params.pageSize, currentPage: params.currentPage
+      query: query,
+      pageSize: params.pageSize,
+      currentPage: params.currentPage
     );
 
-    return query.watch().map((event) {
-      try { return Success(data: event); }
-      catch (e) { return Error.onRepository(message: e.toString()); }
-    });
+    return query.get().then(
+      (result) => Success(data: !params.showHidden ?
+        result as List<RegisterBookViewDAOVersionData> :
+        (result as List<HiddenRegisterBookViewDAOVersionData>).map(
+          (e) => NawiRepositoryTools.registerBookHiddenToPublic(e)
+        ).toList(),
+      ),
+      onError: NawiRepositoryTools.defaultErrorFunction
+    );
   }
+
+  // Stream<Result<List<RegisterBookViewDAOVersionData>>> getAllHidden(RegisterBookFilter params) {
+  //   var query = select(hiddenRegisterBookViewDAOVersion)..where((tbl) {
+  //     final List<Expression<bool>> filterExpressions = [];
+
+  //     NawiRepositoryTools.actionFilter(
+  //       expressions: filterExpressions, table: tbl,
+  //       textLike: params.actionLike
+  //     );
+
+  //     NawiRepositoryTools.nameStudentFilter(
+  //       expressions: filterExpressions, table: tbl,
+  //       textLike: params.studentNameLike
+  //     );
+
+  //     return Expression.and(filterExpressions);
+  //   });
+
+  //   query = NawiRepositoryTools.orderByAction(query: query, orderBy: params.orderBy);
+  //   query = NawiRepositoryTools.infiniteScrollFilter(
+  //     query: query,
+  //     pageSize: params.pageSize,
+  //     currentPage: params.currentPage
+  //   );
+
+  //   return query.watch().map((event) {
+  //     try { return Success(data: event); }
+  //     catch (e) { return Error.onRepository(message: e.toString()); }
+  //   });
+  // }
 
   @override
   Future<Result<RegisterBookTableData>> getOne(String id) {
@@ -77,5 +121,27 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
       (result) => Success(data: result.first),
       onError: NawiRepositoryTools.defaultErrorFunction
     );
+  }
+
+  Future<Result<RegisterBookTableData>> archiveOne(String id) {
+    return transaction<Result<RegisterBookTableData>>(() async {
+      try {
+        final result = await getOne(id);
+        return into(hiddenRegisterBookTable).insertReturningOrNull(HiddenRegisterBookTableData(hiddenRegisterBookId: id)).then(
+          (_) => result, onError: NawiRepositoryTools.defaultErrorFunction
+        );
+      } catch (e) { return Error.onRepository(message: e.toString()); }
+    });
+  }
+
+  Future<Result<RegisterBookTableData>> unarchiveOne(String id) {
+    return transaction<Result<RegisterBookTableData>>(() async {
+      try {
+        final result = await getOne(id);
+        return (delete(hiddenRegisterBookTable)..where((tbl) => tbl.hiddenRegisterBookId.equals(id))).goAndReturn().then(
+          (_) => result, onError: NawiRepositoryTools.defaultErrorFunction
+        );
+      } catch (e) { return Error.onRepository(message: e.toString()); }
+    });
   }
 }

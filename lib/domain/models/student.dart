@@ -14,11 +14,31 @@ enum StudentAge {
   const StudentAge.notDefined(String n) : this(0, n);
 }
 
-class Student {
+mixin _MentionLabelStudent {
+  String get name;
+  String get mentionLabel => name.replaceAll(' ', '_').toLowerCase();
+}
+
+mixin _IdenticalStudent {
+  String get name;
+  StudentAge get age;
+
+  @override
+  bool operator ==(Object other) {
+    if(identical(this, other)) return true;
+    return other is Student && other.name == name && other.age == age;
+  }
+
+  @override
+  int get hashCode => name.hashCode ^ age.hashCode;
+}
+
+
+class Student with _MentionLabelStudent, _IdenticalStudent {
   final String id;
-  String name;
-  final StudentAge age;
-  String? notes;
+  @override final StudentAge age;
+  @override final String name;
+  final String? notes;
   final DateTime timestamp;
 
   Student({
@@ -52,26 +72,14 @@ class Student {
   //* Drift convertors
   Student.fromTableData(StudentTableData data) : 
     this(id: data.id, name: data.name,age: data.age, notes: data.notes, timestamp: data.timestamp);
-
-  String get mentionLabel => name.replaceAll(' ', '_').toLowerCase();
-
-  @override
-  bool operator ==(Object other) {
-    if(identical(this, other)) return true;
-    return other is Student && other.name == name && other.age == age;
-  }
-
-  @override
-  int get hashCode => name.hashCode ^ age.hashCode;
-  
 }
 
-class StudentDAO{
+class StudentDAO with _MentionLabelStudent, _IdenticalStudent {
   final String id;
-  String name;
-  final StudentAge age;
+  @override final String name;
+  @override final StudentAge age;
 
-  StudentDAO({required this.id, required this.name, required this.age});
+  const StudentDAO({required this.id, required this.name, required this.age});
 
   StudentDAO.fromDAOView(StudentViewDAOVersionData data) : this(id: data.id, name: data.name, age: data.age);
 }

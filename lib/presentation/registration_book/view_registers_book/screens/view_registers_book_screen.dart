@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
-import 'package:group_list_view/group_list_view.dart';
-import 'package:collection/collection.dart';
+import 'package:nawiapp/domain/classes/register_book_filter.dart';
+import 'package:nawiapp/domain/models/register_book.dart';
+import 'package:nawiapp/domain/services/register_book_service_base.dart';
+import 'package:nawiapp/presentation/registration_book/view_registers_book/widgets/register_book_element.dart';
 
 class ViewRegistersBookScreen extends StatefulWidget {
   const ViewRegistersBookScreen({super.key});
@@ -12,110 +16,85 @@ class ViewRegistersBookScreen extends StatefulWidget {
 
 class _ViewRegistersBookScreenState extends State<ViewRegistersBookScreen> {
 
-  //TODO: Cambiar por origen de datos real
-  final List<Map<String, dynamic>> registersBook = List.filled(1, [
-    {"action": "Jose Pablo ha dicho su nombre", "date": DateTime(2025, 1, 15), "emisors": ["Jose Pablo"]},
-    {"action": "Raul ha jugado a las escondidas con Anita", "date": DateTime(2025, 1, 15), "emisors": ["Anita", "Raul"]},
-    {"action": "Mario ha pegado a Mahite y Joel", "date": DateTime(2025, 1, 13), "emisors": ["Mario", "Mahite", "Joel"]},
-    {"action": "Anita y Joel han aprendido a contar hasta 3", "date": DateTime(2025, 1, 16), "emisors": ["Anita", "Joel"]},
-    {"action": "Maria Fernanda dice como es ella y se compara con su mama", "date": DateTime(2025, 1, 16), "emisors": ["Maria Fernanda"]},
-  ]).expand((x) => x).toList();
+  final _registerBookService = GetIt.I<RegisterBookServiceBase>();
+  final _pagingController = PagingController<int, RegisterBookDAO>(firstPageKey: 0);
+  bool _isLoadingStarted = false;
+  late final bool _paggingStatusCondition;
+  static const int _pageSize = 10;
 
-  Widget _registersBookList(_, Map<String, dynamic> item){
-    return InkWell(
-      onLongPress: () { },
-      child: Ink(
-        color: Colors.transparent,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400)),
-          child: Dismissible(
+  @override
+  void initState() {
+    super.initState();
+    _paggingStatusCondition = (
+          _pagingController.value.status == PagingStatus.loadingFirstPage ||
+          _pagingController.value.status == PagingStatus.ongoing
+    ) && _isLoadingStarted;
 
-            //TODO: cambiar por la clave o identificador real
-            key: Key("-"),
-            direction: DismissDirection.horizontal,
-            confirmDismiss: (direction) async {
-              if(direction == DismissDirection.startToEnd) {
-                //* Action when edit
-              }
-              if(direction == DismissDirection.endToStart) {
-                //* Action when delete
-                //TODO: agregar un modal para confirmar la eliminacion.
-              }
-              return false;
-            },
-            background: Container(
-              color: Colors.cyan.shade300,
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.only(left: 20),
-              child: Icon(Icons.edit, color: Colors.white)
-            ),
-            secondaryBackground: Container(
-              color: Colors.red.shade400,
-              alignment: Alignment.centerRight,
-              padding: EdgeInsets.only(left: 20),
-              child: Icon(Icons.delete, color: Colors.white)              
-            ),
-            child: ListTile(
-              title: Text(item["action"]),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(DateFormat('dd/MM/y').format(item["date"])),
-                  Wrap(
-                    spacing: 10,
-                    children: (item["emisors"] as List<String>).map((e) => 
-                      Chip(
-                        label: Text(e),
-                        backgroundColor: Colors.blueAccent.shade100,
-                        labelStyle: const TextStyle(fontWeight: FontWeight.bold)
-                      )).toList(),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+    _pagingController.addPageRequestListener((pageKey) {
+      if(_paggingStatusCondition) return; 
+      _isLoadingStarted = true;
+      _fetchPage(pageKey);
+    });    
+  }
+
+  Future<void> _fetchPage(int pageKey) async {
+    final result = await _registerBookService.getAllPaginated(
+      currentPage: pageKey,
+      pageSize: _pageSize,
+      params: RegisterBookFilter()
     );
+
+    result.onValue(
+      withPopup: false,
+      onError: (_, message) => _pagingController.error = message,
+      onSuccessfully: (data, message) {
+        final items = data.data;
+        if(items.length < _pageSize) { _pagingController.appendLastPage(items); }
+        else { _pagingController.appendPage(items, pageKey+1); }
+      }
+    );
+  }
+
+  Future<void> _refresh() async {
+    if(_paggingStatusCondition) return;
+    _pagingController.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    final groupedList = groupBy(registersBook, (e) => DateTime((e["date"] as DateTime).year, (e["date"] as DateTime).month, (e["date"] as DateTime).day));
+    // final groupedList = groupBy(registersBook, (e) => DateTime((e["date"] as DateTime).year, (e["date"] as DateTime).month, (e["date"] as DateTime).day));
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async { },
+        onRefresh: _refresh,
         child: Container(
           padding: EdgeInsets.all(8.0),
-          child: GroupListView(
-            sectionsCount: groupedList.keys.length,
-            countOfItemInSection: (section) => groupedList.values.elementAt(section).length,
-            itemBuilder: (_, index) => _registersBookList(_, groupedList.values.elementAt(index.section).elementAt(index.index)),
-            groupHeaderBuilder: (_, section) => Text(DateFormat('EEEE, d MMMM y').format(groupedList.keys.elementAt(section))),
-            separatorBuilder: (_, index) => const SizedBox(height: 10),
-            sectionSeparatorBuilder: (_, section) => const SizedBox(height: 10),
+          child: PagedListView(
+            pagingController: _pagingController,
+            builderDelegate: PagedChildBuilderDelegate<RegisterBookDAO>(
+              itemBuilder: (context, item, index) {
+                final isFirstOnGroup = index == 0 || item.createdAt != _pagingController.itemList![index - 1].createdAt;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    //* Separador de dia
+                    if(isFirstOnGroup) Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(DateFormat('EEEE, d MMM y').format(item.createdAt), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                    RegisterBookElement(data: item, index: index)
+                  ],
+                );
+              },
+              firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+              newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+              noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay cuadernos de registros ingresados")),
+              noMoreItemsIndicatorBuilder: (_) => const Center(child: Text("No más elementos a cargar")),
+              firstPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información")),
+              newPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información"))
+            )
           )
-          // child: GroupedListView< Map<String, dynamic> , DateTime>(
-          //   useStickyGroupSeparators: true,
-          //   addSemanticIndexes: true,
-          //   elements: registersBook,
-          //   sort: true,
-          //   groupBy: (e) {
-          //     final date = e["date"] as DateTime;
-          //     return DateTime(date.year, date.month, date.day);
-          //   },
-          //   groupSeparatorBuilder: (value) => ListTile(title: Text(
-          //     DateFormat('EEEE, d MMMM y').format(value),
-          //     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
-          //   )),
-          //   itemBuilder: (c, element) => registersBook.isNotEmpty ? _registersBookList(c, element) : 
-          //     GridView.count(crossAxisCount: 1, children: [const Center(child: Text("No hay registros..."))]),
-          //   order: GroupedListOrder.DESC,
-          //   itemComparator: (el1, el2) => (el1["date"] as DateTime).compareTo(el2["date"] as DateTime),
-          // ),
         )
       ),
     );

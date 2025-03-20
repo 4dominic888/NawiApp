@@ -1010,6 +1010,181 @@ class HiddenStudentTableCompanion
   }
 }
 
+class $HiddenRegisterBookTableTable extends HiddenRegisterBookTable
+    with TableInfo<$HiddenRegisterBookTableTable, HiddenRegisterBookTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $HiddenRegisterBookTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _hiddenRegisterBookIdMeta =
+      const VerificationMeta('hiddenRegisterBookId');
+  @override
+  late final GeneratedColumn<String> hiddenRegisterBookId = GeneratedColumn<
+          String>('hidden_register_book_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES register_book (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [hiddenRegisterBookId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'hidden_register_book_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<HiddenRegisterBookTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('hidden_register_book_id')) {
+      context.handle(
+          _hiddenRegisterBookIdMeta,
+          hiddenRegisterBookId.isAcceptableOrUnknown(
+              data['hidden_register_book_id']!, _hiddenRegisterBookIdMeta));
+    } else if (isInserting) {
+      context.missing(_hiddenRegisterBookIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  HiddenRegisterBookTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HiddenRegisterBookTableData(
+      hiddenRegisterBookId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}hidden_register_book_id'])!,
+    );
+  }
+
+  @override
+  $HiddenRegisterBookTableTable createAlias(String alias) {
+    return $HiddenRegisterBookTableTable(attachedDatabase, alias);
+  }
+}
+
+class HiddenRegisterBookTableData extends DataClass
+    implements Insertable<HiddenRegisterBookTableData> {
+  final String hiddenRegisterBookId;
+  const HiddenRegisterBookTableData({required this.hiddenRegisterBookId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['hidden_register_book_id'] = Variable<String>(hiddenRegisterBookId);
+    return map;
+  }
+
+  HiddenRegisterBookTableCompanion toCompanion(bool nullToAbsent) {
+    return HiddenRegisterBookTableCompanion(
+      hiddenRegisterBookId: Value(hiddenRegisterBookId),
+    );
+  }
+
+  factory HiddenRegisterBookTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HiddenRegisterBookTableData(
+      hiddenRegisterBookId:
+          serializer.fromJson<String>(json['hiddenRegisterBookId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'hiddenRegisterBookId': serializer.toJson<String>(hiddenRegisterBookId),
+    };
+  }
+
+  HiddenRegisterBookTableData copyWith({String? hiddenRegisterBookId}) =>
+      HiddenRegisterBookTableData(
+        hiddenRegisterBookId: hiddenRegisterBookId ?? this.hiddenRegisterBookId,
+      );
+  HiddenRegisterBookTableData copyWithCompanion(
+      HiddenRegisterBookTableCompanion data) {
+    return HiddenRegisterBookTableData(
+      hiddenRegisterBookId: data.hiddenRegisterBookId.present
+          ? data.hiddenRegisterBookId.value
+          : this.hiddenRegisterBookId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HiddenRegisterBookTableData(')
+          ..write('hiddenRegisterBookId: $hiddenRegisterBookId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => hiddenRegisterBookId.hashCode;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HiddenRegisterBookTableData &&
+          other.hiddenRegisterBookId == this.hiddenRegisterBookId);
+}
+
+class HiddenRegisterBookTableCompanion
+    extends UpdateCompanion<HiddenRegisterBookTableData> {
+  final Value<String> hiddenRegisterBookId;
+  final Value<int> rowid;
+  const HiddenRegisterBookTableCompanion({
+    this.hiddenRegisterBookId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  HiddenRegisterBookTableCompanion.insert({
+    required String hiddenRegisterBookId,
+    this.rowid = const Value.absent(),
+  }) : hiddenRegisterBookId = Value(hiddenRegisterBookId);
+  static Insertable<HiddenRegisterBookTableData> custom({
+    Expression<String>? hiddenRegisterBookId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (hiddenRegisterBookId != null)
+        'hidden_register_book_id': hiddenRegisterBookId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  HiddenRegisterBookTableCompanion copyWith(
+      {Value<String>? hiddenRegisterBookId, Value<int>? rowid}) {
+    return HiddenRegisterBookTableCompanion(
+      hiddenRegisterBookId: hiddenRegisterBookId ?? this.hiddenRegisterBookId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (hiddenRegisterBookId.present) {
+      map['hidden_register_book_id'] =
+          Variable<String>(hiddenRegisterBookId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HiddenRegisterBookTableCompanion(')
+          ..write('hiddenRegisterBookId: $hiddenRegisterBookId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class StudentViewDAOVersionData extends DataClass {
   final String id;
   final String name;
@@ -1271,16 +1446,12 @@ class RegisterBookViewDAOVersionData extends DataClass {
   final String? hourCreatedAt;
   final DateTime createdAt;
   final RegisterBookType type;
-  final String name;
-  final StudentAge age;
   const RegisterBookViewDAOVersionData(
       {required this.id,
       required this.action,
       this.hourCreatedAt,
       required this.createdAt,
-      required this.type,
-      required this.name,
-      required this.age});
+      required this.type});
   factory RegisterBookViewDAOVersionData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -1291,9 +1462,6 @@ class RegisterBookViewDAOVersionData extends DataClass {
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       type: $RegisterBookTableTable.$convertertype
           .fromJson(serializer.fromJson<int>(json['type'])),
-      name: serializer.fromJson<String>(json['name']),
-      age: $StudentTableTable.$converterage
-          .fromJson(serializer.fromJson<int>(json['age'])),
     );
   }
   @override
@@ -1306,9 +1474,6 @@ class RegisterBookViewDAOVersionData extends DataClass {
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'type': serializer
           .toJson<int>($RegisterBookTableTable.$convertertype.toJson(type)),
-      'name': serializer.toJson<String>(name),
-      'age':
-          serializer.toJson<int>($StudentTableTable.$converterage.toJson(age)),
     };
   }
 
@@ -1317,9 +1482,7 @@ class RegisterBookViewDAOVersionData extends DataClass {
           String? action,
           Value<String?> hourCreatedAt = const Value.absent(),
           DateTime? createdAt,
-          RegisterBookType? type,
-          String? name,
-          StudentAge? age}) =>
+          RegisterBookType? type}) =>
       RegisterBookViewDAOVersionData(
         id: id ?? this.id,
         action: action ?? this.action,
@@ -1327,8 +1490,6 @@ class RegisterBookViewDAOVersionData extends DataClass {
             hourCreatedAt.present ? hourCreatedAt.value : this.hourCreatedAt,
         createdAt: createdAt ?? this.createdAt,
         type: type ?? this.type,
-        name: name ?? this.name,
-        age: age ?? this.age,
       );
   @override
   String toString() {
@@ -1337,16 +1498,13 @@ class RegisterBookViewDAOVersionData extends DataClass {
           ..write('action: $action, ')
           ..write('hourCreatedAt: $hourCreatedAt, ')
           ..write('createdAt: $createdAt, ')
-          ..write('type: $type, ')
-          ..write('name: $name, ')
-          ..write('age: $age')
+          ..write('type: $type')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, action, hourCreatedAt, createdAt, type, name, age);
+  int get hashCode => Object.hash(id, action, hourCreatedAt, createdAt, type);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1355,9 +1513,7 @@ class RegisterBookViewDAOVersionData extends DataClass {
           other.action == this.action &&
           other.hourCreatedAt == this.hourCreatedAt &&
           other.createdAt == this.createdAt &&
-          other.type == this.type &&
-          other.name == this.name &&
-          other.age == this.age);
+          other.type == this.type);
 }
 
 class $RegisterBookViewDAOVersionView extends ViewInfo<
@@ -1367,15 +1523,11 @@ class $RegisterBookViewDAOVersionView extends ViewInfo<
   @override
   final _$NawiDatabase attachedDatabase;
   $RegisterBookViewDAOVersionView(this.attachedDatabase, [this._alias]);
-  $StudentTableTable get student =>
-      attachedDatabase.studentTable.createAlias('t0');
   $RegisterBookTableTable get registerBook =>
-      attachedDatabase.registerBookTable.createAlias('t1');
-  $StudentRegisterBookTableTable get studentRegisterBookTable =>
-      attachedDatabase.studentRegisterBookTable.createAlias('t2');
+      attachedDatabase.registerBookTable.createAlias('t0');
   @override
   List<GeneratedColumn> get $columns =>
-      [id, action, hourCreatedAt, createdAt, type, name, age];
+      [id, action, hourCreatedAt, createdAt, type];
   @override
   String get aliasedName => _alias ?? entityName;
   @override
@@ -1400,10 +1552,6 @@ class $RegisterBookViewDAOVersionView extends ViewInfo<
       type: $RegisterBookTableTable.$convertertype.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}type'])!),
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      age: $StudentTableTable.$converterage.fromSql(attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}age'])!),
     );
   }
 
@@ -1430,31 +1578,174 @@ class $RegisterBookViewDAOVersionView extends ViewInfo<
               type: DriftSqlType.int)
           .withConverter<RegisterBookType>(
               $RegisterBookTableTable.$convertertype);
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      generatedAs: GeneratedAs(student.name, false), type: DriftSqlType.string);
-  late final GeneratedColumnWithTypeConverter<StudentAge, int> age =
-      GeneratedColumn<int>('age', aliasedName, false,
-              generatedAs: GeneratedAs(student.age, false),
-              type: DriftSqlType.int)
-          .withConverter<StudentAge>($StudentTableTable.$converterage);
   @override
   $RegisterBookViewDAOVersionView createAlias(String alias) {
     return $RegisterBookViewDAOVersionView(attachedDatabase, alias);
   }
 
   @override
-  Query? get query => (attachedDatabase.selectOnly(studentRegisterBookTable)
-            ..addColumns($columns))
+  Query? get query =>
+      (attachedDatabase.selectOnly(registerBook)..addColumns($columns));
+  @override
+  Set<String> get readTables => const {'register_book'};
+}
+
+class HiddenRegisterBookViewDAOVersionData extends DataClass {
+  final String id;
+  final String action;
+  final String? hourCreatedAt;
+  final DateTime createdAt;
+  final RegisterBookType type;
+  const HiddenRegisterBookViewDAOVersionData(
+      {required this.id,
+      required this.action,
+      this.hourCreatedAt,
+      required this.createdAt,
+      required this.type});
+  factory HiddenRegisterBookViewDAOVersionData.fromJson(
+      Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HiddenRegisterBookViewDAOVersionData(
+      id: serializer.fromJson<String>(json['id']),
+      action: serializer.fromJson<String>(json['action']),
+      hourCreatedAt: serializer.fromJson<String?>(json['hourCreatedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      type: $RegisterBookTableTable.$convertertype
+          .fromJson(serializer.fromJson<int>(json['type'])),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'action': serializer.toJson<String>(action),
+      'hourCreatedAt': serializer.toJson<String?>(hourCreatedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'type': serializer
+          .toJson<int>($RegisterBookTableTable.$convertertype.toJson(type)),
+    };
+  }
+
+  HiddenRegisterBookViewDAOVersionData copyWith(
+          {String? id,
+          String? action,
+          Value<String?> hourCreatedAt = const Value.absent(),
+          DateTime? createdAt,
+          RegisterBookType? type}) =>
+      HiddenRegisterBookViewDAOVersionData(
+        id: id ?? this.id,
+        action: action ?? this.action,
+        hourCreatedAt:
+            hourCreatedAt.present ? hourCreatedAt.value : this.hourCreatedAt,
+        createdAt: createdAt ?? this.createdAt,
+        type: type ?? this.type,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('HiddenRegisterBookViewDAOVersionData(')
+          ..write('id: $id, ')
+          ..write('action: $action, ')
+          ..write('hourCreatedAt: $hourCreatedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('type: $type')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, action, hourCreatedAt, createdAt, type);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HiddenRegisterBookViewDAOVersionData &&
+          other.id == this.id &&
+          other.action == this.action &&
+          other.hourCreatedAt == this.hourCreatedAt &&
+          other.createdAt == this.createdAt &&
+          other.type == this.type);
+}
+
+class $HiddenRegisterBookViewDAOVersionView extends ViewInfo<
+    $HiddenRegisterBookViewDAOVersionView,
+    HiddenRegisterBookViewDAOVersionData> implements HasResultSet {
+  final String? _alias;
+  @override
+  final _$NawiDatabase attachedDatabase;
+  $HiddenRegisterBookViewDAOVersionView(this.attachedDatabase, [this._alias]);
+  $HiddenRegisterBookTableTable get hiddenRegisterBook =>
+      attachedDatabase.hiddenRegisterBookTable.createAlias('t0');
+  $RegisterBookTableTable get registerBook =>
+      attachedDatabase.registerBookTable.createAlias('t1');
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, action, hourCreatedAt, createdAt, type];
+  @override
+  String get aliasedName => _alias ?? entityName;
+  @override
+  String get entityName => 'hidden_register_book_view_d_a_o_version';
+  @override
+  Map<SqlDialect, String>? get createViewStatements => null;
+  @override
+  $HiddenRegisterBookViewDAOVersionView get asDslTable => this;
+  @override
+  HiddenRegisterBookViewDAOVersionData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HiddenRegisterBookViewDAOVersionData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      action: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}action'])!,
+      hourCreatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}hour_created_at']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      type: $RegisterBookTableTable.$convertertype.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}type'])!),
+    );
+  }
+
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      generatedAs: GeneratedAs(registerBook.id, false),
+      type: DriftSqlType.string);
+  late final GeneratedColumn<String> action = GeneratedColumn<String>(
+      'action', aliasedName, false,
+      generatedAs: GeneratedAs(registerBook.action, false),
+      type: DriftSqlType.string);
+  late final GeneratedColumn<String> hourCreatedAt = GeneratedColumn<String>(
+      'hour_created_at', aliasedName, true,
+      generatedAs: GeneratedAs(
+          DateTimeExpressions(registerBook.createdAt).strftime("%H:%M"), false),
+      type: DriftSqlType.string);
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      generatedAs: GeneratedAs(registerBook.createdAt, false),
+      type: DriftSqlType.dateTime);
+  late final GeneratedColumnWithTypeConverter<RegisterBookType, int> type =
+      GeneratedColumn<int>('type', aliasedName, false,
+              generatedAs: GeneratedAs(registerBook.type, false),
+              type: DriftSqlType.int)
+          .withConverter<RegisterBookType>(
+              $RegisterBookTableTable.$convertertype);
+  @override
+  $HiddenRegisterBookViewDAOVersionView createAlias(String alias) {
+    return $HiddenRegisterBookViewDAOVersionView(attachedDatabase, alias);
+  }
+
+  @override
+  Query? get query =>
+      (attachedDatabase.selectOnly(hiddenRegisterBook)..addColumns($columns))
           .join([
-        innerJoin(
-            student, student.id.equalsExp(studentRegisterBookTable.student)),
         innerJoin(registerBook,
-            registerBook.id.equalsExp(studentRegisterBookTable.registerBook))
+            registerBook.id.equalsExp(hiddenRegisterBook.hiddenRegisterBookId))
       ]);
   @override
   Set<String> get readTables =>
-      const {'student', 'register_book', 'student_register_book'};
+      const {'hidden_register_book_table', 'register_book'};
 }
 
 abstract class _$NawiDatabase extends GeneratedDatabase {
@@ -1467,12 +1758,17 @@ abstract class _$NawiDatabase extends GeneratedDatabase {
       $StudentRegisterBookTableTable(this);
   late final $HiddenStudentTableTable hiddenStudentTable =
       $HiddenStudentTableTable(this);
+  late final $HiddenRegisterBookTableTable hiddenRegisterBookTable =
+      $HiddenRegisterBookTableTable(this);
   late final $StudentViewDAOVersionView studentViewDAOVersion =
       $StudentViewDAOVersionView(this);
   late final $HiddenStudentViewDAOVersionView hiddenStudentViewDAOVersion =
       $HiddenStudentViewDAOVersionView(this);
   late final $RegisterBookViewDAOVersionView registerBookViewDAOVersion =
       $RegisterBookViewDAOVersionView(this);
+  late final $HiddenRegisterBookViewDAOVersionView
+      hiddenRegisterBookViewDAOVersion =
+      $HiddenRegisterBookViewDAOVersionView(this);
   late final Index name = Index('name', 'CREATE INDEX name ON student (name)');
   late final Index age = Index('age', 'CREATE INDEX age ON student (age)');
   late final Index timestamp =
@@ -1496,9 +1792,11 @@ abstract class _$NawiDatabase extends GeneratedDatabase {
         registerBookTable,
         studentRegisterBookTable,
         hiddenStudentTable,
+        hiddenRegisterBookTable,
         studentViewDAOVersion,
         hiddenStudentViewDAOVersion,
         registerBookViewDAOVersion,
+        hiddenRegisterBookViewDAOVersion,
         name,
         age,
         timestamp,
@@ -1897,6 +2195,26 @@ final class $$RegisterBookTableTableReferences extends BaseReferences<
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
+
+  static MultiTypedResultKey<$HiddenRegisterBookTableTable,
+      List<HiddenRegisterBookTableData>> _hiddenRegisterBookTableRefsTable(
+          _$NawiDatabase db) =>
+      MultiTypedResultKey.fromTable(db.hiddenRegisterBookTable,
+          aliasName: $_aliasNameGenerator(db.registerBookTable.id,
+              db.hiddenRegisterBookTable.hiddenRegisterBookId));
+
+  $$HiddenRegisterBookTableTableProcessedTableManager
+      get hiddenRegisterBookTableRefs {
+    final manager = $$HiddenRegisterBookTableTableTableManager(
+            $_db, $_db.hiddenRegisterBookTable)
+        .filter((f) =>
+            f.hiddenRegisterBookId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache =
+        $_typedResult.readTableOrNull(_hiddenRegisterBookTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$RegisterBookTableTableFilterComposer
@@ -1940,6 +2258,29 @@ class $$RegisterBookTableTableFilterComposer
                 $$StudentRegisterBookTableTableFilterComposer(
                   $db: $db,
                   $table: $db.studentRegisterBookTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
+
+  Expression<bool> hiddenRegisterBookTableRefs(
+      Expression<bool> Function($$HiddenRegisterBookTableTableFilterComposer f)
+          f) {
+    final $$HiddenRegisterBookTableTableFilterComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.hiddenRegisterBookTable,
+            getReferencedColumn: (t) => t.hiddenRegisterBookId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$HiddenRegisterBookTableTableFilterComposer(
+                  $db: $db,
+                  $table: $db.hiddenRegisterBookTable,
                   $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
                   joinBuilder: joinBuilder,
                   $removeJoinBuilderFromRootComposer:
@@ -2021,6 +2362,29 @@ class $$RegisterBookTableTableAnnotationComposer
                 ));
     return f(composer);
   }
+
+  Expression<T> hiddenRegisterBookTableRefs<T extends Object>(
+      Expression<T> Function($$HiddenRegisterBookTableTableAnnotationComposer a)
+          f) {
+    final $$HiddenRegisterBookTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.hiddenRegisterBookTable,
+            getReferencedColumn: (t) => t.hiddenRegisterBookId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$HiddenRegisterBookTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.hiddenRegisterBookTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
 }
 
 class $$RegisterBookTableTableTableManager extends RootTableManager<
@@ -2034,7 +2398,9 @@ class $$RegisterBookTableTableTableManager extends RootTableManager<
     $$RegisterBookTableTableUpdateCompanionBuilder,
     (RegisterBookTableData, $$RegisterBookTableTableReferences),
     RegisterBookTableData,
-    PrefetchHooks Function({bool studentRegisterBookTableRefs})> {
+    PrefetchHooks Function(
+        {bool studentRegisterBookTableRefs,
+        bool hiddenRegisterBookTableRefs})> {
   $$RegisterBookTableTableTableManager(
       _$NawiDatabase db, $RegisterBookTableTable table)
       : super(TableManagerState(
@@ -2085,11 +2451,14 @@ class $$RegisterBookTableTableTableManager extends RootTableManager<
                     $$RegisterBookTableTableReferences(db, table, e)
                   ))
               .toList(),
-          prefetchHooksCallback: ({studentRegisterBookTableRefs = false}) {
+          prefetchHooksCallback: (
+              {studentRegisterBookTableRefs = false,
+              hiddenRegisterBookTableRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
-                if (studentRegisterBookTableRefs) db.studentRegisterBookTable
+                if (studentRegisterBookTableRefs) db.studentRegisterBookTable,
+                if (hiddenRegisterBookTableRefs) db.hiddenRegisterBookTable
               ],
               addJoins: null,
               getPrefetchedDataCallback: (items) async {
@@ -2108,6 +2477,21 @@ class $$RegisterBookTableTableTableManager extends RootTableManager<
                         referencedItemsForCurrentItem:
                             (item, referencedItems) => referencedItems
                                 .where((e) => e.registerBook == item.id),
+                        typedResults: items),
+                  if (hiddenRegisterBookTableRefs)
+                    await $_getPrefetchedData<
+                            RegisterBookTableData,
+                            $RegisterBookTableTable,
+                            HiddenRegisterBookTableData>(
+                        currentTable: table,
+                        referencedTable: $$RegisterBookTableTableReferences
+                            ._hiddenRegisterBookTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$RegisterBookTableTableReferences(db, table, p0)
+                                .hiddenRegisterBookTableRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems.where(
+                                (e) => e.hiddenRegisterBookId == item.id),
                         typedResults: items)
                 ];
               },
@@ -2127,7 +2511,8 @@ typedef $$RegisterBookTableTableProcessedTableManager = ProcessedTableManager<
     $$RegisterBookTableTableUpdateCompanionBuilder,
     (RegisterBookTableData, $$RegisterBookTableTableReferences),
     RegisterBookTableData,
-    PrefetchHooks Function({bool studentRegisterBookTableRefs})>;
+    PrefetchHooks Function(
+        {bool studentRegisterBookTableRefs, bool hiddenRegisterBookTableRefs})>;
 typedef $$StudentRegisterBookTableTableCreateCompanionBuilder
     = StudentRegisterBookTableCompanion Function({
   required String student,
@@ -2668,6 +3053,235 @@ typedef $$HiddenStudentTableTableProcessedTableManager = ProcessedTableManager<
     (HiddenStudentTableData, $$HiddenStudentTableTableReferences),
     HiddenStudentTableData,
     PrefetchHooks Function({bool hiddenId})>;
+typedef $$HiddenRegisterBookTableTableCreateCompanionBuilder
+    = HiddenRegisterBookTableCompanion Function({
+  required String hiddenRegisterBookId,
+  Value<int> rowid,
+});
+typedef $$HiddenRegisterBookTableTableUpdateCompanionBuilder
+    = HiddenRegisterBookTableCompanion Function({
+  Value<String> hiddenRegisterBookId,
+  Value<int> rowid,
+});
+
+final class $$HiddenRegisterBookTableTableReferences extends BaseReferences<
+    _$NawiDatabase,
+    $HiddenRegisterBookTableTable,
+    HiddenRegisterBookTableData> {
+  $$HiddenRegisterBookTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $RegisterBookTableTable _hiddenRegisterBookIdTable(
+          _$NawiDatabase db) =>
+      db.registerBookTable.createAlias($_aliasNameGenerator(
+          db.hiddenRegisterBookTable.hiddenRegisterBookId,
+          db.registerBookTable.id));
+
+  $$RegisterBookTableTableProcessedTableManager get hiddenRegisterBookId {
+    final $_column = $_itemColumn<String>('hidden_register_book_id')!;
+
+    final manager =
+        $$RegisterBookTableTableTableManager($_db, $_db.registerBookTable)
+            .filter((f) => f.id.sqlEquals($_column));
+    final item =
+        $_typedResult.readTableOrNull(_hiddenRegisterBookIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$HiddenRegisterBookTableTableFilterComposer
+    extends Composer<_$NawiDatabase, $HiddenRegisterBookTableTable> {
+  $$HiddenRegisterBookTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$RegisterBookTableTableFilterComposer get hiddenRegisterBookId {
+    final $$RegisterBookTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.hiddenRegisterBookId,
+        referencedTable: $db.registerBookTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$RegisterBookTableTableFilterComposer(
+              $db: $db,
+              $table: $db.registerBookTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HiddenRegisterBookTableTableOrderingComposer
+    extends Composer<_$NawiDatabase, $HiddenRegisterBookTableTable> {
+  $$HiddenRegisterBookTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$RegisterBookTableTableOrderingComposer get hiddenRegisterBookId {
+    final $$RegisterBookTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.hiddenRegisterBookId,
+        referencedTable: $db.registerBookTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$RegisterBookTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.registerBookTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HiddenRegisterBookTableTableAnnotationComposer
+    extends Composer<_$NawiDatabase, $HiddenRegisterBookTableTable> {
+  $$HiddenRegisterBookTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$RegisterBookTableTableAnnotationComposer get hiddenRegisterBookId {
+    final $$RegisterBookTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.hiddenRegisterBookId,
+            referencedTable: $db.registerBookTable,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$RegisterBookTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.registerBookTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return composer;
+  }
+}
+
+class $$HiddenRegisterBookTableTableTableManager extends RootTableManager<
+    _$NawiDatabase,
+    $HiddenRegisterBookTableTable,
+    HiddenRegisterBookTableData,
+    $$HiddenRegisterBookTableTableFilterComposer,
+    $$HiddenRegisterBookTableTableOrderingComposer,
+    $$HiddenRegisterBookTableTableAnnotationComposer,
+    $$HiddenRegisterBookTableTableCreateCompanionBuilder,
+    $$HiddenRegisterBookTableTableUpdateCompanionBuilder,
+    (HiddenRegisterBookTableData, $$HiddenRegisterBookTableTableReferences),
+    HiddenRegisterBookTableData,
+    PrefetchHooks Function({bool hiddenRegisterBookId})> {
+  $$HiddenRegisterBookTableTableTableManager(
+      _$NawiDatabase db, $HiddenRegisterBookTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$HiddenRegisterBookTableTableFilterComposer(
+                  $db: db, $table: table),
+          createOrderingComposer: () =>
+              $$HiddenRegisterBookTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$HiddenRegisterBookTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> hiddenRegisterBookId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              HiddenRegisterBookTableCompanion(
+            hiddenRegisterBookId: hiddenRegisterBookId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String hiddenRegisterBookId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              HiddenRegisterBookTableCompanion.insert(
+            hiddenRegisterBookId: hiddenRegisterBookId,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$HiddenRegisterBookTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({hiddenRegisterBookId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (hiddenRegisterBookId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.hiddenRegisterBookId,
+                    referencedTable: $$HiddenRegisterBookTableTableReferences
+                        ._hiddenRegisterBookIdTable(db),
+                    referencedColumn: $$HiddenRegisterBookTableTableReferences
+                        ._hiddenRegisterBookIdTable(db)
+                        .id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$HiddenRegisterBookTableTableProcessedTableManager
+    = ProcessedTableManager<
+        _$NawiDatabase,
+        $HiddenRegisterBookTableTable,
+        HiddenRegisterBookTableData,
+        $$HiddenRegisterBookTableTableFilterComposer,
+        $$HiddenRegisterBookTableTableOrderingComposer,
+        $$HiddenRegisterBookTableTableAnnotationComposer,
+        $$HiddenRegisterBookTableTableCreateCompanionBuilder,
+        $$HiddenRegisterBookTableTableUpdateCompanionBuilder,
+        (HiddenRegisterBookTableData, $$HiddenRegisterBookTableTableReferences),
+        HiddenRegisterBookTableData,
+        PrefetchHooks Function({bool hiddenRegisterBookId})>;
 
 class $NawiDatabaseManager {
   final _$NawiDatabase _db;
@@ -2681,4 +3295,7 @@ class $NawiDatabaseManager {
           _db, _db.studentRegisterBookTable);
   $$HiddenStudentTableTableTableManager get hiddenStudentTable =>
       $$HiddenStudentTableTableTableManager(_db, _db.hiddenStudentTable);
+  $$HiddenRegisterBookTableTableTableManager get hiddenRegisterBookTable =>
+      $$HiddenRegisterBookTableTableTableManager(
+          _db, _db.hiddenRegisterBookTable);
 }

@@ -3,13 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:nawiapp/data/database_connection.dart';
 import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
 import 'package:nawiapp/domain/models/models_views/student_view.dart';
+import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/models/student.dart';
+import 'package:recase/recase.dart';
 import 'package:uuid/uuid.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 
 class NawiTools {
   static Uuid uuid = Uuid();
   static String clearSpacesOnText(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
+  static String formatActionText(String text) {
+    final buffer = StringBuffer();
+    for (String word in text.split(' ')) {
+      if(word.startsWith('@')) word = word.replaceFirst('@', '').replaceAll('_', ' ').titleCase;
+      buffer.write(word);
+      buffer.write(' ');
+    }
+    return clearSpacesOnText(buffer.toString());
+  }
 
   static Success<T> resultConverter<T, E>(Result<E> result, T Function(E value) converter) 
     => Success(data: converter(result.getValue as E), message: result.message);
@@ -17,6 +28,7 @@ class NawiTools {
 
 class NawiServiceTools{
   static Function defaultErrorFunction = (e, stackTrace) => Error.onService(message: e, stackTrace: stackTrace);
+  static Error<T> errorParser<T>(Result result) => Error.onService(message: result.message, stackTrace: (result as Error).stackTrace);
 
   static StudentTableCompanion toStudentTableCompanion(Student data, {bool withId = false}) => StudentTableCompanion(
     id: withId ? Value(data.id) : Value.absent(),
@@ -25,18 +37,33 @@ class NawiServiceTools{
     notes: Value(data.notes),
     timestamp: Value(data.timestamp)
   );
+
+  static RegisterBookTableCompanion toRegisterBookTableCompanion(RegisterBook data, {bool withId = false}) => RegisterBookTableCompanion(
+    id: withId ? Value(data.id) : Value.absent(),
+    action: Value(data.action),
+    createdAt: Value(data.timestamp),
+    notes: Value(data.notes),
+    type: Value(data.type)
+  );
 }
 
 /// Utilidades para los repositorios, que en resumen son cosas de filtros y detalles extras
 class NawiRepositoryTools {
   
   static Function defaultErrorFunction = (e, stackTrace) => Error.onRepository(message: e, stackTrace: stackTrace);
-
-  static StudentViewDAOVersionData hiddenToPublic(HiddenStudentViewDAOVersionData data) => StudentViewDAOVersionData(
+  static StudentViewDAOVersionData studentHiddenToPublic(HiddenStudentViewDAOVersionData data) => StudentViewDAOVersionData(
     id: data.id,
     name: data.name,
     age: data.age,
     timestamp: data.timestamp
+  );
+
+  static RegisterBookViewDAOVersionData registerBookHiddenToPublic(HiddenRegisterBookViewDAOVersionData data) => RegisterBookViewDAOVersionData(
+    id: data.id,
+    action: data.action,
+    createdAt: data.createdAt,
+    type: data.type,
+    hourCreatedAt: data.hourCreatedAt
   );
   
   static SimpleSelectStatement<T, R> infiniteScrollFilter<T extends HasResultSet, R>({required dynamic query, int? pageSize, int? currentPage}) {
@@ -49,13 +76,13 @@ class NawiRepositoryTools {
   /// Solo para la tabla `students` donde se filtra por nombre
   static void nameStudentFilter({required List<Expression<bool>> expressions, String? textLike, required dynamic table}) {
     if(textLike != null && textLike.isNotEmpty) {
-      expressions.add(table.name.like("%$textLike%"));
+      expressions.add((table.name as GeneratedColumn<String>).contains(textLike));
     }
   }
 
   static void actionFilter({required List<Expression<bool>> expressions, String? textLike, required dynamic table}) {
     if(textLike != null && textLike.isNotEmpty) {
-      expressions.add(table.action.like("%$textLike%"));
+      expressions.add((table.action as GeneratedColumn<String>).contains(textLike));
     }
   }
 
@@ -80,8 +107,10 @@ class NawiRepositoryTools {
   }
 
   static void ageFilter({required List<Expression<bool>> expressions, int? ageEnumIndex1, int? ageEnumIndex2, required dynamic table}) {
-    if(ageEnumIndex1 != null) expressions.add(table.age.equals(ageEnumIndex1));
-    if(ageEnumIndex2 != null) expressions.add(table.age.equals(ageEnumIndex2));
+    final List<Expression<bool>> orExpression = [];
+    if(ageEnumIndex1 != null) orExpression.add((table.age as GeneratedColumnWithTypeConverter<StudentAge, int>).equals(ageEnumIndex1));
+    if(ageEnumIndex2 != null) orExpression.add((table.age as GeneratedColumnWithTypeConverter<StudentAge, int>).equals(ageEnumIndex2));
+    if(orExpression.isNotEmpty) expressions.add(Expression.or(orExpression));
   }
 }
 
