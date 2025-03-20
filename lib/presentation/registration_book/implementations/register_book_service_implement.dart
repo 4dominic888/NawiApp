@@ -13,7 +13,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   final StudentRegisterBookRepository studentRegisterBookRepo;
   final RegisterBookRepository registerBookRepo;
 
-  RegisterBookServiceImplement(this.studentRegisterBookRepo, this.registerBookRepo);
+  RegisterBookServiceImplement(this.registerBookRepo, this.studentRegisterBookRepo);
 
   @override
   Future<Result<RegisterBook>> addOne(RegisterBook data) {

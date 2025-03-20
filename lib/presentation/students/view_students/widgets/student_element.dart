@@ -3,25 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/presentation/students/add_students/screens/add_students_screen.dart';
+import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
+
+typedef ButtonControllerWithProcess = ({
+  RoundedLoadingButtonController controller,
+  Future<void> Function() action
+});
 
 class StudentElement extends StatelessWidget {
   const StudentElement({
     super.key,
-    required this.context,
     required this.item,
     required this.index,
-    required this.deleteButton,
-    required this.archiveButton,
-    required this.unarchiveButton,
+    required this.delete,
+    required this.archive,
+    required this.unarchive,
     this.isArchived = false
   });
 
-  final BuildContext context;
   final StudentDAO item;
   final int index;
-  final Widget deleteButton;
-  final Widget archiveButton;
-  final Widget unarchiveButton;
+  final ButtonControllerWithProcess delete;
+  final ButtonControllerWithProcess archive;
+  final ButtonControllerWithProcess unarchive;
   final bool isArchived;
 
   @override
@@ -52,8 +57,25 @@ class StudentElement extends StatelessWidget {
                 title: "Confirmación de eliminación",
                 desc: "¿Estás seguro que deseas eliminar este estudiante? (Esta acción eliminará todos los registros relacionados)"
                 "\n\nCaso contrario, ${!isArchived ? "¿Archivarlo?" : "¿Desarchivarlo?"}",
-                btnOk: deleteButton,
-                btnCancel: !isArchived ? archiveButton : unarchiveButton
+                btnOk: LoadingProcessButton(
+                  controller: delete.controller,
+                  proccess: delete.action,
+                  label: Text("Eliminar", style: TextStyle(color: Colors.white)),
+                  color: Colors.redAccent.shade200
+                ),
+                btnCancel: !isArchived ? 
+                  LoadingProcessButton(
+                    controller: archive.controller,
+                    proccess: archive.action,
+                    label: Text("Archivar", style: TextStyle(color: Colors.white)),
+                    color: Colors.orangeAccent.shade200
+                  ) :
+                  LoadingProcessButton(
+                    controller: unarchive.controller,
+                    proccess: unarchive.action,
+                    label: const Text("Desarchivar", style: TextStyle(color: Colors.white)),
+                    color: Colors.green.shade200,
+                  )
               ).show();
               return false;
             }

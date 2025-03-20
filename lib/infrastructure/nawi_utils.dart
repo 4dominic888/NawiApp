@@ -5,12 +5,22 @@ import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
 import 'package:nawiapp/domain/models/models_views/student_view.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/models/student.dart';
+import 'package:recase/recase.dart';
 import 'package:uuid/uuid.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 
 class NawiTools {
   static Uuid uuid = Uuid();
   static String clearSpacesOnText(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
+  static String formatActionText(String text) {
+    final buffer = StringBuffer();
+    for (String word in text.split(' ')) {
+      if(word.startsWith('@')) word = word.replaceFirst('@', '').replaceAll('_', ' ').titleCase;
+      buffer.write(word);
+      buffer.write(' ');
+    }
+    return clearSpacesOnText(buffer.toString());
+  }
 
   static Success<T> resultConverter<T, E>(Result<E> result, T Function(E value) converter) 
     => Success(data: converter(result.getValue as E), message: result.message);

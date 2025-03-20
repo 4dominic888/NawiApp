@@ -6,7 +6,6 @@ import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/infrastructure/providers/filter_provider.dart';
 import 'package:nawiapp/presentation/students/view_students/widgets/student_element.dart';
-import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 //* lista de datos de prueba
@@ -32,12 +31,13 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
 
   @override
   void initState() {
+    super.initState();
+
     _paggingStatusCondition = (
           _pagingController.value.status == PagingStatus.loadingFirstPage ||
           _pagingController.value.status == PagingStatus.ongoing
     ) && _isLoadingStarted;
 
-    super.initState();
     _pagingController.addPageRequestListener((pageKey) {
       if(_paggingStatusCondition) return; 
       _isLoadingStarted = true;
@@ -76,16 +76,13 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
         child: PagedListView(
           pagingController: _pagingController,
           builderDelegate: PagedChildBuilderDelegate<StudentDAO>(
-            itemBuilder: (context, item, index) => StudentElement(
-              context: context,
+            itemBuilder: (_, item, index) => StudentElement(
               item: item,
               index: index,
               isArchived: ref.watch(studentFilterProvider).showHidden,
-              deleteButton: LoadingProcessButton(
+              delete: (
                 controller: _btnDeleteElementController,
-                label: Text("Eliminar", style: TextStyle(color: Colors.white)),
-                color: Colors.redAccent.shade200,
-                proccess: () async {
+                action: () async {
                   _btnDeleteElementController.start();
                   final result = await _studentService.deleteOne(item.id);
                   result.onValue(
@@ -95,13 +92,11 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
                   );
                   if(context.mounted) Navigator.of(context).pop();
                   _refresh();
-                },
+                }
               ),
-              archiveButton: LoadingProcessButton(
+              archive: (
                 controller: _btnArchiveElementController,
-                label: Text("Archivar", style: TextStyle(color: Colors.white)),
-                color: Colors.orangeAccent.shade200,
-                proccess: () async {
+                action: () async {
                   _btnArchiveElementController.start();
                   final result = await _studentService.archiveOne(item.id);
                   result.onValue(
@@ -110,13 +105,11 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
                   );
                   if(context.mounted) Navigator.of(context).pop();
                   _refresh();
-                },
+                }
               ),
-              unarchiveButton: LoadingProcessButton(
+              unarchive: (
                 controller: _btnUnarchiveElementController,
-                label: const Text("Desarchivar", style: TextStyle(color: Colors.white)),
-                color: Colors.green.shade200,
-                proccess: () async {
+                action: () async {
                   _btnUnarchiveElementController.start();
                   final result = await _studentService.unarchiveOne(item.id);
                   result.onValue(
@@ -125,7 +118,7 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
                   );
                   if(context.mounted) Navigator.of(context).pop();
                   _refresh();
-                },
+                }
               ),
             ),
             firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
