@@ -15,133 +15,118 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
     RegisterBookTableData,
     RegisterBookTableCompanion,
     RegisterBookViewDAOVersionData,
-    RegisterBookFilter
-  >{
+    RegisterBookFilter>
+  {
 
   RegisterBookRepository(super.db);
 
   @override
-  Future<Result<RegisterBookTableData?>> addOne(RegisterBookTableCompanion data) {
-    return into(registerBookTable).insertReturningOrNull(data).then(
-      (result) => Success(data: result), onError: NawiRepositoryTools.defaultErrorFunction
-    );
+  Future<Result<RegisterBookTableData>> addOne(RegisterBookTableCompanion data) async {
+    try {
+      final result = await into(registerBookTable).insertReturningOrNull(data);
+      if(result != null) return Success(data: result);
+      throw NawiError.onRepository(message: "Cuaderno de registro no agregado");
+    } catch (e) { return NawiRepositoryTools.onCatch(e); }
   }
 
   @override
-  Future<Result<List<RegisterBookViewDAOVersionData>>> getAll(RegisterBookFilter params) {
-    var query = (!params.showHidden ? select(registerBookViewDAOVersion) : select(hiddenRegisterBookViewDAOVersion))
-      ..where((tbl) {
-        final List<Expression<bool>> filterExpressions = [];
+  Future<Result<Iterable<RegisterBookViewDAOVersionData>>> getAll(RegisterBookFilter params) async {
+    try {
+      var query = (!params.showHidden ? select(registerBookViewDAOVersion) : select(hiddenRegisterBookViewDAOVersion))
+        ..where((tbl) {
+          final List<Expression<bool>> filterExpressions = [];
 
-        if(!params.showHidden) {
-          filterExpressions.add((tbl as $RegisterBookViewDAOVersionView).id.isNotInQuery(
-            selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
-          ));
-        }
+          if(!params.showHidden) {
+            filterExpressions.add((tbl as $RegisterBookViewDAOVersionView).id.isNotInQuery(
+              selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
+            ));
+          }
 
-        NawiRepositoryTools.actionFilter(
-          expressions: filterExpressions, table: tbl,
-          textLike: params.actionLike
-        );
+          NawiRepositoryTools.actionFilter(
+            expressions: filterExpressions, table: tbl,
+            textLike: params.actionLike
+          );
 
-        NawiRepositoryTools.nameStudentFilter(
-          expressions: filterExpressions, table: tbl,
-          textLike: params.studentNameLike
-        );
+          NawiRepositoryTools.nameStudentFilter(
+            expressions: filterExpressions, table: tbl,
+            textLike: params.studentNameLike
+          );
 
-        return Expression.and(filterExpressions);
-      });
+          return Expression.and(filterExpressions);
+        });
 
-    query = NawiRepositoryTools.orderByAction(query: query, orderBy: params.orderBy);
-    query = NawiRepositoryTools.infiniteScrollFilter(
-      query: query,
-      pageSize: params.pageSize,
-      currentPage: params.currentPage
-    );
+      query = NawiRepositoryTools.orderByAction(query: query, orderBy: params.orderBy);
+      query = NawiRepositoryTools.infiniteScrollFilter(
+        query: query,
+        pageSize: params.pageSize,
+        currentPage: params.currentPage
+      );
 
-    return query.get().then(
-      (result) => Success(data: !params.showHidden ?
-        result as List<RegisterBookViewDAOVersionData> :
+      final result = await query.get();
+      return Success(data: !params.showHidden ?
+        result as Iterable<RegisterBookViewDAOVersionData> :
         (result as List<HiddenRegisterBookViewDAOVersionData>).map(
-          (e) => NawiRepositoryTools.registerBookHiddenToPublic(e)
-        ).toList(),
-      ),
-      onError: NawiRepositoryTools.defaultErrorFunction
-    );
-  }
-
-  // Stream<Result<List<RegisterBookViewDAOVersionData>>> getAllHidden(RegisterBookFilter params) {
-  //   var query = select(hiddenRegisterBookViewDAOVersion)..where((tbl) {
-  //     final List<Expression<bool>> filterExpressions = [];
-
-  //     NawiRepositoryTools.actionFilter(
-  //       expressions: filterExpressions, table: tbl,
-  //       textLike: params.actionLike
-  //     );
-
-  //     NawiRepositoryTools.nameStudentFilter(
-  //       expressions: filterExpressions, table: tbl,
-  //       textLike: params.studentNameLike
-  //     );
-
-  //     return Expression.and(filterExpressions);
-  //   });
-
-  //   query = NawiRepositoryTools.orderByAction(query: query, orderBy: params.orderBy);
-  //   query = NawiRepositoryTools.infiniteScrollFilter(
-  //     query: query,
-  //     pageSize: params.pageSize,
-  //     currentPage: params.currentPage
-  //   );
-
-  //   return query.watch().map((event) {
-  //     try { return Success(data: event); }
-  //     catch (e) { return Error.onRepository(message: e.toString()); }
-  //   });
-  // }
-
-  @override
-  Future<Result<RegisterBookTableData>> getOne(String id) {
-    return (select(registerBookTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull().then(
-      (result) => result != null ? Success(data: result) : Error.onRepository(message: "No encontrado"),
-      onError: NawiRepositoryTools.defaultErrorFunction
-    );
+          (e) => NawiRepositoryTools.registerBookHiddenToPublic(e),
+        )
+      );
+    } catch (e) { return NawiRepositoryTools.onCatch(e); }
   }
 
   @override
-  Future<Result<bool>> updateOne(RegisterBookTableData data) {
-    return update(registerBookTable).replace(data).then(
-      (result) => Success(data: result), onError: NawiRepositoryTools.defaultErrorFunction
-    );
+  Future<Result<RegisterBookTableData>> getOne(String id) async {
+    try {
+      final result = await (select(registerBookTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+      if(result != null) return Success(data: result);
+      throw NawiError.onRepository(message: "Cuaderno de registro no encontrado");
+    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+  }
+
+  Future<Result<bool>> updateOne(RegisterBookTableData data) async {
+    try {
+      final isUpdated = await update(registerBookTable).replace(data);
+      if(!isUpdated) throw NawiError.onRepository(message: "Cuaderno de registro no actualizado");
+      return Success(data: true);
+    } catch (e) { return NawiRepositoryTools.onCatch(e); }
   }
 
   @override
   Future<Result<RegisterBookTableData>> deleteOne(String id) {
-    return (delete(registerBookTable)..where((tbl) => tbl.id.equals(id))).goAndReturn().then(
-      (result) => Success(data: result.first),
-      onError: NawiRepositoryTools.defaultErrorFunction
-    );
+    return transaction<Result<RegisterBookTableData>>(() async {
+      try {
+        await (delete(hiddenRegisterBookTable)..where((tbl) => tbl.hiddenRegisterBookId.equals(id))).go();
+        return Success(data: (await (
+            delete(registerBookTable)
+              ..where((tbl) => tbl.id.equals(id))
+            ).goAndReturn()
+          ).first
+        );
+      } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    });
   }
 
+  @override
   Future<Result<RegisterBookTableData>> archiveOne(String id) {
     return transaction<Result<RegisterBookTableData>>(() async {
       try {
         final result = await getOne(id);
-        return into(hiddenRegisterBookTable).insertReturningOrNull(HiddenRegisterBookTableData(hiddenRegisterBookId: id)).then(
-          (_) => result, onError: NawiRepositoryTools.defaultErrorFunction
-        );
-      } catch (e) { return Error.onRepository(message: e.toString()); }
+        if(result is NawiError<RegisterBookTableData>) throw NawiError.onRepository(message: "No se pudo archivar al cuaderno de registro");
+        final hiddenResult = await  into(hiddenRegisterBookTable).insertReturningOrNull(HiddenRegisterBookTableData(hiddenRegisterBookId: id));
+        if(hiddenResult == null) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar archivar al cuaderno de registro");
+        return Success(data: result.getValue!);
+      } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
 
+  @override
   Future<Result<RegisterBookTableData>> unarchiveOne(String id) {
-    return transaction<Result<RegisterBookTableData>>(() async {
+  return transaction<Result<RegisterBookTableData>>(() async {
       try {
         final result = await getOne(id);
-        return (delete(hiddenRegisterBookTable)..where((tbl) => tbl.hiddenRegisterBookId.equals(id))).goAndReturn().then(
-          (_) => result, onError: NawiRepositoryTools.defaultErrorFunction
-        );
-      } catch (e) { return Error.onRepository(message: e.toString()); }
+        if(result is NawiError<RegisterBookTableData>) throw NawiError.onRepository(message: "No se pudo desarchivar al cuaderno de registro");
+        final hiddenResult = await (delete(hiddenRegisterBookTable)..where((tbl) => tbl.hiddenRegisterBookId.equals(id))).go();
+        if(hiddenResult != 0) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar desarchivar al cuaderno de registro");
+        return Success(data: result.getValue!);
+      } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
 }

@@ -31,7 +31,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
           (e) => StudentRegisterBookTableCompanion.insert(registerBook: data.registerBookId, student: e)
         )));
         return Success(data: true);
-      } catch (e) { return Error.onRepository(message: e.toString()); }
+      } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
 
@@ -44,32 +44,23 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
       try {
         //* Deleting first
         final deleteResult = await deleteManyByRegisterBookID(data.registerBookId);
-        if(deleteResult is Error) return deleteResult;
+        if(deleteResult is NawiError<bool>) throw NawiError.onRepository(message: "No se pudo borrar los cuadernos de registro previos");
 
         //* Add again
         final addResult = await addMany(data);
-        if(addResult is Error) return addResult;
+        if(addResult is NawiError<bool>) NawiError.onRepository(message: "No se pudo volver a agregar los cuadernos de registro");
 
         return Success(data: true);
-      } catch (e) { return Error.onRepository(message: e.toString()); }
+      } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
 
   /// Elimina los registros donde exista [registerBookId]
-  Future<Result<bool>> deleteManyByRegisterBookID(String registerBookId) {
-    return (delete(studentRegisterBookTable)..where((tbl) => tbl.registerBook.equals(registerBookId))).go().then(
-      (_) => Success(data: true),
-      onError: NawiRepositoryTools.defaultErrorFunction
-    );
-    // return transaction<Result<bool>>(() async {
-    //   try {
-    //     await batch((batch) => batch.deleteWhere(studentRegisterBookTable, (tbl) => tbl.registerBook.equals(registerBookId)));
-    //     if(deleteRegisterBook) {
-    //       await batch((batch) => batch.deleteWhere(registerBookTable, (tbl) => tbl.id.equals(registerBookId)));
-    //     }
-    //     return Success(data: true);
-    //   } catch (e) { return Error.onRepository(message: e.toString()); }
-    // });
+  Future<Result<bool>> deleteManyByRegisterBookID(String registerBookId) async {
+    try {
+      await (delete(studentRegisterBookTable)..where((tbl) => tbl.registerBook.equals(registerBookId))).go();
+      return Success(data: true);
+    } catch (e) { return NawiRepositoryTools.onCatch(e); }
   }
 
   /// Elimina los registros donde exista [studentId], ademas de borrar los cuadernos de registro de la tabla [RegisterBookTable] involucrados si [deleteRegisterBooks] es `true`
@@ -86,20 +77,21 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
         }
 
         return Success(data: true);
-      } catch (e) { return Error.onRepository(message: e.toString()); }
+      } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
 
   /// Obtiene una lista de [StudentViewDAOVersion] de un registro de un [RegisterBookTable] en base a la tabla many to many
   /// [StudentRegisterBookTable]
-  Future<Result<List<StudentViewDAOVersionData>>> getStudentsFromRegisterBook(String registerBookId) {
-    return ((select(studentViewDAOVersion))..where((tblStudent) => tblStudent.id.isInQuery(
-      select(studentViewDAOVersion).join([
-        innerJoin(studentRegisterBookTable, studentRegisterBookTable.student.equalsExp(studentViewDAOVersion.id))
-      ])..where(studentRegisterBookTable.registerBook.equals(registerBookId))
-    ))).get().then(
-      (result) => Success(data: result),
-      onError: NawiRepositoryTools.defaultErrorFunction
-    );
+  Future<Result<List<StudentViewDAOVersionData>>> getStudentsFromRegisterBook(String registerBookId) async {
+    try {
+      final result = await ((select(studentViewDAOVersion))..where((tblStudent) => tblStudent.id.isInQuery(
+        select(studentViewDAOVersion).join([
+          innerJoin(studentRegisterBookTable, studentRegisterBookTable.student.equalsExp(studentViewDAOVersion.id))
+        ])..where(studentRegisterBookTable.registerBook.equals(registerBookId))
+      ))).get();
+      return Success(data: result);
+    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+
   }
 }

@@ -60,7 +60,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
   @override
   void initState() {
     super.initState();
-    _future = _studentService.getOne(widget.idToEdit);
+    _future = _studentService.getOne(widget.idToEdit ?? '0');
   }
 
   @override

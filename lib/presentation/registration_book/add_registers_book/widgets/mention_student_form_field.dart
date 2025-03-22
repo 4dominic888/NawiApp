@@ -34,7 +34,7 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
     late final List<StudentDAO> output;
     result.onValue(
       withPopup: false,
-      onSuccessfully: (data, message) => output = data.data,
+      onSuccessfully: (data, message) => output = data.data.toList(),
       onError: (error, message) => output = [],
     );
     return output;
