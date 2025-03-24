@@ -86,12 +86,11 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
   Future<Result<List<StudentViewDAOVersionData>>> getStudentsFromRegisterBook(String registerBookId) async {
     try {
       final result = await ((select(studentViewDAOVersion))..where((tblStudent) => tblStudent.id.isInQuery(
-        select(studentViewDAOVersion).join([
-          innerJoin(studentRegisterBookTable, studentRegisterBookTable.student.equalsExp(studentViewDAOVersion.id))
-        ])..where(studentRegisterBookTable.registerBook.equals(registerBookId))
+        selectOnly(studentRegisterBookTable)
+          ..addColumns([studentRegisterBookTable.student])
+          ..where(studentRegisterBookTable.registerBook.equals(registerBookId))
       ))).get();
       return Success(data: result);
     } catch (e) { return NawiRepositoryTools.onCatch(e); }
-
   }
 }
