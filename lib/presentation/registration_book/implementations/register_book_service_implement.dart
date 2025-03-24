@@ -7,6 +7,7 @@ import 'package:nawiapp/domain/repositories/register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:uuid/uuid.dart';
 
 interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
 
@@ -19,13 +20,14 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   Future<Result<RegisterBook>> addOne(RegisterBook data) {
     return registerBookRepo.transaction<Result<RegisterBook>>(() async {
       //* Agregado del cuaderno de registro a la tabla
-      final addedRegisterBookResult = await registerBookRepo.addOne(NawiServiceTools.toRegisterBookTableCompanion(data));
+      final addedRegisterBookResult = await registerBookRepo.addOne(NawiServiceTools.toRegisterBookTableCompanion(data, withId: Uuid.isValidUUID(fromString: data.id)));
       if(addedRegisterBookResult is NawiError) return NawiTools.errorParser(addedRegisterBookResult);
 
       final addedStudentsOnRegisterBookResult = await studentRegisterBookRepo.addMany((
         emisors: data.mentions.map((e) => e.id),
-        registerBookId: data.id
+        registerBookId: addedRegisterBookResult.getValue!.id
       ));
+
       if(addedStudentsOnRegisterBookResult is NawiError) return NawiTools.errorParser(addedStudentsOnRegisterBookResult);
 
       return NawiTools.resultConverter(addedRegisterBookResult, (value) => RegisterBook.fromTableData(value, data.mentions));
