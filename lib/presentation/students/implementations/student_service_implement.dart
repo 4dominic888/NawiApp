@@ -7,6 +7,7 @@ import 'package:nawiapp/domain/repositories/student_repository.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:recase/recase.dart';
+import 'package:uuid/uuid.dart';
 
 interface class StudentServiceImplement extends StudentServiceBase {
 
@@ -17,7 +18,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   @override
   Future<Result<Student>> addOne(Student data) async {
     data = data.copyWith(name: data.name.titleCase);
-    final result = await studentRepo.addOne(NawiServiceTools.toStudentTableCompanion(data));
+    final result = await studentRepo.addOne(NawiServiceTools.toStudentTableCompanion(data, withId: Uuid.isValidUUID(fromString: data.id)));
     return NawiTools.resultConverter(result, (value) => Student.fromTableData(value!), origin: NawiErrorOrigin.service);
   }
 
