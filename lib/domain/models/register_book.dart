@@ -44,7 +44,8 @@ class RegisterBook {
     action: data.action,
     mentions: mentions,
     notes: data.notes,
-    timestamp: data.createdAt
+    timestamp: data.createdAt,
+    type: data.type
   );
 
   RegisterBook copyWith({
