@@ -81,6 +81,7 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
     } catch (e) { return NawiRepositoryTools.onCatch(e); }
   }
 
+  @override
   Future<Result<bool>> updateOne(RegisterBookTableData data) async {
     try {
       final isUpdated = await update(registerBookTable).replace(data);
