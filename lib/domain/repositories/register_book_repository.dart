@@ -109,11 +109,18 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   Future<Result<RegisterBookTableData>> archiveOne(String id) {
     return transaction<Result<RegisterBookTableData>>(() async {
       try {
-        final result = await getOne(id);
-        if(result is NawiError<RegisterBookTableData>) throw NawiError.onRepository(message: "No se pudo archivar al cuaderno de registro");
-        final hiddenResult = await  into(hiddenRegisterBookTable).insertReturningOrNull(HiddenRegisterBookTableData(hiddenRegisterBookId: id));
+        // final result = await getOne(id);
+        final result = await (select(registerBookTable)..where((tbl) => 
+          Expression.and([
+            tbl.id.isNotInQuery(selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])),
+            tbl.id.equals(id)
+          ])
+        )).get();
+
+        if(result.isEmpty) throw NawiError.onRepository(message: "No se pudo archivar al cuaderno de registro, porque no existe o ya está archivado");
+        final hiddenResult = await into(hiddenRegisterBookTable).insertReturningOrNull(HiddenRegisterBookTableData(hiddenRegisterBookId: id));
         if(hiddenResult == null) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar archivar al cuaderno de registro");
-        return Success(data: result.getValue!);
+        return Success(data: result.first);
       } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
@@ -122,11 +129,17 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   Future<Result<RegisterBookTableData>> unarchiveOne(String id) {
   return transaction<Result<RegisterBookTableData>>(() async {
       try {
-        final result = await getOne(id);
-        if(result is NawiError<RegisterBookTableData>) throw NawiError.onRepository(message: "No se pudo desarchivar al cuaderno de registro");
+        // final result = await getOne(id);
+        final result = await (select(registerBookTable)..where((tbl) => tbl.id.isInQuery(
+          selectOnly(hiddenRegisterBookTable)
+            ..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
+            ..where(hiddenRegisterBookTable.hiddenRegisterBookId.equals(id))
+        ))).get();
+
+        if(result.isEmpty) throw NawiError.onRepository(message: "No se pudo desarchivar al cuaderno de registro, porque no existe o no esta desarchivado");
         final hiddenResult = await (delete(hiddenRegisterBookTable)..where((tbl) => tbl.hiddenRegisterBookId.equals(id))).go();
-        if(hiddenResult != 0) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar desarchivar al cuaderno de registro");
-        return Success(data: result.getValue!);
+        if(hiddenResult == 0) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar desarchivar al cuaderno de registro");
+        return Success(data: result.first);
       } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }

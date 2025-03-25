@@ -77,9 +77,9 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   @override
-  Future<Result<StudentTableData>> getOne(String? id) async{
+  Future<Result<StudentTableData>> getOne(String id) async{
     try {
-      final result = await (select(studentTable)..where((tbl) => tbl.id.equals(id ?? '*'))).getSingleOrNull();
+      final result = await (select(studentTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
       if(result != null) return Success(data: result);
       throw NawiError.onRepository(message: "No encontrado");
     } catch (e) { return NawiRepositoryTools.onCatch(e); }
@@ -117,11 +117,17 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   Future<Result<StudentTableData>> archiveOne(String id) {
     return transaction<Result<StudentTableData>>(() async {
       try {
-        final result = await getOne(id);
-        if(result is NawiError<StudentTableData>) throw NawiError.onRepository(message: "No se pudo archivar el estudiante, porque no existe");
+        final result = await (select(studentTable)..where((tbl) => 
+          Expression.and([
+            tbl.id.isNotInQuery(selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])),
+            tbl.id.equals(id)
+          ])
+        )).get();
+        
+        if(result.isEmpty) throw NawiError.onRepository(message: "No se pudo archivar el estudiante, porque no existe o ya ha sido archivado");
         final hiddenResult = (await into(hiddenStudentTable).insertReturningOrNull(HiddenStudentTableData(hiddenId: id)));
         if(hiddenResult == null) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar archivar al estudiante");
-        return Success(data: result.getValue!);
+        return Success(data: result.first );
       } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
@@ -131,11 +137,16 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   Future<Result<StudentTableData>> unarchiveOne(String id) {
     return transaction<Result<StudentTableData>>(() async {
       try {
-        final result = await getOne(id);
-        if(result is NawiError<StudentTableData>) throw NawiError.onRepository(message: "No se pudo desarchivar el estudiante, porque no existe");
+        final result = await (select(studentTable)..where((tbl) => tbl.id.isInQuery(
+          selectOnly(hiddenStudentTable)
+            ..addColumns([hiddenStudentTable.hiddenId])
+            ..where(hiddenStudentTable.hiddenId.equals(id))
+        ))).get();
+
+        if(result.isEmpty) throw NawiError.onRepository(message: "No se pudo desarchivar el estudiante, porque no existe o no esta archivado");
         final hiddenResult = await (delete(hiddenStudentTable)..where((tbl) => tbl.hiddenId.equals(id))).go();
-        if(hiddenResult != 0) throw NawiError.onRepository(message: "Ha ocurrido un error al desarchivar al estudiante");
-        return Success(data: result.getValue!);
+        if(hiddenResult == 0) throw NawiError.onRepository(message: "Ha ocurrido un error al desarchivar al estudiante");
+        return Success(data: result.first );
       } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
