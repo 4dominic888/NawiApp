@@ -85,16 +85,28 @@ void main(){
     var result = await service.getAll(StudentFilter());
     int length = result.getValue!.length;
     
-    await service.archiveOne(archivedAddedResult.getValue!.id);
+    final goodArchivedResult = await service.archiveOne(archivedAddedResult.getValue!.id);
+    final badArchivedResult = await service.archiveOne('750c3a46-3e44-4800-bee1-ebccb4f4f55c');
 
     result = await service.getAll(StudentFilter());
     expect(result.getValue!.length, length - 1); //* Deberia quitarse el estudiante archivado de la lista
-    debugPrint("Expect 1 of 1 for archiveOne() passed!");
+    debugPrint("Expect 1 of 3 for archiveOne() passed!");
+    expect(goodArchivedResult.getValue, isNotNull);
+    debugPrint("Expect 2 of 3 for archiveOne() passed!");
+    expect(badArchivedResult.runtimeType, NawiError<Student>);
+    debugPrint("Expect 3 of 3 for archiveOne() passed!");
 
-    await service.unarchiveOne(archivedAddedResult.getValue!.id);
+    final goodUnarchiveResult = await service.unarchiveOne(archivedAddedResult.getValue!.id);
+    final badUnarchiveResult = await service.unarchiveOne('980bbf70-48de-4946-8d8f-de06a39d7611');
+    
+    debugPrint("<---------------------------------------------->");
     result = await service.getAll(StudentFilter());
     expect(result.getValue!.length, length); //* Deberia volver a ingresarse el estudiante archivado
-    debugPrint("Expect 1 of 1 for unarchiveOne() passed!");
+    debugPrint("Expect 1 of 3 for unarchiveOne() passed!");
+    expect(goodUnarchiveResult.getValue, isNotNull);
+    debugPrint("Expect 2 of 3 for unarchiveOne() passed!");
+    expect(badUnarchiveResult.runtimeType, NawiError<Student>);
+    debugPrint("Expect 3 of 3 for unarchiveOne() passed!");
   });
 
   group('Filtro de estudiantes', () {
