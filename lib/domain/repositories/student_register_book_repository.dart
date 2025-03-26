@@ -67,14 +67,12 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
   Future<Result<bool>> deleteManyByStudentID({required String studentId, bool deleteRegisterBooks = false}) {
     return transaction<Result<bool>>(() async {
       try {
-        final selectedRegisterBook = selectOnly(studentRegisterBookTable)
-          ..addColumns([studentRegisterBookTable.registerBook])
-          ..where(studentRegisterBookTable.student.equals(studentId));
+        final selectedRegisterBook = await (select(studentRegisterBookTable)..where((tbl) => tbl.student.equals(studentId))).get();
+        if(selectedRegisterBook.isEmpty) return Success(data: true);
+        final registerBookIDs = selectedRegisterBook.map((e) => e.registerBook);
         
-        await batch((batch) => batch.deleteWhere(studentRegisterBookTable, (tbl) => tbl.registerBook.isInQuery(selectedRegisterBook)));
-        if(deleteRegisterBooks) {
-          await batch((batch) => batch.deleteWhere(registerBookTable, (tbl) => tbl.id.isInQuery(selectedRegisterBook)));
-        }
+        await (delete(studentRegisterBookTable)..where((tbl) => tbl.registerBook.isIn(registerBookIDs))).go();
+        if(deleteRegisterBooks) await (delete(registerBookTable)..where((tbl) => tbl.id.isIn(registerBookIDs))).go();
 
         return Success(data: true);
       } catch (e) { return NawiRepositoryTools.onCatch(e); }
