@@ -6,6 +6,7 @@ import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
+import 'package:nawiapp/domain/services/student_service_base.dart';
 
 import '../nawi_test_utils.dart';
 
@@ -94,6 +95,19 @@ void main() {
     debugPrint("Expect 2 of 3 for getOne() passed!");
     expect(goodResult.getValue!.mentions.contains(NawiTestUtils.listOfStudents[1].toStudentDAO), true); //* Mencion esperada
     debugPrint("Expect 3 of 3 for getOne() passed!");
+  });
+
+  test('Eliminado de un estudiante en cuaderno de registro', () async {
+    final registerBookService = GetIt.I<RegisterBookServiceBase>();
+    final studentService = GetIt.I<StudentServiceBase>();
+
+    final deleteResult = await studentService.deleteOne('1d03982a-7a0a-40f2-adb4-1e90c2550485');
+    final badGetResult = await registerBookService.getOne('e0449ae1-ec4d-4eec-a0c2-3b6be2ff46f6');
+
+    expect(deleteResult.getValue, isNotNull); //* Se elimino con exito
+    debugPrint("Expect 1 of 2 for deleteOne() with relationship passed!");
+    expect(badGetResult.runtimeType, NawiError<RegisterBook>); //* La eliminacion en cascada funciono
+    debugPrint("Expect 2 of 2 for deleteOne() with relationship passed!");
   });
 
   test('Archivado y desarchivado de un cuaderno de registro', () async {

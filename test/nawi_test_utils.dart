@@ -61,7 +61,7 @@ class NawiTestUtils {
     RegisterBook(id: 'e0449ae1-ec4d-4eec-a0c2-3b6be2ff46f6', action: "Jose le pego a Pablo", mentions: [listOfStudents[0].toStudentDAO, listOfStudents[1].toStudentDAO], timestamp: DateTime(2025, 1, 5), type: RegisterBookType.incident),
     RegisterBook(id: 'dd1acb1c-86c2-4ba1-a69f-b1c8e24c01ee', action: "Accion indeterminada 1", timestamp: DateTime(2025, 1, 6)),
     RegisterBook(id: '06b654e1-2852-4618-84a7-bb2c43a3eba1', action: "Leonardo, Mendo y Bruno han hecho su actividad", timestamp: DateTime(2025, 1, 6), type: RegisterBookType.anecdotal),
-    RegisterBook(id: '10277d6d-630c-4a6e-99ec-f807a64714f6', action: "Al bordo de un barco, Gerardo ha jugado", timestamp: DateTime(2025, 2, 15), mentions: [listOfStudents[4].toStudentDAO], type: RegisterBookType.anecdotal),
+    RegisterBook(id: '10277d6d-630c-4a6e-99ec-f807a64714f6', action: "Al bordo de un barco, Gerardo ha jugado con Jose", timestamp: DateTime(2025, 2, 15), mentions: [listOfStudents[4].toStudentDAO, listOfStudents[0].toStudentDAO], type: RegisterBookType.anecdotal),
     RegisterBook(id: '3984adaf-70c2-45b1-aecc-e0b56bb43158', action: "Otra accion indeterminada 2", timestamp: DateTime(2025, 1, 1)),
     RegisterBook(id: 'cd334961-cc2f-4c2a-8477-482155e7ed0e', action: "Desde la vista de Bruno, ha visto como Pablo salía del salon", timestamp: DateTime(2025, 3, 8), mentions: [listOfStudents[3].toStudentDAO, listOfStudents[1].toStudentDAO]),
 
