@@ -1,6 +1,5 @@
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
 import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
-import 'package:nawiapp/domain/models/student.dart';
 
 class RegisterBookFilter extends FilterData {
 
@@ -13,14 +12,14 @@ class RegisterBookFilter extends FilterData {
   /// Tipo de ordenamiento
   final RegisterBookViewOrderByType orderBy;
 
-  /// Filtro por lista de estudiantes exactos
-  final List<Student>? searchByStudents;
+  /// Filtro por lista de ID de estudiantes exactos
+  final Iterable<String> searchByStudentsId;
 
   RegisterBookFilter({
     super.pageSize, super.currentPage,
     this.actionLike, this.studentNameLike,
     this.orderBy = RegisterBookViewOrderByType.timestampRecently,
-    this.searchByStudents, super.showHidden
+    this.searchByStudentsId = const [], super.showHidden
   });
 
   @override
@@ -28,7 +27,7 @@ class RegisterBookFilter extends FilterData {
     "orderBy": orderBy,
     "actionLike": actionLike,
     "studentNameLike": studentNameLike,
-    "searchByStudents": searchByStudents
+    "searchByStudents": searchByStudentsId
   }..addAll(super.toMap());
   
   @override
@@ -36,13 +35,13 @@ class RegisterBookFilter extends FilterData {
     int? pageSize, int? currentPage,
     bool? showHidden, String? actionLike,
     String? studentNameLike,
-    List<Student>? searchByStudents,
+    Iterable<String>? searchByStudents,
     RegisterBookViewOrderByType? orderBy
   }) =>
     RegisterBookFilter(
       studentNameLike: studentNameLike ?? this.studentNameLike,
       actionLike: actionLike ?? this.actionLike,
-      searchByStudents: searchByStudents ?? this.searchByStudents,
+      searchByStudentsId: searchByStudents ?? this.searchByStudentsId,
       pageSize: pageSize ?? this.pageSize,
       currentPage: currentPage ?? this.currentPage,
       showHidden: showHidden ?? this.showHidden,
