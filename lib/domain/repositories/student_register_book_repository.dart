@@ -3,6 +3,7 @@ import 'package:nawiapp/data/database_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/models_table/register_book_table.dart';
 import 'package:nawiapp/domain/models/models_table/student_register_book_table.dart';
+import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
 import 'package:nawiapp/domain/models/models_views/student_view.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
@@ -16,7 +17,7 @@ typedef RegisterBookWithEmisorsTableData = ({
   Iterable<String> emisors,
 });
 
-@DriftAccessor(tables: [StudentRegisterBookTable, RegisterBookTable], views: [StudentViewDAOVersion])
+@DriftAccessor(tables: [StudentRegisterBookTable, RegisterBookTable], views: [StudentViewDAOVersion, RegisterBookViewDAOVersion])
 class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRegisterBookRepositoryMixin {
   
   StudentRegisterBookRepository(super.db);
@@ -87,6 +88,20 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
         selectOnly(studentRegisterBookTable)
           ..addColumns([studentRegisterBookTable.student])
           ..where(studentRegisterBookTable.registerBook.equals(registerBookId))
+      ))).get();
+      return Success(data: result);
+    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+  }
+
+  /// Obtiene una lista de [RegisterBookViewDAOVersionData] en base a [studentIds], solo las coincidencias encontradas.
+  /// 
+  /// Si se eligiera más de una id en [studentIds], la busqueda se hará como si fuera un `OR` en cada ID.
+  Future<Result<Iterable<RegisterBookViewDAOVersionData>>> getRegisterBookFromStudents(Iterable<String> studentIds) async {
+    try {
+      final result = await (select(registerBookViewDAOVersion)..where((tbl) => tbl.id.isInQuery(
+        selectOnly(studentRegisterBookTable)
+          ..addColumns([studentRegisterBookTable.registerBook])
+          ..where(studentRegisterBookTable.student.isIn(studentIds))
       ))).get();
       return Success(data: result);
     } catch (e) { return NawiRepositoryTools.onCatch(e); }
