@@ -109,7 +109,6 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   Future<Result<RegisterBookTableData>> archiveOne(String id) {
     return transaction<Result<RegisterBookTableData>>(() async {
       try {
-        // final result = await getOne(id);
         final result = await (select(registerBookTable)..where((tbl) => 
           Expression.and([
             tbl.id.isNotInQuery(selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])),
@@ -129,7 +128,6 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   Future<Result<RegisterBookTableData>> unarchiveOne(String id) {
   return transaction<Result<RegisterBookTableData>>(() async {
       try {
-        // final result = await getOne(id);
         final result = await (select(registerBookTable)..where((tbl) => tbl.id.isInQuery(
           selectOnly(hiddenRegisterBookTable)
             ..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
