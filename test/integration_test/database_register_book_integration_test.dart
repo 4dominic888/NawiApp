@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
+import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
@@ -150,4 +151,119 @@ void main() {
 
   });
 
+  group('Filtro de cuadernos de registro', () {
+    test('Ordenamiento de estudiantes', () async {
+      final service = GetIt.I<RegisterBookServiceBase>();
+
+      expect((
+        await service.getAll(
+          RegisterBookFilter(orderBy: RegisterBookViewOrderByType.actionAsc, pageSize: 1, currentPage: 0)
+        )
+      ).getValue!.first.action, NawiTestUtils.registerBookHighestAction.action);
+      debugPrint("Expect 1 of 4 for getAll() about OrberBy passed!");
+
+      expect((
+        await service.getAll(
+          RegisterBookFilter(orderBy: RegisterBookViewOrderByType.actionDesc, pageSize: 1, currentPage: 0)
+        )
+      ).getValue!.first.action, NawiTestUtils.registerBookLowestAction.action);
+      debugPrint("Expect 2 of 4 for getAll() about OrberBy passed!");
+
+      expect((
+        await service.getAll(
+          RegisterBookFilter(orderBy: RegisterBookViewOrderByType.timestampRecently, pageSize: 1, currentPage: 0)
+        )
+      ).getValue!.first.action, NawiTestUtils.registerBookRecently.action);
+      debugPrint("Expect 3 of 4 for getAll() about OrberBy passed!");
+
+      expect((
+        await service.getAll(
+          RegisterBookFilter(orderBy: RegisterBookViewOrderByType.timestampOldy, pageSize: 1, currentPage: 0)
+        )
+      ).getValue!.first.action, NawiTestUtils.registerBookOldy.action);
+      debugPrint("Expect 4 of 4 for getAll() about OrberBy passed!");
+    });
+
+    test('Paginado de estudiantes', () async {
+      final service = GetIt.I<RegisterBookServiceBase>();
+
+      expect((
+        await service.getAllPaginated(pageSize: 2, currentPage: 1, params: RegisterBookFilter())
+      ).getValue!.data.length, 2);
+      debugPrint("Expect 1 of 3 for getAll() about Pagination passed!");
+
+      expect((
+        await service.getAllPaginated(pageSize: 5, currentPage: 2, params: RegisterBookFilter())
+      ).getValue!.data.length, 1);
+      debugPrint("Expect 2 of 3 for getAll() about Pagination passed!");
+
+      expect((
+        await service.getAllPaginated(pageSize: 3, currentPage: 5, params: RegisterBookFilter())
+      ).getValue!.data.length, 0);
+      debugPrint("Expect 3 of 3 for getAll() about Pagination passed!");
+    });
+
+    test('Busqueda por nombre de accion', () async {
+      final service = GetIt.I<RegisterBookServiceBase>();
+
+      expect((
+        await service.getAll(RegisterBookFilter(actionLike: 'pe'))
+      ).getValue!.any((e) => e.action == "Jose le pego a Pablo"), true);
+      debugPrint("Expect 1 of 3 for getAll() about SearchBy action passed!");
+
+      expect((
+        await service.getAll(RegisterBookFilter(actionLike: "asdasdasdasdsa"))
+      ).getValue!.isEmpty, true);
+      debugPrint("Expect 2 of 3 for getAll() about SearchBy action passed!");
+
+      expect((
+        await service.getAll(RegisterBookFilter(actionLike: "      "))
+      ).getValue!.isEmpty, true);
+      debugPrint("Expect 3 of 3 for getAll() about SearchBy action passed!");
+    });
+
+    test('Busqueda por estudiantes', () async {
+      final service = GetIt.I<RegisterBookServiceBase>();
+
+      expect(( //* Solo 2 cuadernos de registro poseen este estudiante
+        await service.getAll(RegisterBookFilter(searchByStudentsId: ['1d03982a-7a0a-40f2-adb4-1e90c2550485']))
+      ).getValue!.length, 2);
+      debugPrint("Expect 1 of 3 for getAll() about SearchBy students passed!");
+
+      //* Deberian haber 3 cuadernos de registro que tengan una o mas de las ID colocadas en el filtro
+      expect((
+        await service.getAll(RegisterBookFilter(searchByStudentsId: ['1d03982a-7a0a-40f2-adb4-1e90c2550485', '8722e6e9-6178-4296-948a-7fb3db196d44', '194c4084-0fdf-49f2-86d7-766b7607ce0b']))
+      ).getValue!.length, 3);
+      debugPrint("Expect 2 of 3 for getAll() about SearchBy students passed!");
+
+      expect(( //* Pasar un array vacio deberia anular dicha busqueda
+        await service.getAll(RegisterBookFilter(searchByStudentsId: []))
+      ).getValue!.length, 6);
+      debugPrint("Expect 3 of 3 for getAll() about SearchBy students passed!");
+    });
+
+    test('Busqueda por tipo de cuaderno de registro', () async {
+      final service = GetIt.I<RegisterBookServiceBase>();
+
+      expect(( //* Solo hay 2 cuadernos de registro de tipo anecdotico
+        await service.getAll(RegisterBookFilter(searchByType: RegisterBookType.anecdotal))
+      ).getValue!.length, 2);
+      debugPrint("Expect 1 of 2 for getAll() about SearchBy register book type passed!");
+
+      expect(( //* Sin dicho filtro, deberia seguir funcionando
+        await service.getAll(RegisterBookFilter())
+      ).getValue!.length, 6);
+      debugPrint("Expect 2 of 2 for getAll() about SearchBy register book type passed!");
+    });    
+
+    test('Filtro por cuaderno de registros archivados', () async {
+      final service = GetIt.I<RegisterBookServiceBase>();
+
+      expect(( //* Solo hay 2 archivados
+        await service.getAll(RegisterBookFilter(showHidden: true))
+      ).getValue!.length, 2);
+      debugPrint("Expect 1 of 1 for getAll() about archived register book passed!");
+    });
+
+  });
 }
