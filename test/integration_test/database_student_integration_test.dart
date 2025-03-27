@@ -148,12 +148,17 @@ void main(){
       expect(( //* Prueba que solo se regrese 3 elementos
         await service.getAllPaginated(pageSize: 3, currentPage: 1, params: StudentFilter())
       ).getValue!.data.length, 3);
-      debugPrint("Expect 1 of 2 for getAll() about Pagination passed!");
+      debugPrint("Expect 1 of 3 for getAll() about Pagination passed!");
 
       expect(( //* Prueba que solo se regrese 2 elementos
         await service.getAllPaginated(pageSize: 4, currentPage: 2, params: StudentFilter())
       ).getValue!.data.length, 2);
-      debugPrint("Expect 1 of 2 for getAll() about Pagination passed!");
+      debugPrint("Expect 2 of 3 for getAll() about Pagination passed!");
+
+      expect(( //* Prueba una pagina que supuestamente deberia estar vacia
+        await service.getAllPaginated(pageSize: 1, currentPage: 10, params: StudentFilter())
+      ).getValue!.data.length, 0);
+      debugPrint("Expect 3 of 3 for getAll() about Pagination passed!");
     });
 
     test('Busqueda por nombre de estudiante', () async {
