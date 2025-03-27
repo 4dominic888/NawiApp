@@ -5,6 +5,7 @@ import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_repository.dart';
 import 'package:nawiapp/domain/models/models_table/register_book_table.dart';
 import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
+import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 part 'register_book_repository.g.dart';
@@ -32,6 +33,14 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   @override
   Future<Result<Iterable<RegisterBookViewDAOVersionData>>> getAll(RegisterBookFilter params) async {
     try {
+      Iterable<String> registerBookBelonged = [];
+      if(params.searchByStudentsId.isNotEmpty) {
+        final studentRegisterBookRepo = StudentRegisterBookRepository(db); //* Repo auxiliar
+        final getRegisterBookBelonged = await studentRegisterBookRepo.getRegisterBookFromStudents(params.searchByStudentsId);
+        if(getRegisterBookBelonged is NawiError) return getRegisterBookBelonged;
+        registerBookBelonged = getRegisterBookBelonged.getValue!.map((e) => e.id); //* Obtiene las id de los cuadernos de registro en base a los estudiantes
+      }
+
       var query = (!params.showHidden ? select(registerBookViewDAOVersion) : select(hiddenRegisterBookViewDAOVersion))
         ..where((tbl) {
           final List<Expression<bool>> filterExpressions = [];
@@ -40,6 +49,10 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
             filterExpressions.add((tbl as $RegisterBookViewDAOVersionView).id.isNotInQuery(
               selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
             ));
+          }
+
+          if(registerBookBelonged.isNotEmpty) {
+            filterExpressions.add((tbl as $RegisterBookViewDAOVersionView).id.isIn(registerBookBelonged));
           }
 
           NawiRepositoryTools.actionFilter(
