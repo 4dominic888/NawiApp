@@ -55,6 +55,10 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
             filterExpressions.add((tbl as $RegisterBookViewDAOVersionView).id.isIn(registerBookBelonged));
           }
 
+          if(params.searchByType != null) {
+            filterExpressions.add((tbl as $RegisterBookViewDAOVersionView).type.equals(params.searchByType!.index));
+          }
+
           NawiRepositoryTools.actionFilter(
             expressions: filterExpressions, table: tbl,
             textLike: params.actionLike
