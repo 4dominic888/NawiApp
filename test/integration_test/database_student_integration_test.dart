@@ -18,17 +18,26 @@ void main(){
 
     final student = Student(name: "Pepe Gonzales", age: StudentAge.fourYears);
     final diffStudent = Student(name: "Pepe Gonzales2", age: StudentAge.fourYears);
+    final errorStudent = Student(id: '980bbf70-48de-4946-8d8f-de06a39d7611', name: 'adasdasdasd', age: StudentAge.fiveYears); //* ID existente
 
-    final result = await service.addOne(student);
+    final result = await Future.wait([
+      service.addOne(student),
+      service.addOne(errorStudent)
+    ]);
     final studentFromDatabaseDAO = (await service.getAll(StudentFilter(nameLike: "pepe"))).getValue!.first;
 
+    final goodResult = result[0];
+    final badResult = result[1];
+
     //? Se compara por nombres, ya que [student] no tiene una ID asignada, pero para verificar que devuelva un estudiante coherente
-    expect(result.getValue!.name, student.name); //* El retorno de la función de AddOne() es correcto
-    debugPrint("Expect 1 of 3 for AddOne() passed!");
-    expect(result.getValue!.name, isNot(diffStudent.name)); //* Corrobora con un estudiante erróneo
-    debugPrint("Expect 2 of 3 for AddOne() passed!");
-    expect(studentFromDatabaseDAO, result.getValue); //* Se verifica que exista en la base de datos
-    debugPrint("Expect 3 of 3 for AddOne() passed!");
+    expect(goodResult.getValue!.name, student.name, reason: 'something'); //* El retorno de la función de AddOne() es correcto
+    debugPrint("Expect 1 of 4 for AddOne() passed!");
+    expect(goodResult.getValue!.name, isNot(diffStudent.name)); //* Corrobora con un estudiante erróneo
+    debugPrint("Expect 2 of 4 for AddOne() passed!");
+    expect(studentFromDatabaseDAO, goodResult.getValue!); //* Se verifica que exista en la base de datos
+    debugPrint("Expect 3 of 4 for AddOne() passed!");
+    expect(badResult, isA<NawiError>());
+    debugPrint("Expect 4 of 4 for AddOne() passed!"); //* Si el dato a agregar tiene una id existente en la base de datos, dar error
   });
 
   test('Eliminacion de un estudiante', () async {

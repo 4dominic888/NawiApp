@@ -20,20 +20,28 @@ void main() {
 
     final registerBook = RegisterBook(action: "Accion X", mentions: [NawiTestUtils.listOfStudents[1].toStudentDAO, NawiTestUtils.listOfStudents[0].toStudentDAO]);
     final diffRegisterBook = RegisterBook(action: "Accion Y");
+    final errorRegisterBook = RegisterBook(id: '06b654e1-2852-4618-84a7-bb2c43a3eba1', action: 'asdasdasdasd');
 
-    final result = await service.addOne(registerBook);
-    final registerBookFromDB = await service.getOne(result.getValue!.id);
+    final result = await Future.wait([
+      service.addOne(registerBook), service.addOne(errorRegisterBook)
+    ]);
+
+    final goodResult = result[0];
+    final badResult = result[1];
+    final registerBookFromDB = await service.getOne(goodResult.getValue!.id);
 
     expect(registerBookFromDB.getValue, isNotNull); //* El get deberia funcionar
-    debugPrint("Expect 1 of 5 for AddOne() passed!");
-    expect(result.getValue!.action, registerBook.action); //* El atributo de accion del cuaderno de registro no debe diferir
-    debugPrint("Expect 2 of 5 for AddOne() passed!");
-    expect(result.getValue!.action, isNot(diffRegisterBook.action)); //* Se vuelve a comprobar con otro registro que nunca fue agregado
-    debugPrint("Expect 3 of 5 for AddOne() passed!");
+    debugPrint("Expect 1 of 6 for AddOne() passed!");
+    expect(goodResult.getValue!.action, registerBook.action); //* El atributo de accion del cuaderno de registro no debe diferir
+    debugPrint("Expect 2 of 6 for AddOne() passed!");
+    expect(goodResult.getValue!.action, isNot(diffRegisterBook.action)); //* Se vuelve a comprobar con otro registro que nunca fue agregado
+    debugPrint("Expect 3 of 6 for AddOne() passed!");
     expect(registerBookFromDB.getValue!.mentions.any((e) => e == registerBook.mentions.first), true); //* Verificar que se haya agregado al menos una mencion
-    debugPrint("Expect 4 of 5 for AddOne() passed!");
+    debugPrint("Expect 4 of 6 for AddOne() passed!");
     expect(registerBookFromDB.getValue!.type, registerBook.type); //* Verificación de tipo
-    debugPrint("Expect 5 of 5 for AddOne() passed!");
+    debugPrint("Expect 5 of 6 for AddOne() passed!");
+    expect(badResult, isA<NawiError>()); //* Verificar que el agregado sea incorrecto al haber una ID previamente registrada en la BD
+    debugPrint("Expect 6 of 6 for AddOne() passed!");
   });
 
   test('Eliminado de un cuaderno de registro', () async {
