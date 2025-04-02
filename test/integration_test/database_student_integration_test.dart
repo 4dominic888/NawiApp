@@ -7,17 +7,16 @@ import 'package:nawiapp/domain/models/models_views/student_view.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 
-import '../nawi_test_utils.dart';
+import '../nawi_test_utils.dart' as testil;
 
 void main(){
-  setUp(NawiTestUtils.setupTestLocator);
-  tearDown(NawiTestUtils.onTearDownSetupLocator);
+  setUp(testil.setupTestLocator);
+  tearDown(testil.onTearDownSetupLocator);
 
   test('Registro de un estudiante', () async {
     final service = GetIt.I<StudentServiceBase>();
 
     final student = Student(name: "Pepe Gonzales", age: StudentAge.fourYears);
-    final diffStudent = Student(name: "Pepe Gonzales2", age: StudentAge.fourYears);
     final errorStudent = Student(id: '980bbf70-48de-4946-8d8f-de06a39d7611', name: 'adasdasdasd', age: StudentAge.fiveYears); //* ID existente
 
     final result = await Future.wait([
@@ -29,15 +28,21 @@ void main(){
     final goodResult = result[0];
     final badResult = result[1];
 
-    //? Se compara por nombres, ya que [student] no tiene una ID asignada, pero para verificar que devuelva un estudiante coherente
-    expect(goodResult.getValue!.name, student.name, reason: 'something'); //* El retorno de la función de AddOne() es correcto
-    debugPrint("Expect 1 of 4 for AddOne() passed!");
-    expect(goodResult.getValue!.name, isNot(diffStudent.name)); //* Corrobora con un estudiante erróneo
-    debugPrint("Expect 2 of 4 for AddOne() passed!");
-    expect(studentFromDatabaseDAO, goodResult.getValue!); //* Se verifica que exista en la base de datos
-    debugPrint("Expect 3 of 4 for AddOne() passed!");
-    expect(badResult, isA<NawiError>());
-    debugPrint("Expect 4 of 4 for AddOne() passed!"); //* Si el dato a agregar tiene una id existente en la base de datos, dar error
+    testil.customExpect(goodResult, isA<Success>(),
+      about: 'Agregar estudiando a la base de datos', output: goodResult.message, n: 1
+    );
+
+    testil.customExpect(goodResult.getValue!.name, student.name,
+      about: 'Valor de retorno', n: 2
+    );
+
+    testil.customExpect(studentFromDatabaseDAO, goodResult.getValue!,
+      about: 'Verificar que esté en la base de datos', n: 3
+    );
+
+    testil.customExpect(badResult, isA<NawiError>(),
+      about: 'Estudiante con ID existente no debe de registrarse', output: badResult.message, n: 4
+    );
   });
 
   test('Eliminacion de un estudiante', () async {
@@ -46,12 +51,18 @@ void main(){
     final addedResult = await service.addOne(Student(name: "Pepe Gonzales", age: StudentAge.fourYears));
     final result = await service.deleteOne(addedResult.getValue!.id);
 
-    expect(result.getValue!.id, addedResult.getValue!.id); //* Se espera que el valor devuelto sea del estudiante eliminado
-    debugPrint("Expect 1 of 2 for DeleteOne() passed!");
+    testil.customExpect(result, isA<Success>(),
+      about: "Eliminación de un estudiante", output: result.message, n: 1
+    );
+
+    testil.customExpect(result.getValue!.id, addedResult.getValue!.id,
+      about: "Valor retornado", output: result.message, n: 2
+    );
     
     final getDeletedResult = await service.getOne(result.getValue!.id);
-    expect(getDeletedResult.runtimeType, NawiError<Student>); //* Se espera que no esté en la BD
-    debugPrint("Expect 2 of 2 for DeleteOne() passed!");
+    testil.customExpect(getDeletedResult, isA<NawiError>(),
+      about: "Resultado al obtener un estudiante eliminado", output: getDeletedResult.message, n: 3
+    );
   });
 
   test("Actualizacion de un estudiante", () async {
@@ -59,27 +70,43 @@ void main(){
 
     final addedResult = await service.addOne(Student(name: "Pepe Gonzales", age: StudentAge.fourYears));
     final result = await service.updateOne(addedResult.getValue!.copyWith(name: "Amaterasu Remake", age: StudentAge.fiveYears));
-
     final getResult = await service.getOne(addedResult.getValue!.id);
 
-    expect(result.getValue!, true); //* Segun el result, debería de haberse ejecutado correctamente
-    debugPrint("Expect 1 of 3 for UpdateOne() passed!");
-    expect(getResult.getValue!.name, "Amaterasu Remake"); //* En la consulta a la BD, se debe reflejar los cambios
-    debugPrint("Expect 2 of 3 for UpdateOne() passed!");
-    expect(getResult.getValue!.id, addedResult.getValue!.id); //* Las IDs deben coincidir
-    debugPrint("Expect 2 of 3 for UpdateOne() passed!");
+    testil.customExpect(result, isA<Success>(),
+      about: "Actualizado de un estudiante", output: result.message, n: 1
+    );
+
+    testil.customExpect(getResult.getValue!.name, "Amaterasu Remake",
+      about: "Verificar que el dato haya sido editado con nombre", n: 2
+    );
+
+    testil.customExpect(getResult.getValue!.id, addedResult.getValue!.id,
+      about: "Verificar que sus identificadores sean iguales", n: 3
+    );
   });
 
   test('Obtener un estudiante', () async {
     final service = GetIt.I<StudentServiceBase>();
 
-    final badResult = await service.getOne('0');
-    final goodResult = await service.getOne('980bbf70-48de-4946-8d8f-de06a39d7611');
+    final results = await Future.wait([
+      service.getOne('0'),
+      service.getOne('980bbf70-48de-4946-8d8f-de06a39d7611')
+    ]);
 
-    expect(badResult.runtimeType, NawiError<Student>); //* Se espera que no se encuentre el valor ante un ID no existente
-    debugPrint("Expect 1 of 2 for getOne() passed!");
-    expect(goodResult.getValue!.name, "Leonardo Da Vinci"); //* Se espera que el estudiante obtenido exista en la base de datos
-    debugPrint("Expect 2 of 2 for getOne() passed!");
+    final badResult = results[0];
+    final goodResult = results[1];
+
+    testil.customExpect(goodResult, isA<Success>(),
+      about: "Obtención de un estudiante existente", output: goodResult.message, n: 1
+    );
+
+    testil.customExpect(goodResult.getValue!.name, "Leonardo Da Vinci",
+      about: "Corroborar el nombre del estudiando obtenido", output: goodResult.message, n: 2
+    );
+
+    testil.customExpect(badResult, isA<NawiError>(),
+      about: "Obtención de un estudiante no existente", output: badResult.message, n: 3
+    );
   });
 
   test('Archivado y Desarchivado de un estudiante', () async {
@@ -88,132 +115,195 @@ void main(){
     final studentArchived = Student(name: "Juan gonzales paredes", age: StudentAge.fourYears);
     final student = Student(name: "Juan Archive", age: StudentAge.fourYears);
     
-    final archivedAddedResult = await service.addOne(studentArchived);
-    await service.addOne(student);
+    final addedResults = await Future.wait([
+      service.addOne(studentArchived),
+      service.addOne(student)
+    ]);
+
+    final archivedAddedResult = addedResults[0];
 
     var result = await service.getAll(StudentFilter());
     int length = result.getValue!.length;
     
-    final goodArchivedResult = await service.archiveOne(archivedAddedResult.getValue!.id);
-    final badArchivedResult = await service.archiveOne('750c3a46-3e44-4800-bee1-ebccb4f4f55c');
+    final archivedResults = await Future.wait([
+      service.archiveOne(archivedAddedResult.getValue!.id),
+      service.archiveOne('750c3a46-3e44-4800-bee1-ebccb4f4f55c')
+    ]);
+
+    final goodArchivedResult = archivedResults[0];
+    final badArchivedResult = archivedResults[1];
 
     result = await service.getAll(StudentFilter());
-    expect(result.getValue!.length, length - 1); //* Deberia quitarse el estudiante archivado de la lista
-    debugPrint("Expect 1 of 3 for archiveOne() passed!");
-    expect(goodArchivedResult.getValue, isNotNull);
-    debugPrint("Expect 2 of 3 for archiveOne() passed!");
-    expect(badArchivedResult.runtimeType, NawiError<Student>);
-    debugPrint("Expect 3 of 3 for archiveOne() passed!");
 
-    final goodUnarchiveResult = await service.unarchiveOne(archivedAddedResult.getValue!.id);
-    final badUnarchiveResult = await service.unarchiveOne('980bbf70-48de-4946-8d8f-de06a39d7611');
+    testil.customExpect(goodArchivedResult, isA<Success>(),
+      about: "Archivado correcto", output: goodArchivedResult.message, n: 1
+    );
+
+    testil.customExpect(badArchivedResult, isA<NawiError>(),
+      about: "Archivando un estudiante ya archivado", output: badArchivedResult.message, n: 2
+    );
+
+    testil.customExpect(result.getValue!.length, length - 1,
+      about: "Lista reducida en la BD", n: 3
+    );
+
+    final unarchivedResults = await Future.wait([
+      service.unarchiveOne(archivedAddedResult.getValue!.id),
+      service.unarchiveOne('980bbf70-48de-4946-8d8f-de06a39d7611')
+    ]);
+
+    final goodUnarchiveResult = unarchivedResults[0];
+    final badUnarchiveResult = unarchivedResults[1];
     
     debugPrint("<---------------------------------------------->");
+
     result = await service.getAll(StudentFilter());
-    expect(result.getValue!.length, length); //* Deberia volver a ingresarse el estudiante archivado
-    debugPrint("Expect 1 of 3 for unarchiveOne() passed!");
-    expect(goodUnarchiveResult.getValue, isNotNull);
-    debugPrint("Expect 2 of 3 for unarchiveOne() passed!");
-    expect(badUnarchiveResult.runtimeType, NawiError<Student>);
-    debugPrint("Expect 3 of 3 for unarchiveOne() passed!");
+
+    testil.customExpect(goodUnarchiveResult, isA<Success>(),
+      about: "Desarchivado correcto", output: goodUnarchiveResult.message, n: 4
+    );
+
+    testil.customExpect(badUnarchiveResult, isA<NawiError>(),
+      about: "Desarchivado incorrecto", output: badUnarchiveResult.message, n: 5
+    );
+
+    testil.customExpect(result.getValue!.length, length,
+      about: "Lista aumentada en la BD", n: 6
+    );
   });
 
   group('Filtro de estudiantes', () {
     test('Ordenamiento de estudiantes', () async {
       final service = GetIt.I<StudentServiceBase>();
 
-      expect(( //* Prueba por order por nombre ascendentemente
-        await service.getAll(
-          StudentFilter(orderBy: StudentViewOrderByType.nameAsc, pageSize: 1, currentPage: 0)
-        )
-      ).getValue!.first.name, NawiTestUtils.studentHighestName.name);
-      debugPrint("Expect 1 of 4 for getAll() about OrberBy passed!");
+      //* Por nombre
+      var result = await service.getAll(
+        StudentFilter(orderBy: StudentViewOrderByType.nameAsc, pageSize: 1, currentPage: 0)
+      );
 
-      expect(( //* Prueba por nombre descendentemente
-        await service.getAll(
-          StudentFilter(orderBy: StudentViewOrderByType.nameDesc, pageSize: 1, currentPage: 0)
-        )
-      ).getValue!.first.name, NawiTestUtils.studentLowestName.name);
-      debugPrint("Expect 2 of 4 for getAll() about OrberBy passed!");
+      testil.customExpect(result, isA<Success>(),
+        about: "Comprobación del resultado por ordenamiento", output: result.message, n: 1
+      );
 
-      expect(( //* Prueba por estudiante registrado recientemente
-        await service.getAll(
-          StudentFilter(orderBy: StudentViewOrderByType.timestampRecently, pageSize: 1, currentPage: 0)
-        )
-      ).getValue!.first.name, NawiTestUtils.studentRecently.name);
-      debugPrint("Expect 3 of 4 for getAll() about OrberBy passed!");
+      testil.customExpect(result.getValue!.first.name, testil.studentHighestName.name,
+        about: "Ordenamiento por nombre ascendentemente", n: 2
+      );
 
-      expect(( //* Prueba por estudiante registrado viejo
-        await service.getAll(
-          StudentFilter(orderBy: StudentViewOrderByType.timestampOldy, pageSize: 1, currentPage: 0)
-        )
-      ).getValue!.first.name, NawiTestUtils.studentOldy.name);
-      debugPrint("Expect 4 of 4 for getAll() about OrberBy passed!");
+      result = await service.getAll(
+        StudentFilter(orderBy: StudentViewOrderByType.nameDesc, pageSize: 1, currentPage: 0)
+      );
+
+      testil.customExpect(result.getValue!.first.name, testil.studentLowestName.name,
+        about: "Ordenamiento por nombre descendentemente", n: 3
+      );
+
+      result = await service.getAll(
+        StudentFilter(orderBy: StudentViewOrderByType.timestampRecently, pageSize: 1, currentPage: 0)
+      );
+
+      testil.customExpect(result.getValue!.first.name, testil.studentRecently.name,
+        about: "Ordenamiento por tiempo de creación reciente", n: 4
+      );
+
+      result = await service.getAll(
+        StudentFilter(orderBy: StudentViewOrderByType.timestampOldy, pageSize: 1, currentPage: 0)
+      );
+
+      testil.customExpect(result.getValue!.first.name, testil.studentOldy.name,
+        about: "Ordenamiento por tiempo de creación antigua", n: 5
+      );
     });
 
     test('Paginado de estudiantes', () async {
       final service = GetIt.I<StudentServiceBase>();
 
-      expect(( //* Prueba que solo se regrese 3 elementos
-        await service.getAllPaginated(pageSize: 3, currentPage: 1, params: StudentFilter())
-      ).getValue!.data.length, 3);
-      debugPrint("Expect 1 of 3 for getAll() about Pagination passed!");
+      var result = await service.getAllPaginated(pageSize: 3, currentPage: 1, params: StudentFilter());
 
-      expect(( //* Prueba que solo se regrese 2 elementos
-        await service.getAllPaginated(pageSize: 4, currentPage: 2, params: StudentFilter())
-      ).getValue!.data.length, 2);
-      debugPrint("Expect 2 of 3 for getAll() about Pagination passed!");
+      testil.customExpect(result, isA<Success>(),
+        about: "Comprobación de resultado por paginado", output: result.message, n: 1
+      );
 
-      expect(( //* Prueba una pagina que supuestamente deberia estar vacia
-        await service.getAllPaginated(pageSize: 1, currentPage: 10, params: StudentFilter())
-      ).getValue!.data.length, 0);
-      debugPrint("Expect 3 of 3 for getAll() about Pagination passed!");
+      testil.customExpect(result.getValue!.data.length, 3,
+        about: "Paginado de X longitud", n: 2
+      );
+
+      result = await service.getAllPaginated(pageSize: 4, currentPage: 2, params: StudentFilter()); 
+
+      testil.customExpect(result.getValue!.data.length, 2,
+        about: "Paginado de X longitud y X pagina", n: 3
+      );
+
+      result = await service.getAllPaginated(pageSize: 1, currentPage: 10, params: StudentFilter());
+
+      testil.customExpect(result.getValue!.data.length, 0,
+        about: "Paginado fuera de rango", n: 4
+      );
     });
 
     test('Busqueda por nombre de estudiante', () async {
       final service = GetIt.I<StudentServiceBase>();
 
-      expect((
-        await service.getAll(StudentFilter(nameLike: "l"))
-      ).getValue!.any((e) => e.name == 'Jose Olaya'), true);
-      debugPrint("Expect 1 of 3 for getAll() about SearchBy name passed!");
+      var result = await service.getAll(StudentFilter(nameLike: 'l'));
 
-      expect((
-        await service.getAll(StudentFilter(nameLike: "ñ"))
-      ).getValue!.isEmpty, true);
-      debugPrint("Expect 2 of 3 for getAll() about SearchBy name passed!");
+      testil.customExpect(result, isA<Success>(),
+        about: "Comprobación de resultado por nombre de estudiante", output: result.message, n: 1
+      );
 
-      expect(( //* Como si no se aplicara el filtro
-        await service.getAll(StudentFilter(nameLike: "  "))
-      ).getValue!.length, 6);
-      debugPrint("Expect 3 of 3 for getAll() about SearchBy name passed!");
+      testil.customExpect(result.getValue!.any((e) => e.name == 'Jose Olaya'), true,
+        about: "Busqueda por nombre por un caracter aleatorio", n: 2
+      );
+
+      result = await service.getAll(StudentFilter(nameLike: "ñ"));
+
+      testil.customExpect(result.getValue!.isEmpty, true,
+        about: "Busqueda por nombre y que no exista", n: 3
+      );
+
+      result = await service.getAll(StudentFilter(nameLike: "  "));
+
+      testil.customExpect(result.getValue!.length, 6,
+        about: "Busqueda por nombre y que sean espacios en blanco", n: 4
+      );
     });
 
     test('Busqueda por edad del estudiante', () async {
       final service = GetIt.I<StudentServiceBase>();
 
-      expect((
-        await service.getAll(StudentFilter(ageEnumIndex1: StudentAge.fiveYears))
-      ).getValue!.any((element) => element.age == StudentAge.fiveYears), true);
-      debugPrint("Expect 1 of 3 for getAll() about SearchBy age passed!");
+      var result = await service.getAll(StudentFilter(ageEnumIndex1: StudentAge.fiveYears));
 
-      expect((
-        await service.getAll(StudentFilter(ageEnumIndex1: StudentAge.fourYears, ageEnumIndex2: StudentAge.threeYears))
-      ).getValue!.length, 5);
-      debugPrint("Expect 2 of 3 for getAll() about SearchBy age passed!");
+      testil.customExpect(result, isA<Success>(),
+        about: "Comprobación del resultado por edad del estudiante", output: result.message, n: 1
+      );
+
+      testil.customExpect(result.getValue!.any((e) => e.age == StudentAge.fiveYears), true,
+        about: "Búsqueda por edad de 5 años", n: 2
+      );
+
+      result = await service.getAll(StudentFilter(ageEnumIndex1: StudentAge.fourYears, ageEnumIndex2: StudentAge.threeYears));
+
+      testil.customExpect(result.getValue!.length, 5,
+        about: "Búsqueda por 4 y 3 años", n: 3
+      );
       
-      expect((
-        await service.getAll(StudentFilter(ageEnumIndex2: StudentAge.fourYears))
-      ).getValue!.length, 2);
-      debugPrint("Expect 3 of 3 for getAll() about SearchBy age passed!");
+      result = await service.getAll(StudentFilter(ageEnumIndex2: StudentAge.fourYears));
+
+      testil.customExpect(result.getValue!.length, 2,
+        about: "Búsqueda por 4 años en el ageEnumIndex2", n: 4
+      );
     });
 
     test('Filtro de estudiantes archivados', () async {
       final service = GetIt.I<StudentServiceBase>();
 
-      expect(( //* Solo hay 2 estudiantes archivados en la lista estática
-        await service.getAll(StudentFilter(showHidden: true))
-      ).getValue!.length, 2);
+      var result = await service.getAll(StudentFilter(showHidden: true));
+
+      testil.customExpect(result, isA<Success>(),
+        about: "Comprobación de búsqueda de estudiantes ocultos", output: result.message, n: 1
+      );
+
+      testil.customExpect(result.getValue!.length, 2,
+        about: "Búsqueda de estudiantes archivados", n: 2
+      );
       debugPrint("Expect 1 of 1 for getAll() about archived students passed!");
     });
 
