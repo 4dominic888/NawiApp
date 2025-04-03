@@ -3,6 +3,7 @@ import 'package:nawiapp/data/database_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/models_table/register_book_table.dart';
 import 'package:nawiapp/domain/models/models_table/student_register_book_table.dart';
+import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
 import 'package:nawiapp/domain/models/models_views/student_view.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
@@ -16,7 +17,7 @@ typedef RegisterBookWithEmisorsTableData = ({
   Iterable<String> emisors,
 });
 
-@DriftAccessor(tables: [StudentRegisterBookTable, RegisterBookTable], views: [StudentViewDAOVersion])
+@DriftAccessor(tables: [StudentRegisterBookTable, RegisterBookTable], views: [StudentViewDAOVersion, RegisterBookViewDAOVersion])
 class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRegisterBookRepositoryMixin {
   
   StudentRegisterBookRepository(super.db);
@@ -31,7 +32,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
           (e) => StudentRegisterBookTableCompanion.insert(registerBook: data.registerBookId, student: e)
         )));
         return Success(data: true);
-      } catch (e) { return Error.onRepository(message: e.toString()); }
+      } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
 
@@ -44,62 +45,65 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
       try {
         //* Deleting first
         final deleteResult = await deleteManyByRegisterBookID(data.registerBookId);
-        if(deleteResult is Error) return deleteResult;
+        if(deleteResult is NawiError<bool>) throw NawiError.onRepository(message: "No se pudo borrar los cuadernos de registro previos");
 
         //* Add again
         final addResult = await addMany(data);
-        if(addResult is Error) return addResult;
+        if(addResult is NawiError<bool>) NawiError.onRepository(message: "No se pudo volver a agregar los cuadernos de registro");
 
         return Success(data: true);
-      } catch (e) { return Error.onRepository(message: e.toString()); }
+      } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
 
   /// Elimina los registros donde exista [registerBookId]
-  Future<Result<bool>> deleteManyByRegisterBookID(String registerBookId) {
-    return (delete(studentRegisterBookTable)..where((tbl) => tbl.registerBook.equals(registerBookId))).go().then(
-      (_) => Success(data: true),
-      onError: NawiRepositoryTools.defaultErrorFunction
-    );
-    // return transaction<Result<bool>>(() async {
-    //   try {
-    //     await batch((batch) => batch.deleteWhere(studentRegisterBookTable, (tbl) => tbl.registerBook.equals(registerBookId)));
-    //     if(deleteRegisterBook) {
-    //       await batch((batch) => batch.deleteWhere(registerBookTable, (tbl) => tbl.id.equals(registerBookId)));
-    //     }
-    //     return Success(data: true);
-    //   } catch (e) { return Error.onRepository(message: e.toString()); }
-    // });
+  Future<Result<bool>> deleteManyByRegisterBookID(String registerBookId) async {
+    try {
+      await (delete(studentRegisterBookTable)..where((tbl) => tbl.registerBook.equals(registerBookId))).go();
+      return Success(data: true);
+    } catch (e) { return NawiRepositoryTools.onCatch(e); }
   }
 
   /// Elimina los registros donde exista [studentId], ademas de borrar los cuadernos de registro de la tabla [RegisterBookTable] involucrados si [deleteRegisterBooks] es `true`
   Future<Result<bool>> deleteManyByStudentID({required String studentId, bool deleteRegisterBooks = false}) {
     return transaction<Result<bool>>(() async {
       try {
-        final selectedRegisterBook = selectOnly(studentRegisterBookTable)
-          ..addColumns([studentRegisterBookTable.registerBook])
-          ..where(studentRegisterBookTable.student.equals(studentId));
+        final selectedRegisterBook = await (select(studentRegisterBookTable)..where((tbl) => tbl.student.equals(studentId))).get();
+        if(selectedRegisterBook.isEmpty) return Success(data: true);
+        final registerBookIDs = selectedRegisterBook.map((e) => e.registerBook);
         
-        await batch((batch) => batch.deleteWhere(studentRegisterBookTable, (tbl) => tbl.registerBook.isInQuery(selectedRegisterBook)));
-        if(deleteRegisterBooks) {
-          await batch((batch) => batch.deleteWhere(registerBookTable, (tbl) => tbl.id.isInQuery(selectedRegisterBook)));
-        }
+        await (delete(studentRegisterBookTable)..where((tbl) => tbl.registerBook.isIn(registerBookIDs))).go();
+        if(deleteRegisterBooks) await (delete(registerBookTable)..where((tbl) => tbl.id.isIn(registerBookIDs))).go();
 
         return Success(data: true);
-      } catch (e) { return Error.onRepository(message: e.toString()); }
+      } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
 
   /// Obtiene una lista de [StudentViewDAOVersion] de un registro de un [RegisterBookTable] en base a la tabla many to many
   /// [StudentRegisterBookTable]
-  Future<Result<List<StudentViewDAOVersionData>>> getStudentsFromRegisterBook(String registerBookId) {
-    return ((select(studentViewDAOVersion))..where((tblStudent) => tblStudent.id.isInQuery(
-      select(studentViewDAOVersion).join([
-        innerJoin(studentRegisterBookTable, studentRegisterBookTable.student.equalsExp(studentViewDAOVersion.id))
-      ])..where(studentRegisterBookTable.registerBook.equals(registerBookId))
-    ))).get().then(
-      (result) => Success(data: result),
-      onError: NawiRepositoryTools.defaultErrorFunction
-    );
+  Future<Result<List<StudentViewDAOVersionData>>> getStudentsFromRegisterBook(String registerBookId) async {
+    try {
+      final result = await ((select(studentViewDAOVersion))..where((tblStudent) => tblStudent.id.isInQuery(
+        selectOnly(studentRegisterBookTable)
+          ..addColumns([studentRegisterBookTable.student])
+          ..where(studentRegisterBookTable.registerBook.equals(registerBookId))
+      ))).get();
+      return Success(data: result);
+    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+  }
+
+  /// Obtiene una lista de [RegisterBookViewDAOVersionData] en base a [studentIds], solo las coincidencias encontradas.
+  /// 
+  /// Si se eligiera más de una id en [studentIds], la busqueda se hará como si fuera un `OR` en cada ID.
+  Future<Result<Iterable<RegisterBookViewDAOVersionData>>> getRegisterBookFromStudents(Iterable<String> studentIds) async {
+    try {
+      final result = await (select(registerBookViewDAOVersion)..where((tbl) => tbl.id.isInQuery(
+        selectOnly(studentRegisterBookTable)
+          ..addColumns([studentRegisterBookTable.registerBook])
+          ..where(studentRegisterBookTable.student.isIn(studentIds))
+      ))).get();
+      return Success(data: result);
+    } catch (e) { return NawiRepositoryTools.onCatch(e); }
   }
 }

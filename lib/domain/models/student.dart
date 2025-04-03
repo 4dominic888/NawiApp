@@ -20,13 +20,15 @@ mixin _MentionLabelStudent {
 }
 
 mixin _IdenticalStudent {
+  String get id;
   String get name;
   StudentAge get age;
 
   @override
   bool operator ==(Object other) {
     if(identical(this, other)) return true;
-    return other is Student && other.name == name && other.age == age;
+    return (other is Student || other is StudentDAO) &&
+    (other as _IdenticalStudent).name == name && other.age == age && other.id == id;
   }
 
   @override
@@ -35,7 +37,7 @@ mixin _IdenticalStudent {
 
 
 class Student with _MentionLabelStudent, _IdenticalStudent {
-  final String id;
+  @override final String id;
   @override final StudentAge age;
   @override final String name;
   final String? notes;
@@ -72,10 +74,12 @@ class Student with _MentionLabelStudent, _IdenticalStudent {
   //* Drift convertors
   Student.fromTableData(StudentTableData data) : 
     this(id: data.id, name: data.name,age: data.age, notes: data.notes, timestamp: data.timestamp);
+
+  StudentDAO get toStudentDAO => StudentDAO(id: id, name: name, age: age);
 }
 
 class StudentDAO with _MentionLabelStudent, _IdenticalStudent {
-  final String id;
+  @override final String id;
   @override final String name;
   @override final StudentAge age;
 

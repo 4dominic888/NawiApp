@@ -57,8 +57,8 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
       onError: (_, message) => _pagingController.error = message,
       onSuccessfully: (data, message) {
         final items = data.data;
-        if(items.length < _pageSize) { _pagingController.appendLastPage(items); }
-        else { _pagingController.appendPage(items, pageKey+1); }
+        if(items.length < _pageSize) { _pagingController.appendLastPage(items.toList()); }
+        else { _pagingController.appendPage(items.toList(), pageKey+1); }
       },
     );
   }

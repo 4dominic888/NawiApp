@@ -9,9 +9,17 @@ import 'package:recase/recase.dart';
 import 'package:uuid/uuid.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 
+/// Utilidades generales de la aplicación
 class NawiTools {
   static Uuid uuid = Uuid();
+  /// Parsea bien el texto en caso halla excepciones en la variable [e], caso contrario, devuelve un [String] = 'Error inesperado'
+  static String errorTextParser(Object e) => e is Exception ? e.toString() : "Error inesperado";
+
+  /// Limpia los espacios de más, incluyendo los de en medio del texto
   static String clearSpacesOnText(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
+
+  static NawiError<T> errorParser<T>(Result result) => NawiError(message: result.message, stackTrace: (result as NawiError).stackTrace, origin: result.origin);
+
   static String formatActionText(String text) {
     final buffer = StringBuffer();
     for (String word in text.split(' ')) {
@@ -22,13 +30,21 @@ class NawiTools {
     return clearSpacesOnText(buffer.toString());
   }
 
-  static Success<T> resultConverter<T, E>(Result<E> result, T Function(E value) converter) 
-    => Success(data: converter(result.getValue as E), message: result.message);
+  /// Devuelve un [Result], el cual [E] es el tipo original y se desea parsear a un tipo [T]
+  static Result<T> resultConverter<T, E>(Result<E> result, T Function(E value) converter, {NawiErrorOrigin? origin}) {
+    if(result is Success) {
+      return Success<T>(data: converter(result.getValue as E), message: result.message);
+    }
+    final error = result as NawiError<E>;
+    return NawiError<T>(message: error.message, stackTrace: error.stackTrace, origin: origin ?? result.origin);
+  }
 }
 
-class NawiServiceTools{
-  static Function defaultErrorFunction = (e, stackTrace) => Error.onService(message: e, stackTrace: stackTrace);
-  static Error<T> errorParser<T>(Result result) => Error.onService(message: result.message, stackTrace: (result as Error).stackTrace);
+class NawiServiceTools{  
+  static NawiError<T> onCatch<T>(Object e) {
+    if(e is NawiError<T>) return e;
+    return NawiError.onService(message: NawiTools.errorTextParser(e));
+  }
 
   static StudentTableCompanion toStudentTableCompanion(Student data, {bool withId = false}) => StudentTableCompanion(
     id: withId ? Value(data.id) : Value.absent(),
@@ -49,8 +65,6 @@ class NawiServiceTools{
 
 /// Utilidades para los repositorios, que en resumen son cosas de filtros y detalles extras
 class NawiRepositoryTools {
-  
-  static Function defaultErrorFunction = (e, stackTrace) => Error.onRepository(message: e, stackTrace: stackTrace);
   static StudentViewDAOVersionData studentHiddenToPublic(HiddenStudentViewDAOVersionData data) => StudentViewDAOVersionData(
     id: data.id,
     name: data.name,
@@ -65,6 +79,11 @@ class NawiRepositoryTools {
     type: data.type,
     hourCreatedAt: data.hourCreatedAt
   );
+
+  static NawiError<T> onCatch<T>(Object e) {
+    if(e is NawiError<T>) return e;
+    return NawiError.onRepository(message: NawiTools.errorTextParser(e));
+  }
   
   static SimpleSelectStatement<T, R> infiniteScrollFilter<T extends HasResultSet, R>({required dynamic query, int? pageSize, int? currentPage}) {
     if(pageSize != null && currentPage != null) {
@@ -80,12 +99,20 @@ class NawiRepositoryTools {
     }
   }
 
+  /// Solo para la tabla `register_book`, donde se filtra por accion
   static void actionFilter({required List<Expression<bool>> expressions, String? textLike, required dynamic table}) {
     if(textLike != null && textLike.isNotEmpty) {
       expressions.add((table.action as GeneratedColumn<String>).contains(textLike));
     }
   }
 
+  static void timestampRangeFilter({required List<Expression<bool>> expressions, DateTimeRange? range, required dynamic table}) {
+    if(range != null) {
+      expressions.add((table.createdAt as GeneratedColumn<DateTime>).isBetweenValues(range.start, range.end));
+    }
+  }
+
+  /// Solo para la tabla `student`, donde se ordena en base a ciertos criterios
   static SimpleSelectStatement<T, R> orderByStudent<T extends HasResultSet, R>({required dynamic query, required StudentViewOrderByType orderBy}) {
     query = switch (orderBy) {
       StudentViewOrderByType.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.timestamp)]),
@@ -96,6 +123,7 @@ class NawiRepositoryTools {
     return query;
   }
 
+  /// Solo para la tabla `register_book`, donde se ordena en base a ciertos criterios
   static SimpleSelectStatement<T, R> orderByAction<T extends HasResultSet, R>({required dynamic query, required RegisterBookViewOrderByType orderBy}) {
     query = switch (orderBy) {
       RegisterBookViewOrderByType.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.createdAt)]),
@@ -106,6 +134,7 @@ class NawiRepositoryTools {
     return query;
   }
 
+  /// Solo para la tabla `student`, donde se filtra por edad
   static void ageFilter({required List<Expression<bool>> expressions, int? ageEnumIndex1, int? ageEnumIndex2, required dynamic table}) {
     final List<Expression<bool>> orExpression = [];
     if(ageEnumIndex1 != null) orExpression.add((table.age as GeneratedColumnWithTypeConverter<StudentAge, int>).equals(ageEnumIndex1));

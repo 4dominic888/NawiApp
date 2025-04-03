@@ -1,6 +1,7 @@
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
 import 'package:nawiapp/domain/models/models_views/student_view.dart';
 import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 class StudentFilter extends FilterData {
   /// Tipo de ordenamiento
@@ -19,8 +20,8 @@ class StudentFilter extends FilterData {
     super.pageSize, super.currentPage,
     this.orderBy = StudentViewOrderByType.timestampRecently,
     this.ageEnumIndex1, this.ageEnumIndex2,
-    this.nameLike, super.showHidden
-  });
+    String? nameLike, super.showHidden
+  }) : nameLike = NawiTools.clearSpacesOnText(nameLike ?? '');
 
   StudentFilter.none() : this();
 

@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
 import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/register_book.dart';
 
 class RegisterBookFilter extends FilterData {
 
@@ -13,14 +14,24 @@ class RegisterBookFilter extends FilterData {
   /// Tipo de ordenamiento
   final RegisterBookViewOrderByType orderBy;
 
-  /// Filtro por lista de estudiantes exactos
-  final List<Student>? searchByStudents;
+  /// Filtro por lista de ID de estudiantes exactos
+  final Iterable<String> searchByStudentsId;
+
+  /// Filtro para buscar por tipo de cuaderno de registro
+  final RegisterBookType? searchByType;
+
+  /// Filtro para buscar entre un rango de fechas
+  /// 
+  /// Valor por defecto, dia de hoy hasta la semana pasada
+  final DateTimeRange? timestampRange;
 
   RegisterBookFilter({
     super.pageSize, super.currentPage,
     this.actionLike, this.studentNameLike,
     this.orderBy = RegisterBookViewOrderByType.timestampRecently,
-    this.searchByStudents, super.showHidden
+    this.searchByType,
+    this.searchByStudentsId = const [], super.showHidden,
+    this.timestampRange
   });
 
   @override
@@ -28,7 +39,9 @@ class RegisterBookFilter extends FilterData {
     "orderBy": orderBy,
     "actionLike": actionLike,
     "studentNameLike": studentNameLike,
-    "searchByStudents": searchByStudents
+    "searchByStudents": searchByStudentsId,
+    "searchByType": searchByType,
+    "timestampRage" : timestampRange
   }..addAll(super.toMap());
   
   @override
@@ -36,17 +49,21 @@ class RegisterBookFilter extends FilterData {
     int? pageSize, int? currentPage,
     bool? showHidden, String? actionLike,
     String? studentNameLike,
-    List<Student>? searchByStudents,
-    RegisterBookViewOrderByType? orderBy
+    Iterable<String>? searchByStudentsId,
+    RegisterBookType? searchByType,
+    RegisterBookViewOrderByType? orderBy,
+    DateTimeRange? timestampRange,
   }) =>
     RegisterBookFilter(
       studentNameLike: studentNameLike ?? this.studentNameLike,
       actionLike: actionLike ?? this.actionLike,
-      searchByStudents: searchByStudents ?? this.searchByStudents,
+      searchByStudentsId: searchByStudentsId ?? this.searchByStudentsId,
+      searchByType: searchByType ?? this.searchByType,
       pageSize: pageSize ?? this.pageSize,
       currentPage: currentPage ?? this.currentPage,
       showHidden: showHidden ?? this.showHidden,
-      orderBy: orderBy ?? this.orderBy
+      orderBy: orderBy ?? this.orderBy,
+      timestampRange: timestampRange ?? this.timestampRange
     );
   
 }

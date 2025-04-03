@@ -1,7 +1,7 @@
 class PaginatedData<T> {
 
   final ({int currentPage, int pageSize}) metadata;
-  final List<T> data;
+  final Iterable<T> data;
 
   PaginatedData._({required this.metadata, required this.data});
 
@@ -13,7 +13,7 @@ class PaginatedData<T> {
   PaginatedData.build({
     required int currentPage,
     required int pageSize,
-    required List<T> data
+    required Iterable<T> data
   }) : this._(metadata: (
     currentPage: currentPage,
     pageSize: pageSize

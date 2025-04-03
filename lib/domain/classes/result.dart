@@ -1,29 +1,32 @@
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
 
-enum ErrorOrigin{
+enum NawiErrorOrigin{
   repository,
   service,
   presentation,
   other
 }
 
-interface class Error<T> extends Result<T> {
-  final ErrorOrigin origin;
+interface class NawiError<T> extends Result<T> implements Exception {
+  final NawiErrorOrigin origin;
   final StackTrace? stackTrace;
 
-  Error._({required super.message, required this.origin, this.stackTrace});
+  NawiError({required super.message, required this.origin, this.stackTrace});
 
-  Error.onRepository({required String message, StackTrace? stackTrace}) : 
-    this._(message: message, stackTrace: stackTrace, origin: ErrorOrigin.repository);
+  NawiError.onRepository({required String message, StackTrace? stackTrace}) : 
+    this(message: message, stackTrace: stackTrace, origin: NawiErrorOrigin.repository);
 
-  Error.onService({required String message, StackTrace? stackTrace}) : 
-    this._(message: message, stackTrace: stackTrace, origin: ErrorOrigin.service);
+  NawiError.onService({required String message, StackTrace? stackTrace}) : 
+    this(message: message, stackTrace: stackTrace, origin: NawiErrorOrigin.service);
 
-  Error.onPresentation({required String message, StackTrace? stackTrace}) : 
-    this._(message: message, stackTrace: stackTrace, origin: ErrorOrigin.presentation);
+  NawiError.onPresentation({required String message, StackTrace? stackTrace}) : 
+    this(message: message, stackTrace: stackTrace, origin: NawiErrorOrigin.presentation);
     
-  Error.onOther({required String message, StackTrace? stackTrace}) : 
-    this._(message: message, stackTrace: stackTrace, origin: ErrorOrigin.other);
+  NawiError.onOther({required String message, StackTrace? stackTrace}) : 
+    this(message: message, stackTrace: stackTrace, origin: NawiErrorOrigin.other);
+
+  @override
+  String toString() => message;
 }
 
 interface class Success<T> extends Result<T> {
@@ -42,7 +45,7 @@ class Result<T> {
 
   void onValue({
     void Function(T data, String message)? onSuccessfully,
-    void Function(Error error, String message)? onError,
+    void Function(NawiError error, String message)? onError,
     bool withPopup = true
     }) {
 
@@ -52,7 +55,7 @@ class Result<T> {
     }
     else {
       if(withPopup) NotificationMessage.showSuccessNotification(message);
-      onError?.call(this as Error, message);
+      onError?.call(this as NawiError, message);
     }
   }
 
