@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
 import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
@@ -19,12 +20,18 @@ class RegisterBookFilter extends FilterData {
   /// Filtro para buscar por tipo de cuaderno de registro
   final RegisterBookType? searchByType;
 
+  /// Filtro para buscar entre un rango de fechas
+  /// 
+  /// Valor por defecto, dia de hoy hasta la semana pasada
+  final DateTimeRange? timestampRange;
+
   RegisterBookFilter({
     super.pageSize, super.currentPage,
     this.actionLike, this.studentNameLike,
     this.orderBy = RegisterBookViewOrderByType.timestampRecently,
     this.searchByType,
-    this.searchByStudentsId = const [], super.showHidden
+    this.searchByStudentsId = const [], super.showHidden,
+    this.timestampRange
   });
 
   @override
@@ -33,7 +40,8 @@ class RegisterBookFilter extends FilterData {
     "actionLike": actionLike,
     "studentNameLike": studentNameLike,
     "searchByStudents": searchByStudentsId,
-    "searchByType": searchByType
+    "searchByType": searchByType,
+    "timestampRage" : timestampRange
   }..addAll(super.toMap());
   
   @override
@@ -43,7 +51,8 @@ class RegisterBookFilter extends FilterData {
     String? studentNameLike,
     Iterable<String>? searchByStudentsId,
     RegisterBookType? searchByType,
-    RegisterBookViewOrderByType? orderBy
+    RegisterBookViewOrderByType? orderBy,
+    DateTimeRange? timestampRange,
   }) =>
     RegisterBookFilter(
       studentNameLike: studentNameLike ?? this.studentNameLike,
@@ -53,7 +62,8 @@ class RegisterBookFilter extends FilterData {
       pageSize: pageSize ?? this.pageSize,
       currentPage: currentPage ?? this.currentPage,
       showHidden: showHidden ?? this.showHidden,
-      orderBy: orderBy ?? this.orderBy
+      orderBy: orderBy ?? this.orderBy,
+      timestampRange: timestampRange ?? this.timestampRange
     );
   
 }

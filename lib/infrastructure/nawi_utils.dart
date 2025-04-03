@@ -99,12 +99,20 @@ class NawiRepositoryTools {
     }
   }
 
+  /// Solo para la tabla `register_book`, donde se filtra por accion
   static void actionFilter({required List<Expression<bool>> expressions, String? textLike, required dynamic table}) {
     if(textLike != null && textLike.isNotEmpty) {
       expressions.add((table.action as GeneratedColumn<String>).contains(textLike));
     }
   }
 
+  static void timestampRangeFilter({required List<Expression<bool>> expressions, DateTimeRange? range, required dynamic table}) {
+    if(range != null) {
+      expressions.add((table.createdAt as GeneratedColumn<DateTime>).isBetweenValues(range.start, range.end));
+    }
+  }
+
+  /// Solo para la tabla `student`, donde se ordena en base a ciertos criterios
   static SimpleSelectStatement<T, R> orderByStudent<T extends HasResultSet, R>({required dynamic query, required StudentViewOrderByType orderBy}) {
     query = switch (orderBy) {
       StudentViewOrderByType.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.timestamp)]),
@@ -115,6 +123,7 @@ class NawiRepositoryTools {
     return query;
   }
 
+  /// Solo para la tabla `register_book`, donde se ordena en base a ciertos criterios
   static SimpleSelectStatement<T, R> orderByAction<T extends HasResultSet, R>({required dynamic query, required RegisterBookViewOrderByType orderBy}) {
     query = switch (orderBy) {
       RegisterBookViewOrderByType.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.createdAt)]),
@@ -125,6 +134,7 @@ class NawiRepositoryTools {
     return query;
   }
 
+  /// Solo para la tabla `student`, donde se filtra por edad
   static void ageFilter({required List<Expression<bool>> expressions, int? ageEnumIndex1, int? ageEnumIndex2, required dynamic table}) {
     final List<Expression<bool>> orExpression = [];
     if(ageEnumIndex1 != null) orExpression.add((table.age as GeneratedColumnWithTypeConverter<StudentAge, int>).equals(ageEnumIndex1));

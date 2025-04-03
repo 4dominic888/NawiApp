@@ -64,6 +64,8 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
             textLike: params.actionLike
           );
 
+          NawiRepositoryTools.timestampRangeFilter(expressions: filterExpressions, table: tbl, range: params.timestampRange);
+
           NawiRepositoryTools.nameStudentFilter(
             expressions: filterExpressions, table: tbl,
             textLike: params.studentNameLike
