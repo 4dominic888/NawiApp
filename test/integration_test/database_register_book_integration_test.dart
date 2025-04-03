@@ -351,6 +351,38 @@ void main() {
       );
     });    
 
+    test('Busqueda por rango de fechas', () async {
+      final service = GetIt.I<RegisterBookServiceBase>();
+
+      var result = await service.getAll(RegisterBookFilter(timestampRange: 
+        DateTimeRange(start: DateTime(2025, 1, 6), end: DateTime(2025, 2, 15))
+      ));
+
+      testil.customExpect(result, isA<Success>(),
+        about: "Busqueda por rango correcta", output: result.message, n: 1
+      );
+
+      testil.customExpect(result.getValue!.length, 3,
+        about: "Busqueda con rango de fechas con resultados a esperar", n: 2
+      );
+
+      result = await service.getAll(RegisterBookFilter(timestampRange: 
+        DateTimeRange(start: DateTime(2025, 1, 1), end: DateTime(2025, 1, 1))
+      ));
+
+      testil.customExpect(result.getValue!.length, 1,
+        about: "Busqueda con rango de fechas donde se especifica un día en especifico", n: 3
+      );
+
+      result = await service.getAll(RegisterBookFilter(timestampRange: 
+        DateTimeRange(start: DateTime(2025, 3, 9), end: DateTime(2025, 4, 8))
+      ));
+
+      testil.customExpect(result.getValue!, isEmpty,
+        about: "Busqueda fuera de rango de las fechas de los registros", n: 4
+      );
+    });
+
     test('Filtro por cuaderno de registros archivados', () async {
       final service = GetIt.I<RegisterBookServiceBase>();
 
