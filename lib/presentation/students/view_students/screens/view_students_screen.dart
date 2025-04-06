@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/records/button_controller_with_process.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/infrastructure/providers/filter_provider.dart';
 import 'package:nawiapp/presentation/students/view_students/widgets/student_element.dart';
@@ -68,8 +69,11 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
     _pagingController.refresh();
   }
 
+
   @override
   Widget build(BuildContext context) {
+    quitPopup() { if(context.mounted) Navigator.of(context).pop(); _refresh(); }
+
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: _refresh,
@@ -80,46 +84,21 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
               item: item,
               index: index,
               isArchived: ref.watch(studentFilterProvider).showHidden,
-              delete: (
-                controller: _btnDeleteElementController,
-                action: () async {
-                  _btnDeleteElementController.start();
-                  final result = await _studentService.deleteOne(item.id);
-                  result.onValue(
-                    onSuccessfully: (data, message) => _btnDeleteElementController.success(),
-                    onError: (error, message) => _btnDeleteElementController.error(),
-                    withPopup: false
-                  );
-                  if(context.mounted) Navigator.of(context).pop();
-                  _refresh();
-                }
+              delete: defaulVoidResultAction(
+                result: _studentService.deleteOne(item.id),
+                buttonController: _btnDeleteElementController,
+                onAction: quitPopup
               ),
-              archive: (
-                controller: _btnArchiveElementController,
-                action: () async {
-                  _btnArchiveElementController.start();
-                  final result = await _studentService.archiveOne(item.id);
-                  result.onValue(
-                    onSuccessfully: (data, message) => _btnArchiveElementController.success(),
-                    onError: (error, message) => _btnArchiveElementController.error()
-                  );
-                  if(context.mounted) Navigator.of(context).pop();
-                  _refresh();
-                }
+              archive: defaulVoidResultAction(
+                result: _studentService.archiveOne(item.id),
+                buttonController: _btnArchiveElementController,
+                onAction: quitPopup
               ),
-              unarchive: (
-                controller: _btnUnarchiveElementController,
-                action: () async {
-                  _btnUnarchiveElementController.start();
-                  final result = await _studentService.unarchiveOne(item.id);
-                  result.onValue(
-                    onSuccessfully: (data, message) => _btnUnarchiveElementController.success(),
-                    onError: (error, message) => _btnUnarchiveElementController.error()
-                  );
-                  if(context.mounted) Navigator.of(context).pop();
-                  _refresh();
-                }
-              ),
+              unarchive: defaulVoidResultAction(
+                result: _studentService.unarchiveOne(item.id),
+                buttonController: _btnUnarchiveElementController,
+                onAction: quitPopup
+              )
             ),
             firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
             newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
