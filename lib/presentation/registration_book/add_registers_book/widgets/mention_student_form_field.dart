@@ -9,9 +9,10 @@ import 'package:nawiapp/presentation/registration_book/add_registers_book/widget
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 class MentionStudentFormField extends StatefulWidget {
-  const MentionStudentFormField({super.key, required this.formFieldKey});
+  const MentionStudentFormField({super.key, required this.formFieldKey, required this.typeRegisterFormFieldKey});
 
   final Key formFieldKey;
+  final GlobalKey<FormFieldState<RegisterBookType>> typeRegisterFormFieldKey;
 
   @override
   State<MentionStudentFormField> createState() => _MentionStudentFormFieldState();
@@ -28,6 +29,10 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
 
   Color Function(bool hasError) get errorColor => (bool hasError) => hasError ? Colors.red : Colors.black;
   final _studentService = GetIt.I<StudentServiceBase>();
+
+  //* Some variables
+  String? mentionValue;
+  List<StudentDAO> searchResults = [];
 
   Future<List<StudentDAO>> requestData(String? query) async {
     final result = await _studentService.getAllPaginated(pageSize: 5, currentPage: 0, params: StudentFilter(nameLike: query));
@@ -49,10 +54,6 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
     }
   }
 
-  //* Some variables
-  String? mentionValue;
-  List<StudentDAO> searchResults = [];
-
   @override
   void initState() {
     super.initState();
@@ -69,8 +70,27 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                ButtonSpeechField(controller: _speechController, onPlay: cleanController,),
+                ButtonSpeechField(controller: _speechController, onPlay: cleanController),
+
                 const SizedBox(height: 15),
+
+                DropdownButtonFormField<RegisterBookType>(
+                  key: widget.typeRegisterFormFieldKey,
+                  value: RegisterBookType.register,
+                  decoration: const InputDecoration(
+                    labelText: "Selecciona el tipo",
+                    prefixIcon: Icon(Icons.type_specimen),
+                    border: OutlineInputBorder()
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: RegisterBookType.register, child: Text("Registro")),
+                    DropdownMenuItem(value: RegisterBookType.incident, child: Text("Incidente")),
+                    DropdownMenuItem(value: RegisterBookType.anecdotal, child: Text("Anecdótico")),
+                  ],
+                  onChanged: (value) { setState(() {}); },
+                ),
+
+                const SizedBox(height: 30),
 
                 Focus(
                   onFocusChange: (value) {
