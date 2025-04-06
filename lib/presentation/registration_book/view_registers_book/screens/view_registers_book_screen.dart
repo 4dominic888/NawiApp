@@ -54,17 +54,17 @@ class _ViewRegistersBookScreenState extends State<ViewRegistersBookScreen> {
           itemBuilder: (item) => RegisterBookElement(
             item: item,
             delete: defaulVoidResultAction(
-              result: _registerBookService.deleteOne(item.id),
+              result: (() => _registerBookService.deleteOne(item.id)),
               buttonController: _btnDeleteElementController,
               onAction: quitPopup
             ),
             archive: defaulVoidResultAction(
-              result: _registerBookService.archiveOne(item.id),
+              result: (() => _registerBookService.archiveOne(item.id)),
               buttonController: _btnArchiveElementController,
               onAction: quitPopup
             ),
             unarchive: defaulVoidResultAction(
-              result: _registerBookService.unarchiveOne(item.id),
+              result: (() => _registerBookService.unarchiveOne(item.id)),
               buttonController: _btnUnarchiveElementController,
               onAction: quitPopup
             ),

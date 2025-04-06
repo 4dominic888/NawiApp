@@ -14,14 +14,14 @@ typedef ButtonControllerWithProcess = ({
 /// 
 /// [onAction] te permite colocar una función cuando el proceso original acabó.
 ButtonControllerWithProcess defaulVoidResultAction({
-  required Future<Result> result,
+  required Future<Result> Function() result,
   required RoundedLoadingButtonController buttonController,
   void Function()? onAction
 }) => (
   controller: buttonController,
     action: () async {
       buttonController.start();
-      final r = await result;
+      final r = await result.call();
       r.onValue(
         onSuccessfully: (_, __) => buttonController.success(),
         onError: (_, __) => buttonController.error(),

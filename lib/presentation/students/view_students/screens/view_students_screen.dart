@@ -85,17 +85,17 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
               index: index,
               isArchived: ref.watch(studentFilterProvider).showHidden,
               delete: defaulVoidResultAction(
-                result: _studentService.deleteOne(item.id),
+                result: (() => _studentService.deleteOne(item.id)),
                 buttonController: _btnDeleteElementController,
                 onAction: quitPopup
               ),
               archive: defaulVoidResultAction(
-                result: _studentService.archiveOne(item.id),
+                result: (() => _studentService.archiveOne(item.id)),
                 buttonController: _btnArchiveElementController,
                 onAction: quitPopup
               ),
               unarchive: defaulVoidResultAction(
-                result: _studentService.unarchiveOne(item.id),
+                result: (() => _studentService.unarchiveOne(item.id)),
                 buttonController: _btnUnarchiveElementController,
                 onAction: quitPopup
               )
