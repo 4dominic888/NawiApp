@@ -78,11 +78,17 @@ class RegisterBookElement extends StatelessWidget {
         ),
         child: ListTile(
           title: Text(item.action),
-          trailing: switch (item.type) {
-            RegisterBookType.register => const Icon(Icons.app_registration_rounded),
-            RegisterBookType.incident => const Icon(Icons.warning),
-            RegisterBookType.anecdotal => const Icon(Icons.star)
-          },
+          trailing: 
+          Column(
+            children: [
+              switch (item.type) {
+                RegisterBookType.register => const Icon(Icons.app_registration_rounded),
+                RegisterBookType.incident => const Icon(Icons.warning),
+                RegisterBookType.anecdotal => const Icon(Icons.star)
+              },
+              Text(item.type.name)
+            ],
+          ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
