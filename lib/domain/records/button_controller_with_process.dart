@@ -1,14 +1,16 @@
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
-/// Tipo creado para poder almacenar información de botones de tipo [RoundedLoadingButtonController] con
+/// `Record` creado para poder almacenar información de botones de tipo [RoundedLoadingButtonController] con
 /// una acción de tipo [Function] con un [Future] como retorno
+/// 
+/// Por lo general dicho `Widdget` necesita un controlador y una acción, por lo que este record fusiona ambos
 typedef ButtonControllerWithProcess = ({
   RoundedLoadingButtonController controller,
   Future<void> Function() action
 });
 
-/// Usa esto para cuando deseas construir obtener un [ButtonControllerWithProcess] con ningun retorno.
+/// Usa esto para cuando deseas construir un [ButtonControllerWithProcess] con ningun retorno.
 /// 
 /// [result] te permite colocar tu accion, del cual solo te interesa saber si fue correcto o no.
 /// 

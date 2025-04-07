@@ -1,5 +1,8 @@
+import 'package:drift/drift.dart';
 import 'package:nawiapp/data/database_connection.dart';
 import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:recase/recase.dart';
 
 enum RegisterBookType {
   incident("Incidente"),
@@ -10,9 +13,34 @@ enum RegisterBookType {
   const RegisterBookType(this.name);
 }
 
-class RegisterBook {
+/// Para que compartan esta funcion que formatea la acción
+mixin _FormatActionRegisterBook {
+
+  String get action;
+
+  /// Formatea el texto ingresado a uno más legible.
+  /// 
+  /// Remplaza las menciones encontradas en el texto por sus formas capitalizadas.
+  /// 
+  /// Ejemplo:
+  /// ```
+  /// formatActionText("Y asi, @mario_rodriguez jugó tranquilo"); // Y asi, Mario Rodriguez jugó tranquilo
+  /// ```
+  String get formatActionText {
+    final buffer = StringBuffer();
+    for (String word in action.split(' ')) {
+      if(word.startsWith('@')) word = word.replaceFirst('@', '').replaceAll('_', ' ').titleCase;
+      buffer.write(word);
+      buffer.write(' ');
+    }
+    return NawiTools.clearSpacesOnText(buffer.toString());
+  }
+
+}
+
+class RegisterBook with _FormatActionRegisterBook {
   final String id;
-  final String action;
+  @override final String action;
   final DateTime timestamp;
   final RegisterBookType type;
   final String? notes;
@@ -29,6 +57,14 @@ class RegisterBook {
     createdAt: timestamp,
     notes: notes
   );
+
+  RegisterBookTableCompanion toTableCompanion({bool withId = false}) => RegisterBookTableCompanion(
+    id: withId ? Value(id) : Value.absent(),
+    action: Value(action),
+    createdAt: Value(timestamp),
+    notes: Value(notes),
+    type: Value(type)
+  );  
 
   RegisterBook({
     this.id = '*',
@@ -66,9 +102,9 @@ class RegisterBook {
 
 //* No se si fue buena idea crear una clase aparte, sabiendo que tiene incluso la misma cantidad
 //* de atributos, quitando [notes]
-class RegisterBookDAO {
+class RegisterBookDAO with _FormatActionRegisterBook {
   final String id;
-  final String action;
+  @override final String action;
   final String hourCreatedAt;
   final DateTime createdAt;
   final RegisterBookType type;

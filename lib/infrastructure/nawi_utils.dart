@@ -3,68 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:nawiapp/data/database_connection.dart';
 import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
 import 'package:nawiapp/domain/models/models_views/student_view.dart';
-import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/models/student.dart';
-import 'package:recase/recase.dart';
 import 'package:uuid/uuid.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 
 /// Utilidades generales de la aplicación
 class NawiTools {
   static Uuid uuid = Uuid();
-  /// Parsea bien el texto en caso halla excepciones en la variable [e], caso contrario, devuelve un [String] = 'Error inesperado'
+  /// Parsea bien el texto en caso haya excepciones en la variable [e], caso contrario, devuelve un [String] = 'Error inesperado'
   static String errorTextParser(Object e) => e is Exception ? e.toString() : "Error inesperado";
 
   /// Limpia los espacios de más, incluyendo los de en medio del texto
   static String clearSpacesOnText(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
-
-  static NawiError<T> errorParser<T>(Result result) => NawiError(message: result.message, stackTrace: (result as NawiError).stackTrace, origin: result.origin);
-
-  static String formatActionText(String text) {
-    final buffer = StringBuffer();
-    for (String word in text.split(' ')) {
-      if(word.startsWith('@')) word = word.replaceFirst('@', '').replaceAll('_', ' ').titleCase;
-      buffer.write(word);
-      buffer.write(' ');
-    }
-    return clearSpacesOnText(buffer.toString());
-  }
-
-  /// Devuelve un [Result], el cual [E] es el tipo original y se desea parsear a un tipo [T]
-  static Result<T> resultConverter<T, E>(Result<E> result, T Function(E value) converter, {NawiErrorOrigin? origin}) {
-    if(result is Success) {
-      return Success<T>(data: converter(result.getValue as E), message: result.message);
-    }
-    final error = result as NawiError<E>;
-    return NawiError<T>(message: error.message, stackTrace: error.stackTrace, origin: origin ?? result.origin);
-  }
 }
 
+/// Utilidades para la capa de servicio
 class NawiServiceTools{  
+
+  /// [NawiError] por defecto en bloques try catch
   static NawiError<T> onCatch<T>(Object e) {
     if(e is NawiError<T>) return e;
     return NawiError.onService(message: NawiTools.errorTextParser(e));
   }
-
-  static StudentTableCompanion toStudentTableCompanion(Student data, {bool withId = false}) => StudentTableCompanion(
-    id: withId ? Value(data.id) : Value.absent(),
-    age: Value(data.age),
-    name: Value(data.name),
-    notes: Value(data.notes),
-    timestamp: Value(data.timestamp)
-  );
-
-  static RegisterBookTableCompanion toRegisterBookTableCompanion(RegisterBook data, {bool withId = false}) => RegisterBookTableCompanion(
-    id: withId ? Value(data.id) : Value.absent(),
-    action: Value(data.action),
-    createdAt: Value(data.timestamp),
-    notes: Value(data.notes),
-    type: Value(data.type)
-  );
 }
 
 /// Utilidades para los repositorios, que en resumen son cosas de filtros y detalles extras
 class NawiRepositoryTools {
+
+  /// Para convertir un [HiddenStudentViewDAOVersionData] a un [StudentViewDAOVersionData]
   static StudentViewDAOVersionData studentHiddenToPublic(HiddenStudentViewDAOVersionData data) => StudentViewDAOVersionData(
     id: data.id,
     name: data.name,
@@ -72,6 +38,7 @@ class NawiRepositoryTools {
     timestamp: data.timestamp
   );
 
+  /// Para convertir un [HiddenRegisterBookViewDAOVersionData] a un [RegisterBookViewDAOVersionData]
   static RegisterBookViewDAOVersionData registerBookHiddenToPublic(HiddenRegisterBookViewDAOVersionData data) => RegisterBookViewDAOVersionData(
     id: data.id,
     action: data.action,
@@ -80,11 +47,15 @@ class NawiRepositoryTools {
     hourCreatedAt: data.hourCreatedAt
   );
 
+  /// [NawiError] por defecto en bloques try catch
   static NawiError<T> onCatch<T>(Object e) {
     if(e is NawiError<T>) return e;
     return NawiError.onRepository(message: NawiTools.errorTextParser(e));
   }
   
+  /// Para aplicar scroll infinito
+  /// 
+  /// Tambien sirve para paginado normal
   static SimpleSelectStatement<T, R> infiniteScrollFilter<T extends HasResultSet, R>({required dynamic query, int? pageSize, int? currentPage}) {
     if(pageSize != null && currentPage != null) {
       query = query..limit(pageSize, offset: (currentPage - 1) * pageSize);

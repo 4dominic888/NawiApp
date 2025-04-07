@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:nawiapp/data/database_connection.dart';
 
 enum StudentAge {
@@ -35,7 +36,6 @@ mixin _IdenticalStudent {
   int get hashCode => name.hashCode ^ age.hashCode;
 }
 
-
 class Student with _MentionLabelStudent, _IdenticalStudent {
   @override final String id;
   @override final StudentAge age;
@@ -56,6 +56,14 @@ class Student with _MentionLabelStudent, _IdenticalStudent {
     timestamp: timestamp,
     notes: notes
   );
+
+  StudentTableCompanion toTableCompanion({bool withId = false}) => StudentTableCompanion(
+    id: withId ? Value(id) : Value.absent(),
+    age: Value(age),
+    name: Value(name),
+    notes: Value(notes),
+    timestamp: Value(timestamp)
+  );  
 
   Student copyWith({
     String? id,

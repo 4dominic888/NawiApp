@@ -6,7 +6,6 @@ import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/repositories/register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:uuid/uuid.dart';
 
 interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
@@ -20,17 +19,17 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   Future<Result<RegisterBook>> addOne(RegisterBook data) {
     return registerBookRepo.transaction<Result<RegisterBook>>(() async {
       //* Agregado del cuaderno de registro a la tabla
-      final addedRegisterBookResult = await registerBookRepo.addOne(NawiServiceTools.toRegisterBookTableCompanion(data, withId: Uuid.isValidUUID(fromString: data.id)));
-      if(addedRegisterBookResult is NawiError) return NawiTools.errorParser(addedRegisterBookResult);
+      final addedRegisterBookResult = await registerBookRepo.addOne(data.toTableCompanion(withId: Uuid.isValidUUID(fromString: data.id)));
+      if(addedRegisterBookResult is NawiError) return addedRegisterBookResult.getError()!;
 
       final addedStudentsOnRegisterBookResult = await studentRegisterBookRepo.addMany((
         emisors: data.mentions.map((e) => e.id),
         registerBookId: addedRegisterBookResult.getValue!.id
       ));
 
-      if(addedStudentsOnRegisterBookResult is NawiError) return NawiTools.errorParser(addedStudentsOnRegisterBookResult);
+      if(addedStudentsOnRegisterBookResult is NawiError) return addedStudentsOnRegisterBookResult.getError()!;
 
-      return NawiTools.resultConverter(addedRegisterBookResult, (value) => RegisterBook.fromTableData(value, data.mentions));
+      return addedRegisterBookResult.convertTo((value) => RegisterBook.fromTableData(value, data.mentions));
     });
   }
 
@@ -38,12 +37,12 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   Future<Result<RegisterBook>> deleteOne(String id) {
     return registerBookRepo.transaction<Result<RegisterBook>>(() async {
       final deleteManyToManyRelationResult = await studentRegisterBookRepo.deleteManyByRegisterBookID(id);
-      if(deleteManyToManyRelationResult is NawiError) return NawiTools.errorParser(deleteManyToManyRelationResult);
+      if(deleteManyToManyRelationResult is NawiError) deleteManyToManyRelationResult.getError()!;
 
       final deleteRegisterBookResult = await registerBookRepo.deleteOne(id);
-      if(deleteRegisterBookResult is NawiError) return NawiTools.errorParser(deleteRegisterBookResult);
+      if(deleteRegisterBookResult is NawiError) return deleteRegisterBookResult.getError()!;
 
-      return NawiTools.resultConverter(deleteRegisterBookResult, (value) => RegisterBook.fromTableData(value, const []));
+      return deleteRegisterBookResult.convertTo((value) => RegisterBook.fromTableData(value, const []));
     });
   }
 
@@ -51,13 +50,13 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   Future<Result<bool>> updateOne(RegisterBook data) {
     return registerBookRepo.transaction<Result<bool>>(() async {
       final updatedRegisterBookResult = await registerBookRepo.updateOne(data.toTable);
-      if(updatedRegisterBookResult is NawiError) return NawiTools.errorParser(updatedRegisterBookResult);
+      if(updatedRegisterBookResult is NawiError) return updatedRegisterBookResult.getError()!;
 
       final updateManyToManyResult = await studentRegisterBookRepo.updateMany((
         registerBookId: data.id,
         emisors: data.mentions.map((e) => e.id)
       ));
-      if(updateManyToManyResult is NawiError) return NawiTools.errorParser(updateManyToManyResult);
+      if(updateManyToManyResult is NawiError) return updateManyToManyResult.getError()!;
       return updatedRegisterBookResult;
     });
   }
@@ -68,7 +67,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
 
       //* Obtiene los cuadernos de registro sin estudiantes
       final gotRawRegisterBookResult = await registerBookRepo.getAll(params);
-      if(gotRawRegisterBookResult is NawiError) return NawiTools.errorParser(gotRawRegisterBookResult);
+      if(gotRawRegisterBookResult is NawiError) return gotRawRegisterBookResult.getError()!;
 
       return Success(data: await Future.wait(
         gotRawRegisterBookResult.getValue!.map((e) async {
@@ -87,16 +86,16 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   @override
   Future<Result<PaginatedData<RegisterBookDAO>>> getAllPaginated({required int pageSize, required int currentPage, required RegisterBookFilter params}) async {
     final result = await getAll(params.copyWith(pageSize: pageSize, currentPage: currentPage));
-    return NawiTools.resultConverter(result, (value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
+    return result.convertTo((value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
   }
 
   @override
   Future<Result<RegisterBook>> getOne(String id) {
     return registerBookRepo.transaction(() async {
       final studentOnRegisterBookResult = await studentRegisterBookRepo.getStudentsFromRegisterBook(id);
-      if(studentOnRegisterBookResult is NawiError) return NawiTools.errorParser(studentOnRegisterBookResult);
+      if(studentOnRegisterBookResult is NawiError) return studentOnRegisterBookResult.getError()!;
       final result = await registerBookRepo.getOne(id);
-      return NawiTools.resultConverter(result, 
+      return result.convertTo( 
         (value) => 
           RegisterBook.fromTableData(value, studentOnRegisterBookResult.getValue!.map(
             (e) => StudentDAO.fromDAOView(e)
@@ -109,12 +108,12 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   @override
   Future<Result<RegisterBook>> archiveOne(String id) async {
     final result = await registerBookRepo.archiveOne(id);
-    return NawiTools.resultConverter(result, (value) => RegisterBook.fromTableData(value, const []));
+    return result.convertTo((value) => RegisterBook.fromTableData(value, const []));
   }
 
   @override
   Future<Result<RegisterBook>> unarchiveOne(String id) async {
     final result = await registerBookRepo.unarchiveOne(id);
-    return NawiTools.resultConverter(result, (value) => RegisterBook.fromTableData(value, const []));
+    return result.convertTo((value) => RegisterBook.fromTableData(value, const []));
   }
 }

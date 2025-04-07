@@ -6,6 +6,7 @@ import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/widgets/mention_student_form_field.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
+import 'package:recase/recase.dart';
 
 class AddRegisterBookScreen extends StatefulWidget {
   const AddRegisterBookScreen({super.key});
@@ -23,10 +24,28 @@ class _AddRegisterBookScreenState extends State<AddRegisterBookScreen> {
   final _typeRegisterKey = GlobalKey<FormFieldState<RegisterBookType>>();
   final _btnController = RoundedLoadingButtonController();
 
+  /// Formatea el texto ingresado a uno más legible.
+  /// 
+  /// Remplaza las menciones encontradas en el texto por sus formas capitalizadas.
+  /// 
+  /// Ejemplo:
+  /// ```
+  /// formatActionText("Y asi, @mario_rodriguez jugó tranquilo"); // Y asi, Mario Rodriguez jugó tranquilo
+  /// ```
+  static String formatActionText(String text) {
+    final buffer = StringBuffer();
+    for (String word in text.split(' ')) {
+      if(word.startsWith('@')) word = word.replaceFirst('@', '').replaceAll('_', ' ').titleCase;
+      buffer.write(word);
+      buffer.write(' ');
+    }
+    return NawiTools.clearSpacesOnText(buffer.toString());
+  }
+
   Future<void> onSubmit() async {
     if(_formKey.currentState!.validate()) {
       final result = await _registerBookService.addOne(RegisterBook(
-        action: NawiTools.formatActionText(_actionKey.currentState!.value!.action),
+        action: formatActionText(_actionKey.currentState!.value!.action),
         mentions: _actionKey.currentState!.value!.mentions,
         type: _typeRegisterKey.currentState!.value!
       ));

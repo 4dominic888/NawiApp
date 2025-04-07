@@ -23,8 +23,6 @@ class StudentFilter extends FilterData {
     String? nameLike, super.showHidden
   }) : nameLike = NawiTools.clearSpacesOnText(nameLike ?? '');
 
-  StudentFilter.none() : this();
-
   @override
   Map<String, dynamic> toMap() => {
     "orderBy": orderBy,

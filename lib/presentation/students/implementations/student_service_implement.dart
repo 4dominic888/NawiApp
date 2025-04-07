@@ -5,7 +5,6 @@ import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_repository.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:recase/recase.dart';
 import 'package:uuid/uuid.dart';
 
@@ -18,27 +17,26 @@ interface class StudentServiceImplement extends StudentServiceBase {
   @override
   Future<Result<Student>> addOne(Student data) async {
     data = data.copyWith(name: data.name.titleCase);
-    final result = await studentRepo.addOne(NawiServiceTools.toStudentTableCompanion(data, withId: Uuid.isValidUUID(fromString: data.id)));
-    return NawiTools.resultConverter(result, (value) => Student.fromTableData(value!), origin: NawiErrorOrigin.service);
+    final result = await studentRepo.addOne(data.toTableCompanion(withId: Uuid.isValidUUID(fromString: data.id)));
+    return result.convertTo((value) => Student.fromTableData(value!), origin: NawiErrorOrigin.service);
   }
 
   @override
   Future<Result<Iterable<StudentDAO>>> getAll(StudentFilter params) async {
     final result = await studentRepo.getAll(params);
-    return NawiTools.resultConverter(result, (value) => value.map((e) => StudentDAO.fromDAOView(e)));
+    return result.convertTo((value) => value.map((e) => StudentDAO.fromDAOView(e)));
   }
 
   @override
   Future<Result<PaginatedData<StudentDAO>>> getAllPaginated({required int pageSize, required int currentPage, required StudentFilter params}) async {
     final result = await getAll(params.copyWith(pageSize: pageSize, currentPage: currentPage));
-    return NawiTools.resultConverter(result, (value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
+    return result.convertTo((value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
   }
 
   @override
   Future<Result<Student>> getOne(String id) async {
     final studentTableDataResult = await studentRepo.getOne(id);
-    return NawiTools.resultConverter(
-      studentTableDataResult, 
+    return studentTableDataResult.convertTo(
       (value) => Student.fromTableData(studentTableDataResult.getValue!)
     );
   }
@@ -51,25 +49,25 @@ interface class StudentServiceImplement extends StudentServiceBase {
     return studentRepo.transaction<Result<Student>>(() async {
       //* Eliminacion de registros relacionados de la tabla StudentRegisterBookTable
       final deleteManyToManyResult = await studentRegisterBookRepo.deleteManyByStudentID(studentId: id, deleteRegisterBooks: true);
-      if(deleteManyToManyResult is NawiError) return NawiTools.errorParser(deleteManyToManyResult);
+      if(deleteManyToManyResult is NawiError) return deleteManyToManyResult.getError()!;
 
       //* Eliminación del estudiante en cuestion
       final deleteStudentResult = await studentRepo.deleteOne(id);
-      if(deleteStudentResult is NawiError) return NawiTools.errorParser(deleteStudentResult);
+      if(deleteStudentResult is NawiError) return deleteStudentResult.getError()!;
 
-      return NawiTools.resultConverter(deleteStudentResult, (value) => Student.fromTableData(deleteStudentResult.getValue!));
+      return deleteStudentResult.convertTo((value) => Student.fromTableData(deleteStudentResult.getValue!));
     });
   }
   
   @override
   Future<Result<Student>> archiveOne(String id) async {
     final result = await studentRepo.archiveOne(id);
-    return NawiTools.resultConverter(result, (value) => Student.fromTableData(value));
+    return result.convertTo((value) => Student.fromTableData(value));
   }
 
   @override
   Future<Result<Student>> unarchiveOne(String id) async {
     final result = await studentRepo.unarchiveOne(id);
-    return NawiTools.resultConverter(result, (value) => Student.fromTableData(value));
+    return result.convertTo((value) => Student.fromTableData(value));
   }
 }

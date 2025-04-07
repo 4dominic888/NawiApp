@@ -1,3 +1,4 @@
+/// Clase con atributos útiles para filtros avanzados
 abstract class FilterData {
 
   /// Tamaño de cada porcion de datos seleccionados
