@@ -74,6 +74,7 @@ class _ViewRegistersBookScreenState extends State<ViewRegistersBookScreen> {
           loadingWidget: const Center(child: CircularProgressIndicator()),
           showRefreshIndicator: true,
           stickyGroups: false,
+          noItemsFoundWidget: const Center(child: Text('No hay registros agregados'))
         )
       ),
     );
