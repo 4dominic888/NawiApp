@@ -33,7 +33,7 @@ class RegisterBookElement extends StatelessWidget {
         direction: DismissDirection.horizontal,
         confirmDismiss: (direction) async {
           if(direction == DismissDirection.startToEnd) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => AddRegisterBookScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (_) => AddRegisterBookScreen(idToEdit: item.id)));
           }
           if(direction == DismissDirection.endToStart) {
             await WarningAwesomeDialog(
@@ -77,7 +77,7 @@ class RegisterBookElement extends StatelessWidget {
           child: Icon(Icons.delete, color: Colors.white)              
         ),
         child: ListTile(
-          title: Text(item.action),
+          title: Text(item.formatActionText),
           trailing: 
           Column(
             children: [

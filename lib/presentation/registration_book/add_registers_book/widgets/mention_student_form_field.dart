@@ -9,8 +9,9 @@ import 'package:nawiapp/presentation/registration_book/add_registers_book/widget
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 class MentionStudentFormField extends StatefulWidget {
-  const MentionStudentFormField({super.key, required this.formFieldKey, required this.typeRegisterFormFieldKey});
+  const MentionStudentFormField({super.key, this.registerBook, required this.formFieldKey, required this.typeRegisterFormFieldKey});
 
+  final RegisterBook? registerBook;
   final Key formFieldKey;
   final GlobalKey<FormFieldState<RegisterBookType>> typeRegisterFormFieldKey;
 
@@ -20,7 +21,7 @@ class MentionStudentFormField extends StatefulWidget {
 
 class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
 
-  final RegisterBook _value = RegisterBook.empty();
+  late final RegisterBook _value;
 
   /// Controlador que maneja especificamente el texto resultante del widget de voz a texto
   final _speechController = TextEditingController();
@@ -57,12 +58,15 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
   @override
   void initState() {
     super.initState();
+    _value = widget.registerBook ?? RegisterBook.empty();
     _speechController.addListener(() => _taggerController.setText = _speechController.text);
+    _taggerController.setText = _value.action;
   }
 
   @override
   Widget build(BuildContext context) {
     return FormField<RegisterBook>(
+      initialValue: _value,
       key: widget.formFieldKey,
       builder: (formState) {
         return SafeArea(
@@ -76,7 +80,7 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
 
                 DropdownButtonFormField<RegisterBookType>(
                   key: widget.typeRegisterFormFieldKey,
-                  value: RegisterBookType.register,
+                  value: _value.type,
                   decoration: const InputDecoration(
                     labelText: "Selecciona el tipo",
                     prefixIcon: Icon(Icons.type_specimen),
@@ -87,7 +91,7 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
                     DropdownMenuItem(value: RegisterBookType.incident, child: Text("Incidente")),
                     DropdownMenuItem(value: RegisterBookType.anecdotal, child: Text("Anecdótico")),
                   ],
-                  onChanged: (value) { setState(() {}); },
+                  onChanged: (value) { setState(() {}); }
                 ),
 
                 const SizedBox(height: 30),
@@ -99,6 +103,7 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
                   child: MentionTagTextFormField(
                     keyboardType: TextInputType.multiline,
                     minLines: 1, maxLines: 5, controller: _taggerController,
+                    initialMentions: _value.mentions.map((e) => ("@${e.mentionLabel}", e, null)).toList(),
                     onTapOutside: (event) {
                       formState.didChange(_value.copyWith(
                         action: _taggerController.getText,

@@ -18,8 +18,6 @@ class AddStudentsScreen extends StatefulWidget {
 
 class _AddStudentsScreenState extends State<AddStudentsScreen> {
 
-  bool _isUpdatable = false;
-
   final _studentService = GetIt.I<StudentServiceBase>();
 
   final _formKey = GlobalKey<FormState>();
@@ -27,8 +25,15 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
   final _ageKey = GlobalKey<FormFieldState<StudentAge>>();
   final _btnController = RoundedLoadingButtonController();
 
-  Student? _studentforEditing;
+  bool _isUpdatable = false;
+  Student? _getData;
   late final Future<Result<Student>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = _studentService.getOne(widget.idToEdit ?? '0');
+  }
 
   Future<void> onSubmit() async {
     if(_formKey.currentState!.validate()) {
@@ -37,8 +42,8 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
       final Student student = Student(
         name: _nameKey.currentState!.value!,
         age: _ageKey.currentState!.value!,
-        notes: _studentforEditing?.notes,
-        timestamp: _studentforEditing?.timestamp
+        notes: _getData?.notes,
+        timestamp: _getData?.timestamp
       );
 
       if(!_isUpdatable) { //* Crear
@@ -55,12 +60,6 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
       return;
     }
     _btnController.error();
-  }
-  
-  @override
-  void initState() {
-    super.initState();
-    _future = _studentService.getOne(widget.idToEdit ?? '0');
   }
 
   @override
@@ -80,8 +79,8 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
           builder: (_, snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
             
-            _studentforEditing = snapshot.data?.getValue;
-            _isUpdatable = _studentforEditing != null;
+            _getData = snapshot.data?.getValue;
+            _isUpdatable = _getData != null;
 
             return SingleChildScrollView(
               child: Padding(
@@ -95,11 +94,11 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                       Center(
                         child: CircleAvatar(
                           radius: screenWidth / 9,
-                          backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? _studentforEditing?.age.value ?? 0, withOpacity: true),
+                          backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0, withOpacity: true),
                           child: Icon(
                             Icons.person,
                             size: screenWidth / 9,
-                            color: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? _studentforEditing?.age.value ?? 0)
+                            color: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0)
                           )
                         )
                       ),
@@ -108,7 +107,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                   
                       TextFormField(
                         key: _nameKey,
-                        initialValue: _studentforEditing?.name,
+                        initialValue: _getData?.name,
                         decoration: const InputDecoration(
                           labelText: "Nombre",
                           prefixIcon: Icon(Icons.accessibility_new_rounded),
@@ -126,7 +125,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                   
                       DropdownButtonFormField<StudentAge>(
                         key: _ageKey,
-                        value: _studentforEditing?.age,
+                        value: _getData?.age,
                         decoration: const InputDecoration(
                           labelText: "Selecciona la edad",
                           prefixIcon: Icon(Icons.apple),
@@ -153,14 +152,14 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                         color: _isUpdatable ? Colors.lightBlueAccent.shade100 : Theme.of(context).colorScheme.inversePrimary,
                         proccess: onSubmit,
                       )
-                    ],
-                  ),
-                ),
-              ),
+                    ]
+                  )
+                )
+              )
             );
           }
-        ),
-      ),
+        )
+      )
     );
   }
 }
