@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nawiapp/domain/classes/student_filter.dart';
+import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 
 class StudentFilterNotifier extends StateNotifier<StudentFilter> {
   StudentFilterNotifier() : super(StudentFilter());

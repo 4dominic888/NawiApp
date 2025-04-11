@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
-import 'package:nawiapp/data/database_connection.dart';
-import 'package:nawiapp/domain/models/models_views/register_book_view.dart';
-import 'package:nawiapp/domain/models/models_views/student_view.dart';
+import 'package:nawiapp/data/drift_connection.dart';
+import 'package:nawiapp/domain/models/views/register_book_view.dart';
+import 'package:nawiapp/domain/models/views/student_view.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:uuid/uuid.dart';
 import 'package:nawiapp/domain/classes/result.dart';
@@ -10,36 +10,34 @@ import 'package:nawiapp/domain/classes/result.dart';
 /// Utilidades generales de la aplicación
 class NawiTools {
   static Uuid uuid = Uuid();
-  /// Parsea bien el texto en caso haya excepciones en la variable [e], caso contrario, devuelve un [String] = 'Error inesperado'
-  static String errorTextParser(Object e) => e is Exception ? e.toString() : "Error inesperado";
 
   /// Limpia los espacios de más, incluyendo los de en medio del texto
-  static String clearSpacesOnText(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
+  static String clearSpaces(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
 }
 
 /// Utilidades para la capa de servicio
 class NawiServiceTools{  
-
+  
   /// [NawiError] por defecto en bloques try catch
   static NawiError<T> onCatch<T>(Object e) {
     if(e is NawiError<T>) return e;
-    return NawiError.onService(message: NawiTools.errorTextParser(e));
+    return NawiError.onService(message: e.toString());
   }
 }
 
 /// Utilidades para los repositorios, que en resumen son cosas de filtros y detalles extras
 class NawiRepositoryTools {
 
-  /// Para convertir un [HiddenStudentViewDAOVersionData] a un [StudentViewDAOVersionData]
-  static StudentViewDAOVersionData studentHiddenToPublic(HiddenStudentViewDAOVersionData data) => StudentViewDAOVersionData(
+  /// Para convertir un [HiddenStudentViewDTOVersionData] a un [StudentViewDTOVersionData]
+  static StudentViewDTOVersionData studentHiddenToPublic(HiddenStudentViewDTOVersionData data) => StudentViewDTOVersionData(
     id: data.id,
     name: data.name,
     age: data.age,
     timestamp: data.timestamp
   );
 
-  /// Para convertir un [HiddenRegisterBookViewDAOVersionData] a un [RegisterBookViewDAOVersionData]
-  static RegisterBookViewDAOVersionData registerBookHiddenToPublic(HiddenRegisterBookViewDAOVersionData data) => RegisterBookViewDAOVersionData(
+  /// Para convertir un [HiddenRegisterBookViewDTOVersionData] a un [RegisterBookViewDTOVersionData]
+  static RegisterBookViewDTOVersionData registerBookHiddenToPublic(HiddenRegisterBookViewDTOVersionData data) => RegisterBookViewDTOVersionData(
     id: data.id,
     action: data.action,
     createdAt: data.createdAt,
@@ -50,7 +48,7 @@ class NawiRepositoryTools {
   /// [NawiError] por defecto en bloques try catch
   static NawiError<T> onCatch<T>(Object e) {
     if(e is NawiError<T>) return e;
-    return NawiError.onRepository(message: NawiTools.errorTextParser(e));
+    return NawiError.onRepository(message: e.toString());
   }
   
   /// Para aplicar scroll infinito

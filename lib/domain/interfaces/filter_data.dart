@@ -13,6 +13,8 @@ abstract class FilterData {
   /// muestra solo los archivados
   final bool showHidden;
 
+  bool get notShowHidden => !showHidden;
+
   FilterData({this.pageSize, this.currentPage, this.showHidden = false});
 
   Map<String, dynamic> toMap() => {

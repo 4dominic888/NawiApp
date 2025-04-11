@@ -115,7 +115,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                         ),
                         validator: (value) {
                           if(value == null || value.trim().isEmpty) return "No se ha proporcionado un nombre";
-                          value = NawiTools.clearSpacesOnText(value);
+                          value = NawiTools.clearSpaces(value);
                           if(value.length <= 2) return "El nombre es demasiado corto";
                           return null;
                         },

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'database_connection.dart';
+part of 'drift_connection.dart';
 
 // ignore_for_file: type=lint
 class $StudentTableTable extends StudentTable
@@ -1185,20 +1185,20 @@ class HiddenRegisterBookTableCompanion
   }
 }
 
-class StudentViewDAOVersionData extends DataClass {
+class StudentViewDTOVersionData extends DataClass {
   final String id;
   final String name;
   final StudentAge age;
   final DateTime timestamp;
-  const StudentViewDAOVersionData(
+  const StudentViewDTOVersionData(
       {required this.id,
       required this.name,
       required this.age,
       required this.timestamp});
-  factory StudentViewDAOVersionData.fromJson(Map<String, dynamic> json,
+  factory StudentViewDTOVersionData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return StudentViewDAOVersionData(
+    return StudentViewDTOVersionData(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       age: $StudentTableTable.$converterage
@@ -1218,9 +1218,9 @@ class StudentViewDAOVersionData extends DataClass {
     };
   }
 
-  StudentViewDAOVersionData copyWith(
+  StudentViewDTOVersionData copyWith(
           {String? id, String? name, StudentAge? age, DateTime? timestamp}) =>
-      StudentViewDAOVersionData(
+      StudentViewDTOVersionData(
         id: id ?? this.id,
         name: name ?? this.name,
         age: age ?? this.age,
@@ -1228,7 +1228,7 @@ class StudentViewDAOVersionData extends DataClass {
       );
   @override
   String toString() {
-    return (StringBuffer('StudentViewDAOVersionData(')
+    return (StringBuffer('StudentViewDTOVersionData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('age: $age, ')
@@ -1242,20 +1242,20 @@ class StudentViewDAOVersionData extends DataClass {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is StudentViewDAOVersionData &&
+      (other is StudentViewDTOVersionData &&
           other.id == this.id &&
           other.name == this.name &&
           other.age == this.age &&
           other.timestamp == this.timestamp);
 }
 
-class $StudentViewDAOVersionView
-    extends ViewInfo<$StudentViewDAOVersionView, StudentViewDAOVersionData>
+class $StudentViewDTOVersionView
+    extends ViewInfo<$StudentViewDTOVersionView, StudentViewDTOVersionData>
     implements HasResultSet {
   final String? _alias;
   @override
   final _$NawiDatabase attachedDatabase;
-  $StudentViewDAOVersionView(this.attachedDatabase, [this._alias]);
+  $StudentViewDTOVersionView(this.attachedDatabase, [this._alias]);
   $StudentTableTable get student =>
       attachedDatabase.studentTable.createAlias('t0');
   @override
@@ -1263,16 +1263,16 @@ class $StudentViewDAOVersionView
   @override
   String get aliasedName => _alias ?? entityName;
   @override
-  String get entityName => 'student_view_d_a_o_version';
+  String get entityName => 'student_view_d_t_o_version';
   @override
   Map<SqlDialect, String>? get createViewStatements => null;
   @override
-  $StudentViewDAOVersionView get asDslTable => this;
+  $StudentViewDTOVersionView get asDslTable => this;
   @override
-  StudentViewDAOVersionData map(Map<String, dynamic> data,
+  StudentViewDTOVersionData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return StudentViewDAOVersionData(
+    return StudentViewDTOVersionData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
@@ -1300,8 +1300,8 @@ class $StudentViewDAOVersionView
       generatedAs: GeneratedAs(student.timestamp, false),
       type: DriftSqlType.dateTime);
   @override
-  $StudentViewDAOVersionView createAlias(String alias) {
-    return $StudentViewDAOVersionView(attachedDatabase, alias);
+  $StudentViewDTOVersionView createAlias(String alias) {
+    return $StudentViewDTOVersionView(attachedDatabase, alias);
   }
 
   @override
@@ -1311,20 +1311,20 @@ class $StudentViewDAOVersionView
   Set<String> get readTables => const {'student'};
 }
 
-class HiddenStudentViewDAOVersionData extends DataClass {
+class HiddenStudentViewDTOVersionData extends DataClass {
   final String id;
   final String name;
   final StudentAge age;
   final DateTime timestamp;
-  const HiddenStudentViewDAOVersionData(
+  const HiddenStudentViewDTOVersionData(
       {required this.id,
       required this.name,
       required this.age,
       required this.timestamp});
-  factory HiddenStudentViewDAOVersionData.fromJson(Map<String, dynamic> json,
+  factory HiddenStudentViewDTOVersionData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HiddenStudentViewDAOVersionData(
+    return HiddenStudentViewDTOVersionData(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       age: $StudentTableTable.$converterage
@@ -1344,9 +1344,9 @@ class HiddenStudentViewDAOVersionData extends DataClass {
     };
   }
 
-  HiddenStudentViewDAOVersionData copyWith(
+  HiddenStudentViewDTOVersionData copyWith(
           {String? id, String? name, StudentAge? age, DateTime? timestamp}) =>
-      HiddenStudentViewDAOVersionData(
+      HiddenStudentViewDTOVersionData(
         id: id ?? this.id,
         name: name ?? this.name,
         age: age ?? this.age,
@@ -1354,7 +1354,7 @@ class HiddenStudentViewDAOVersionData extends DataClass {
       );
   @override
   String toString() {
-    return (StringBuffer('HiddenStudentViewDAOVersionData(')
+    return (StringBuffer('HiddenStudentViewDTOVersionData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('age: $age, ')
@@ -1368,20 +1368,20 @@ class HiddenStudentViewDAOVersionData extends DataClass {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is HiddenStudentViewDAOVersionData &&
+      (other is HiddenStudentViewDTOVersionData &&
           other.id == this.id &&
           other.name == this.name &&
           other.age == this.age &&
           other.timestamp == this.timestamp);
 }
 
-class $HiddenStudentViewDAOVersionView extends ViewInfo<
-    $HiddenStudentViewDAOVersionView,
-    HiddenStudentViewDAOVersionData> implements HasResultSet {
+class $HiddenStudentViewDTOVersionView extends ViewInfo<
+    $HiddenStudentViewDTOVersionView,
+    HiddenStudentViewDTOVersionData> implements HasResultSet {
   final String? _alias;
   @override
   final _$NawiDatabase attachedDatabase;
-  $HiddenStudentViewDAOVersionView(this.attachedDatabase, [this._alias]);
+  $HiddenStudentViewDTOVersionView(this.attachedDatabase, [this._alias]);
   $HiddenStudentTableTable get hiddenStudent =>
       attachedDatabase.hiddenStudentTable.createAlias('t0');
   $StudentTableTable get student =>
@@ -1391,16 +1391,16 @@ class $HiddenStudentViewDAOVersionView extends ViewInfo<
   @override
   String get aliasedName => _alias ?? entityName;
   @override
-  String get entityName => 'hidden_student_view_d_a_o_version';
+  String get entityName => 'hidden_student_view_d_t_o_version';
   @override
   Map<SqlDialect, String>? get createViewStatements => null;
   @override
-  $HiddenStudentViewDAOVersionView get asDslTable => this;
+  $HiddenStudentViewDTOVersionView get asDslTable => this;
   @override
-  HiddenStudentViewDAOVersionData map(Map<String, dynamic> data,
+  HiddenStudentViewDTOVersionData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HiddenStudentViewDAOVersionData(
+    return HiddenStudentViewDTOVersionData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
@@ -1428,8 +1428,8 @@ class $HiddenStudentViewDAOVersionView extends ViewInfo<
       generatedAs: GeneratedAs(student.timestamp, false),
       type: DriftSqlType.dateTime);
   @override
-  $HiddenStudentViewDAOVersionView createAlias(String alias) {
-    return $HiddenStudentViewDAOVersionView(attachedDatabase, alias);
+  $HiddenStudentViewDTOVersionView createAlias(String alias) {
+    return $HiddenStudentViewDTOVersionView(attachedDatabase, alias);
   }
 
   @override
@@ -1440,22 +1440,22 @@ class $HiddenStudentViewDAOVersionView extends ViewInfo<
   Set<String> get readTables => const {'hidden_student_table', 'student'};
 }
 
-class RegisterBookViewDAOVersionData extends DataClass {
+class RegisterBookViewDTOVersionData extends DataClass {
   final String id;
   final String action;
   final String? hourCreatedAt;
   final DateTime createdAt;
   final RegisterBookType type;
-  const RegisterBookViewDAOVersionData(
+  const RegisterBookViewDTOVersionData(
       {required this.id,
       required this.action,
       this.hourCreatedAt,
       required this.createdAt,
       required this.type});
-  factory RegisterBookViewDAOVersionData.fromJson(Map<String, dynamic> json,
+  factory RegisterBookViewDTOVersionData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return RegisterBookViewDAOVersionData(
+    return RegisterBookViewDTOVersionData(
       id: serializer.fromJson<String>(json['id']),
       action: serializer.fromJson<String>(json['action']),
       hourCreatedAt: serializer.fromJson<String?>(json['hourCreatedAt']),
@@ -1477,13 +1477,13 @@ class RegisterBookViewDAOVersionData extends DataClass {
     };
   }
 
-  RegisterBookViewDAOVersionData copyWith(
+  RegisterBookViewDTOVersionData copyWith(
           {String? id,
           String? action,
           Value<String?> hourCreatedAt = const Value.absent(),
           DateTime? createdAt,
           RegisterBookType? type}) =>
-      RegisterBookViewDAOVersionData(
+      RegisterBookViewDTOVersionData(
         id: id ?? this.id,
         action: action ?? this.action,
         hourCreatedAt:
@@ -1493,7 +1493,7 @@ class RegisterBookViewDAOVersionData extends DataClass {
       );
   @override
   String toString() {
-    return (StringBuffer('RegisterBookViewDAOVersionData(')
+    return (StringBuffer('RegisterBookViewDTOVersionData(')
           ..write('id: $id, ')
           ..write('action: $action, ')
           ..write('hourCreatedAt: $hourCreatedAt, ')
@@ -1508,7 +1508,7 @@ class RegisterBookViewDAOVersionData extends DataClass {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is RegisterBookViewDAOVersionData &&
+      (other is RegisterBookViewDTOVersionData &&
           other.id == this.id &&
           other.action == this.action &&
           other.hourCreatedAt == this.hourCreatedAt &&
@@ -1516,13 +1516,13 @@ class RegisterBookViewDAOVersionData extends DataClass {
           other.type == this.type);
 }
 
-class $RegisterBookViewDAOVersionView extends ViewInfo<
-    $RegisterBookViewDAOVersionView,
-    RegisterBookViewDAOVersionData> implements HasResultSet {
+class $RegisterBookViewDTOVersionView extends ViewInfo<
+    $RegisterBookViewDTOVersionView,
+    RegisterBookViewDTOVersionData> implements HasResultSet {
   final String? _alias;
   @override
   final _$NawiDatabase attachedDatabase;
-  $RegisterBookViewDAOVersionView(this.attachedDatabase, [this._alias]);
+  $RegisterBookViewDTOVersionView(this.attachedDatabase, [this._alias]);
   $RegisterBookTableTable get registerBook =>
       attachedDatabase.registerBookTable.createAlias('t0');
   @override
@@ -1531,16 +1531,16 @@ class $RegisterBookViewDAOVersionView extends ViewInfo<
   @override
   String get aliasedName => _alias ?? entityName;
   @override
-  String get entityName => 'register_book_view_d_a_o_version';
+  String get entityName => 'register_book_view_d_t_o_version';
   @override
   Map<SqlDialect, String>? get createViewStatements => null;
   @override
-  $RegisterBookViewDAOVersionView get asDslTable => this;
+  $RegisterBookViewDTOVersionView get asDslTable => this;
   @override
-  RegisterBookViewDAOVersionData map(Map<String, dynamic> data,
+  RegisterBookViewDTOVersionData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return RegisterBookViewDAOVersionData(
+    return RegisterBookViewDTOVersionData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       action: attachedDatabase.typeMapping
@@ -1579,8 +1579,8 @@ class $RegisterBookViewDAOVersionView extends ViewInfo<
           .withConverter<RegisterBookType>(
               $RegisterBookTableTable.$convertertype);
   @override
-  $RegisterBookViewDAOVersionView createAlias(String alias) {
-    return $RegisterBookViewDAOVersionView(attachedDatabase, alias);
+  $RegisterBookViewDTOVersionView createAlias(String alias) {
+    return $RegisterBookViewDTOVersionView(attachedDatabase, alias);
   }
 
   @override
@@ -1590,23 +1590,23 @@ class $RegisterBookViewDAOVersionView extends ViewInfo<
   Set<String> get readTables => const {'register_book'};
 }
 
-class HiddenRegisterBookViewDAOVersionData extends DataClass {
+class HiddenRegisterBookViewDTOVersionData extends DataClass {
   final String id;
   final String action;
   final String? hourCreatedAt;
   final DateTime createdAt;
   final RegisterBookType type;
-  const HiddenRegisterBookViewDAOVersionData(
+  const HiddenRegisterBookViewDTOVersionData(
       {required this.id,
       required this.action,
       this.hourCreatedAt,
       required this.createdAt,
       required this.type});
-  factory HiddenRegisterBookViewDAOVersionData.fromJson(
+  factory HiddenRegisterBookViewDTOVersionData.fromJson(
       Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HiddenRegisterBookViewDAOVersionData(
+    return HiddenRegisterBookViewDTOVersionData(
       id: serializer.fromJson<String>(json['id']),
       action: serializer.fromJson<String>(json['action']),
       hourCreatedAt: serializer.fromJson<String?>(json['hourCreatedAt']),
@@ -1628,13 +1628,13 @@ class HiddenRegisterBookViewDAOVersionData extends DataClass {
     };
   }
 
-  HiddenRegisterBookViewDAOVersionData copyWith(
+  HiddenRegisterBookViewDTOVersionData copyWith(
           {String? id,
           String? action,
           Value<String?> hourCreatedAt = const Value.absent(),
           DateTime? createdAt,
           RegisterBookType? type}) =>
-      HiddenRegisterBookViewDAOVersionData(
+      HiddenRegisterBookViewDTOVersionData(
         id: id ?? this.id,
         action: action ?? this.action,
         hourCreatedAt:
@@ -1644,7 +1644,7 @@ class HiddenRegisterBookViewDAOVersionData extends DataClass {
       );
   @override
   String toString() {
-    return (StringBuffer('HiddenRegisterBookViewDAOVersionData(')
+    return (StringBuffer('HiddenRegisterBookViewDTOVersionData(')
           ..write('id: $id, ')
           ..write('action: $action, ')
           ..write('hourCreatedAt: $hourCreatedAt, ')
@@ -1659,7 +1659,7 @@ class HiddenRegisterBookViewDAOVersionData extends DataClass {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is HiddenRegisterBookViewDAOVersionData &&
+      (other is HiddenRegisterBookViewDTOVersionData &&
           other.id == this.id &&
           other.action == this.action &&
           other.hourCreatedAt == this.hourCreatedAt &&
@@ -1667,13 +1667,13 @@ class HiddenRegisterBookViewDAOVersionData extends DataClass {
           other.type == this.type);
 }
 
-class $HiddenRegisterBookViewDAOVersionView extends ViewInfo<
-    $HiddenRegisterBookViewDAOVersionView,
-    HiddenRegisterBookViewDAOVersionData> implements HasResultSet {
+class $HiddenRegisterBookViewDTOVersionView extends ViewInfo<
+    $HiddenRegisterBookViewDTOVersionView,
+    HiddenRegisterBookViewDTOVersionData> implements HasResultSet {
   final String? _alias;
   @override
   final _$NawiDatabase attachedDatabase;
-  $HiddenRegisterBookViewDAOVersionView(this.attachedDatabase, [this._alias]);
+  $HiddenRegisterBookViewDTOVersionView(this.attachedDatabase, [this._alias]);
   $HiddenRegisterBookTableTable get hiddenRegisterBook =>
       attachedDatabase.hiddenRegisterBookTable.createAlias('t0');
   $RegisterBookTableTable get registerBook =>
@@ -1684,16 +1684,16 @@ class $HiddenRegisterBookViewDAOVersionView extends ViewInfo<
   @override
   String get aliasedName => _alias ?? entityName;
   @override
-  String get entityName => 'hidden_register_book_view_d_a_o_version';
+  String get entityName => 'hidden_register_book_view_d_t_o_version';
   @override
   Map<SqlDialect, String>? get createViewStatements => null;
   @override
-  $HiddenRegisterBookViewDAOVersionView get asDslTable => this;
+  $HiddenRegisterBookViewDTOVersionView get asDslTable => this;
   @override
-  HiddenRegisterBookViewDAOVersionData map(Map<String, dynamic> data,
+  HiddenRegisterBookViewDTOVersionData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HiddenRegisterBookViewDAOVersionData(
+    return HiddenRegisterBookViewDTOVersionData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       action: attachedDatabase.typeMapping
@@ -1732,8 +1732,8 @@ class $HiddenRegisterBookViewDAOVersionView extends ViewInfo<
           .withConverter<RegisterBookType>(
               $RegisterBookTableTable.$convertertype);
   @override
-  $HiddenRegisterBookViewDAOVersionView createAlias(String alias) {
-    return $HiddenRegisterBookViewDAOVersionView(attachedDatabase, alias);
+  $HiddenRegisterBookViewDTOVersionView createAlias(String alias) {
+    return $HiddenRegisterBookViewDTOVersionView(attachedDatabase, alias);
   }
 
   @override
@@ -1760,15 +1760,15 @@ abstract class _$NawiDatabase extends GeneratedDatabase {
       $HiddenStudentTableTable(this);
   late final $HiddenRegisterBookTableTable hiddenRegisterBookTable =
       $HiddenRegisterBookTableTable(this);
-  late final $StudentViewDAOVersionView studentViewDAOVersion =
-      $StudentViewDAOVersionView(this);
-  late final $HiddenStudentViewDAOVersionView hiddenStudentViewDAOVersion =
-      $HiddenStudentViewDAOVersionView(this);
-  late final $RegisterBookViewDAOVersionView registerBookViewDAOVersion =
-      $RegisterBookViewDAOVersionView(this);
-  late final $HiddenRegisterBookViewDAOVersionView
-      hiddenRegisterBookViewDAOVersion =
-      $HiddenRegisterBookViewDAOVersionView(this);
+  late final $StudentViewDTOVersionView studentViewDTOVersion =
+      $StudentViewDTOVersionView(this);
+  late final $HiddenStudentViewDTOVersionView hiddenStudentViewDTOVersion =
+      $HiddenStudentViewDTOVersionView(this);
+  late final $RegisterBookViewDTOVersionView registerBookViewDTOVersion =
+      $RegisterBookViewDTOVersionView(this);
+  late final $HiddenRegisterBookViewDTOVersionView
+      hiddenRegisterBookViewDTOVersion =
+      $HiddenRegisterBookViewDTOVersionView(this);
   late final Index name = Index('name', 'CREATE INDEX name ON student (name)');
   late final Index age = Index('age', 'CREATE INDEX age ON student (age)');
   late final Index timestamp =
@@ -1793,10 +1793,10 @@ abstract class _$NawiDatabase extends GeneratedDatabase {
         studentRegisterBookTable,
         hiddenStudentTable,
         hiddenRegisterBookTable,
-        studentViewDAOVersion,
-        hiddenStudentViewDAOVersion,
-        registerBookViewDAOVersion,
-        hiddenRegisterBookViewDAOVersion,
+        studentViewDTOVersion,
+        hiddenStudentViewDTOVersion,
+        registerBookViewDTOVersion,
+        hiddenRegisterBookViewDTOVersion,
         name,
         age,
         timestamp,

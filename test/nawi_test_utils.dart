@@ -3,9 +3,9 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:nawiapp/data/database_connection.dart';
-import 'package:nawiapp/domain/classes/register_book_filter.dart';
-import 'package:nawiapp/domain/classes/student_filter.dart';
+import 'package:nawiapp/data/drift_connection.dart';
+import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
+import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/repositories/register_book_repository.dart';
@@ -59,16 +59,16 @@ import 'package:nawiapp/presentation/students/implementations/student_service_im
   ];
 
   final listOfRegisterBook = <RegisterBook>[
-    RegisterBook(id: 'e0449ae1-ec4d-4eec-a0c2-3b6be2ff46f6', action: "Jose le pego a Pablo", mentions: [listOfStudents[0].toStudentDAO, listOfStudents[1].toStudentDAO], timestamp: DateTime(2025, 1, 5), type: RegisterBookType.incident),
+    RegisterBook(id: 'e0449ae1-ec4d-4eec-a0c2-3b6be2ff46f6', action: "Jose le pego a Pablo", mentions: [listOfStudents[0].toStudentDTO, listOfStudents[1].toStudentDTO], timestamp: DateTime(2025, 1, 5), type: RegisterBookType.incident),
     RegisterBook(id: 'dd1acb1c-86c2-4ba1-a69f-b1c8e24c01ee', action: "Accion indeterminada 1", timestamp: DateTime(2025, 1, 6)),
     RegisterBook(id: '06b654e1-2852-4618-84a7-bb2c43a3eba1', action: "Leonardo, Mendo y Bruno han hecho su actividad", timestamp: DateTime(2025, 1, 6), type: RegisterBookType.anecdotal),
-    RegisterBook(id: '10277d6d-630c-4a6e-99ec-f807a64714f6', action: "Al bordo de un barco, Gerardo ha jugado con Jose", timestamp: DateTime(2025, 2, 15), mentions: [listOfStudents[4].toStudentDAO, listOfStudents[0].toStudentDAO], type: RegisterBookType.anecdotal),
+    RegisterBook(id: '10277d6d-630c-4a6e-99ec-f807a64714f6', action: "Al bordo de un barco, Gerardo ha jugado con Jose", timestamp: DateTime(2025, 2, 15), mentions: [listOfStudents[4].toStudentDTO, listOfStudents[0].toStudentDTO], type: RegisterBookType.anecdotal),
     RegisterBook(id: '3984adaf-70c2-45b1-aecc-e0b56bb43158', action: "Otra accioni indeterminada 2", timestamp: DateTime(2025, 1, 1)),
-    RegisterBook(id: 'cd334961-cc2f-4c2a-8477-482155e7ed0e', action: "Desde la vista de Bruno, ha visto como Pablo salía del salon", timestamp: DateTime(2025, 3, 8), mentions: [listOfStudents[3].toStudentDAO, listOfStudents[1].toStudentDAO]),
+    RegisterBook(id: 'cd334961-cc2f-4c2a-8477-482155e7ed0e', action: "Desde la vista de Bruno, ha visto como Pablo salía del salon", timestamp: DateTime(2025, 3, 8), mentions: [listOfStudents[3].toStudentDTO, listOfStudents[1].toStudentDTO]),
 
     //* A archivar
     RegisterBook(id: '743f923b-3a0e-45a9-a681-85408e5fa521', action: "Accion mal escrota Archived", timestamp: DateTime(2025, 2, 7)),
-    RegisterBook(id: 'c1b271b1-f21f-4c10-9dae-975f627d0c00', action: "Otra accione mal escrota Archived", timestamp: DateTime(2025, 1, 2), mentions: [listOfStudents[5].toStudentDAO], type: RegisterBookType.incident),
+    RegisterBook(id: 'c1b271b1-f21f-4c10-9dae-975f627d0c00', action: "Otra accione mal escrota Archived", timestamp: DateTime(2025, 1, 2), mentions: [listOfStudents[5].toStudentDTO], type: RegisterBookType.incident),
   ];
 
   Student studentRecently = listOfStudents.reduce((a, b) => a.timestamp.isAfter(b.timestamp) ? a : b);
@@ -76,8 +76,8 @@ import 'package:nawiapp/presentation/students/implementations/student_service_im
   Student studentHighestName = listOfStudents.reduce((a, b) => a.name.compareTo(b.name) < 0 ? a : b);
   Student studentLowestName = listOfStudents.reduce((a, b) => a.name.compareTo(b.name) > 0 ? a : b);
 
-  RegisterBook registerBookRecently = listOfRegisterBook.reduce((a, b) => a.timestamp.isAfter(b.timestamp) ? a : b);
-  RegisterBook registerBookOldy = listOfRegisterBook.reduce((a, b) => a.timestamp.isBefore(b.timestamp) ? a : b);
+  RegisterBook registerBookRecently = listOfRegisterBook.reduce((a, b) => a.createdAt.isAfter(b.createdAt) ? a : b);
+  RegisterBook registerBookOldy = listOfRegisterBook.reduce((a, b) => a.createdAt.isBefore(b.createdAt) ? a : b);
   RegisterBook registerBookHighestAction = listOfRegisterBook.reduce((a, b) => a.action.compareTo(b.action) < 0 ? a : b);
   RegisterBook registerBookLowestAction = listOfRegisterBook.reduce((a, b) => a.action.compareTo(b.action) > 0 ? a : b);
 

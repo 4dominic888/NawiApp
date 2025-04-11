@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:infinite_grouped_list/infinite_grouped_list.dart';
 import 'package:intl/intl.dart';
-import 'package:nawiapp/domain/classes/register_book_filter.dart';
+import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/records/button_controller_with_process.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
@@ -19,12 +19,12 @@ class ViewRegistersBookScreen extends StatefulWidget {
 class _ViewRegistersBookScreenState extends State<ViewRegistersBookScreen> {
 
   final _registerBookService = GetIt.I<RegisterBookServiceBase>();
-  final _paggingController = InfiniteGroupedListController<RegisterBookDAO, DateTime, String>(limit: 5);
+  final _paggingController = InfiniteGroupedListController<RegisterBookDTO, DateTime, String>(limit: 5);
   final _btnDeleteElementController = RoundedLoadingButtonController();
   final _btnArchiveElementController = RoundedLoadingButtonController();
   final _btnUnarchiveElementController = RoundedLoadingButtonController();
 
-  Future<List<RegisterBookDAO>> _fetchPage(PaginationInfo paginationInfo) async {
+  Future<List<RegisterBookDTO>> _fetchPage(PaginationInfo paginationInfo) async {
     final result = await _registerBookService.getAllPaginated(
       currentPage: paginationInfo.page,
       pageSize: paginationInfo.limit,

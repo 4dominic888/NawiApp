@@ -45,11 +45,11 @@ class _AddRegisterBookScreenState extends State<AddRegisterBookScreen> {
         type: _typeRegisterKey.currentState!.value!
       );
 
-      if(!_isUpdatable) { //* Crear
-        result = await _registerBookService.addOne(registerBook);
-      }
-      else { //* Editar
+      if(_isUpdatable) { //* Editar
         result = await _registerBookService.updateOne(registerBook.copyWith(id: widget.idToEdit));
+      }
+      else { //* Crear
+        result = await _registerBookService.addOne(registerBook);
       }
 
       result.onValue(

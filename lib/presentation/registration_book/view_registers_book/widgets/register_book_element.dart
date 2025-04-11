@@ -17,7 +17,7 @@ class RegisterBookElement extends StatelessWidget {
     this.isArchived = false
   });
 
-  final RegisterBookDAO item;
+  final RegisterBookDTO item;
   final ButtonControllerWithProcess delete;
   final ButtonControllerWithProcess archive;
   final ButtonControllerWithProcess unarchive;
@@ -77,7 +77,7 @@ class RegisterBookElement extends StatelessWidget {
           child: Icon(Icons.delete, color: Colors.white)              
         ),
         child: ListTile(
-          title: Text(item.formatActionText),
+          title: Text(item.actionUnslug),
           trailing: 
           Column(
             children: [

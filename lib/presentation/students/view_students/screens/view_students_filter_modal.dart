@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nawiapp/domain/classes/student_filter.dart';
-import 'package:nawiapp/domain/models/models_views/student_view.dart';
+import 'package:nawiapp/domain/classes/filter/student_filter.dart';
+import 'package:nawiapp/domain/models/views/student_view.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/infrastructure/providers/filter_provider.dart';
@@ -189,7 +189,7 @@ class _ViewStudentsFilterModalState extends ConsumerState<ViewStudentsFilterModa
             }
 
             final studentFiler = StudentFilter(
-              nameLike: NawiTools.clearSpacesOnText(_searchStudentController.text),
+              nameLike: NawiTools.clearSpaces(_searchStudentController.text),
               ageEnumIndex1: age1,
               ageEnumIndex2: age2,
               orderBy: _selectedOrder!,

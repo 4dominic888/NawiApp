@@ -1,5 +1,5 @@
 import 'package:nawiapp/domain/classes/paginated_data.dart';
-import 'package:nawiapp/domain/classes/register_book_filter.dart';
+import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/models/student.dart';
@@ -23,7 +23,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
       if(addedRegisterBookResult is NawiError) return addedRegisterBookResult.getError()!;
 
       final addedStudentsOnRegisterBookResult = await studentRegisterBookRepo.addMany((
-        emisors: data.mentions.map((e) => e.id),
+        mentions: data.mentions.map((e) => e.id),
         registerBookId: addedRegisterBookResult.getValue!.id
       ));
 
@@ -54,7 +54,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
 
       final updateManyToManyResult = await studentRegisterBookRepo.updateMany((
         registerBookId: data.id,
-        emisors: data.mentions.map((e) => e.id)
+        mentions: data.mentions.map((e) => e.id)
       ));
       if(updateManyToManyResult is NawiError) return updateManyToManyResult.getError()!;
       return updatedRegisterBookResult;
@@ -62,8 +62,8 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   }
 
   @override
-  Future<Result<Iterable<RegisterBookDAO>>> getAll(RegisterBookFilter params) {
-    return registerBookRepo.transaction<Result<List<RegisterBookDAO>>>(() async {
+  Future<Result<Iterable<RegisterBookDTO>>> getAll(RegisterBookFilter params) {
+    return registerBookRepo.transaction<Result<List<RegisterBookDTO>>>(() async {
 
       //* Obtiene los cuadernos de registro sin estudiantes
       final gotRawRegisterBookResult = await registerBookRepo.getAll(params);
@@ -75,8 +75,8 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
           final mentionsResult = await studentRegisterBookRepo.getStudentsFromRegisterBook(e.id);
 
           //* Parsing
-          return RegisterBookDAO.fromDAOView(data: e,
-            mentions: (mentionsResult is NawiError) ? const [] : mentionsResult.getValue!.map((s) => StudentDAO.fromDAOView(s))
+          return RegisterBookDTO.fromDTOView(data: e,
+            mentions: (mentionsResult is NawiError) ? const [] : mentionsResult.getValue!.map((s) => StudentDTO.fromDTOView(s))
           );
         })
       ));
@@ -84,7 +84,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   }
 
   @override
-  Future<Result<PaginatedData<RegisterBookDAO>>> getAllPaginated({required int pageSize, required int currentPage, required RegisterBookFilter params}) async {
+  Future<Result<PaginatedData<RegisterBookDTO>>> getAllPaginated({required int pageSize, required int currentPage, required RegisterBookFilter params}) async {
     final result = await getAll(params.copyWith(pageSize: pageSize, currentPage: currentPage));
     return result.convertTo((value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
   }
@@ -98,7 +98,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
       return result.convertTo( 
         (value) => 
           RegisterBook.fromTableData(value, studentOnRegisterBookResult.getValue!.map(
-            (e) => StudentDAO.fromDAOView(e)
+            (e) => StudentDTO.fromDTOView(e)
           )
         )
       );

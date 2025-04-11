@@ -1,6 +1,6 @@
 import 'package:nawiapp/domain/classes/paginated_data.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/classes/student_filter.dart';
+import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_repository.dart';
@@ -22,13 +22,13 @@ interface class StudentServiceImplement extends StudentServiceBase {
   }
 
   @override
-  Future<Result<Iterable<StudentDAO>>> getAll(StudentFilter params) async {
+  Future<Result<Iterable<StudentDTO>>> getAll(StudentFilter params) async {
     final result = await studentRepo.getAll(params);
-    return result.convertTo((value) => value.map((e) => StudentDAO.fromDAOView(e)));
+    return result.convertTo((value) => value.map((e) => StudentDTO.fromDTOView(e)));
   }
 
   @override
-  Future<Result<PaginatedData<StudentDAO>>> getAllPaginated({required int pageSize, required int currentPage, required StudentFilter params}) async {
+  Future<Result<PaginatedData<StudentDTO>>> getAllPaginated({required int pageSize, required int currentPage, required StudentFilter params}) async {
     final result = await getAll(params.copyWith(pageSize: pageSize, currentPage: currentPage));
     return result.convertTo((value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
   }

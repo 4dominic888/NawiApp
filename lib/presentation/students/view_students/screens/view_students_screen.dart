@@ -21,7 +21,7 @@ class ViewStudentsScreen extends ConsumerStatefulWidget {
 class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
 
   final _studentService = GetIt.I<StudentServiceBase>();
-  final _pagingController = PagingController<int, StudentDAO>(firstPageKey: 0);
+  final _pagingController = PagingController<int, StudentDTO>(firstPageKey: 0);
   final _btnDeleteElementController = RoundedLoadingButtonController();
   final _btnArchiveElementController = RoundedLoadingButtonController();
   final _btnUnarchiveElementController = RoundedLoadingButtonController();
@@ -79,7 +79,7 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
         onRefresh: _refresh,
         child: PagedListView(
           pagingController: _pagingController,
-          builderDelegate: PagedChildBuilderDelegate<StudentDAO>(
+          builderDelegate: PagedChildBuilderDelegate<StudentDTO>(
             itemBuilder: (_, item, index) => StudentElement(
               item: item,
               index: index,

@@ -3,6 +3,7 @@ import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
 
 /// Esta clase abstracta fusiona todas las funciones que tiene un CRUD y más.
+/// Se puede ver tambien como la abstracción general de un repositorio
 ///
 /// ``[T]`` es la clase modelo de drift
 /// 

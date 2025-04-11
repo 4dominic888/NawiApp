@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mention_tag_text_field/mention_tag_text_field.dart';
-import 'package:nawiapp/domain/classes/student_filter.dart';
+import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
@@ -33,11 +33,11 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
 
   //* Some variables
   String? mentionValue;
-  List<StudentDAO> searchResults = [];
+  List<StudentDTO> searchResults = [];
 
-  Future<List<StudentDAO>> requestData(String? query) async {
+  Future<List<StudentDTO>> requestData(String? query) async {
     final result = await _studentService.getAllPaginated(pageSize: 5, currentPage: 0, params: StudentFilter(nameLike: query));
-    late final List<StudentDAO> output;
+    late final List<StudentDTO> output;
     result.onValue(
       withPopup: false,
       onSuccessfully: (data, message) => output = data.data.toList(),
@@ -107,14 +107,14 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
                     onTapOutside: (event) {
                       formState.didChange(_value.copyWith(
                         action: _taggerController.getText,
-                        mentions: _taggerController.mentions.cast<StudentDAO>()
+                        mentions: _taggerController.mentions.cast<StudentDTO>()
                       ));
                     },
                     onMention: (value) async {
                       //* Limpiando el widget de elementos antes de colocar los datos
                       formState.didChange(_value.copyWith(
                         action: _taggerController.getText,
-                        mentions: _taggerController.mentions.cast<StudentDAO>()
+                        mentions: _taggerController.mentions.cast<StudentDTO>()
                       ));
 
                       setState(() { mentionValue = value; searchResults.clear(); });

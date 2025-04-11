@@ -1,20 +1,20 @@
 import 'package:drift/drift.dart';
-import 'package:nawiapp/data/database_connection.dart';
+import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/classes/student_filter.dart';
+import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_repository.dart';
-import 'package:nawiapp/domain/models/models_table/student_table.dart';
-import 'package:nawiapp/domain/models/models_views/student_view.dart';
+import 'package:nawiapp/domain/models/tables/student_table.dart';
+import 'package:nawiapp/domain/models/views/student_view.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 part 'student_repository.g.dart';
 
-@DriftAccessor(tables: [StudentTable], views: [StudentViewDAOVersion, HiddenStudentViewDAOVersion])
+@DriftAccessor(tables: [StudentTable], views: [StudentViewDTOVersion, HiddenStudentViewDTOVersion])
 class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRepositoryMixin 
   implements ModelDriftRepository<
     StudentTableData,
     StudentTableCompanion,
-    StudentViewDAOVersionData,
+    StudentViewDTOVersionData,
     StudentFilter
   >{
 
@@ -23,34 +23,39 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   @override
   Future<Result<StudentTableData?>> addOne(StudentTableCompanion data) async {
     try {
-      final result = await into(studentTable).insertReturningOrNull(data);
-      if(result != null) return Success(data: result);
+      final addedStudent = await into(studentTable).insertReturningOrNull(data);
+      if(addedStudent != null) return Success(data: addedStudent);
       throw NawiError.onRepository(message: "Estudiante no agregado");
     } catch (e) { return NawiRepositoryTools.onCatch(e); }
   }
 
   @override
-  Future<Result<Iterable<StudentViewDAOVersionData>>> getAll(StudentFilter params) async {
+  Future<Result<Iterable<StudentViewDTOVersionData>>> getAll(StudentFilter params) async {
     try {
-      var query = (!params.showHidden ? select(studentViewDAOVersion) : select(hiddenStudentViewDAOVersion))
+      var query = ( params.notShowHidden ? select(studentViewDTOVersion) : select(hiddenStudentViewDTOVersion) )
         ..where((tbl) {
           final List<Expression<bool>> filterExpressions = [];
 
           //* Excluye estudiantes marcados como ocultos
-          if(!params.showHidden) {
-            filterExpressions.add((tbl as $StudentViewDAOVersionView).id.isNotInQuery(
-              selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])
-            ));
+          if(params.notShowHidden) {
+            tbl = tbl as $StudentViewDTOVersionView;
+            filterExpressions.add(
+              tbl.id.isNotInQuery(
+                selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])
+              )
+            );
           }
 
           NawiRepositoryTools.ageFilter(
-            expressions: filterExpressions, table: tbl,
+            table: tbl,
+            expressions: filterExpressions,
             ageEnumIndex1: params.ageEnumIndex1?.index,
             ageEnumIndex2: params.ageEnumIndex2?.index
           );
 
           NawiRepositoryTools.nameStudentFilter(
-            expressions: filterExpressions, table: tbl,
+            table: tbl,
+            expressions: filterExpressions,
             textLike: params.nameLike
           );
           
@@ -65,10 +70,14 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
         currentPage: params.currentPage
       );
 
-      final result = await query.get();
-      return Success(data: !params.showHidden ?
-        result as Iterable<StudentViewDAOVersionData> :
-        (result as Iterable<HiddenStudentViewDAOVersionData>).map(
+      final filteredStudents = await query.get();
+
+      if(params.notShowHidden) {
+        return Success(data: filteredStudents as Iterable<StudentViewDTOVersionData>);
+      }
+
+      return Success(data:
+        (filteredStudents as Iterable<HiddenStudentViewDTOVersionData>).map(
           (e) => NawiRepositoryTools.studentHiddenToPublic(e)
         )
       );
@@ -79,8 +88,8 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   @override
   Future<Result<StudentTableData>> getOne(String id) async{
     try {
-      final result = await (select(studentTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
-      if(result != null) return Success(data: result);
+      final gottenStudent = await (select(studentTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+      if(gottenStudent != null) return Success(data: gottenStudent);
       throw NawiError.onRepository(message: "No encontrado");
     } catch (e) { return NawiRepositoryTools.onCatch(e); }
   }
@@ -99,7 +108,8 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
     return transaction<Result<StudentTableData>>(() async {
       try {
         //* Elimina primero el registro en la tabla de estudiantes ocultos, si es que existe
-        await (delete(hiddenStudentTable)..where((tbl) => tbl.hiddenId.equals(id))).go();
+        final deleteStatement = delete(hiddenStudentTable)..where((tbl) => tbl.hiddenId.equals(id));
+        await deleteStatement.go();
 
         return Success(data: ( await (
             delete(studentTable)
@@ -117,17 +127,21 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   Future<Result<StudentTableData>> archiveOne(String id) {
     return transaction<Result<StudentTableData>>(() async {
       try {
-        final result = await (select(studentTable)..where((tbl) => 
-          Expression.and([
-            tbl.id.isNotInQuery(selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])),
-            tbl.id.equals(id)
-          ])
-        )).get();
+        final studentArchived = await (
+          select(studentTable)..where((tbl) => 
+            Expression.and([
+              tbl.id.isNotInQuery(selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])),
+              tbl.id.equals(id)
+            ])
+          )
+        ).getSingleOrNull();
         
-        if(result.isEmpty) throw NawiError.onRepository(message: "No se pudo archivar el estudiante, porque no existe o ya ha sido archivado");
-        final hiddenResult = (await into(hiddenStudentTable).insertReturningOrNull(HiddenStudentTableData(hiddenId: id)));
-        if(hiddenResult == null) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar archivar al estudiante");
-        return Success(data: result.first );
+        if(studentArchived == null) throw NawiError.onRepository(message: "No se pudo archivar el estudiante, porque no existe o ya ha sido archivado");
+
+        final addingStatement = await into(hiddenStudentTable).insertReturningOrNull(HiddenStudentTableData(hiddenId: id));
+        if(addingStatement == null) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar archivar al estudiante");
+
+        return Success(data: studentArchived);
       } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }
@@ -137,16 +151,24 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   Future<Result<StudentTableData>> unarchiveOne(String id) {
     return transaction<Result<StudentTableData>>(() async {
       try {
-        final result = await (select(studentTable)..where((tbl) => tbl.id.isInQuery(
-          selectOnly(hiddenStudentTable)
-            ..addColumns([hiddenStudentTable.hiddenId])
-            ..where(hiddenStudentTable.hiddenId.equals(id))
-        ))).get();
+        final studentUnarchived = await (
+          select(studentTable)..where((tbl) => tbl.id.isInQuery(
+            selectOnly(hiddenStudentTable)
+              ..addColumns([hiddenStudentTable.hiddenId])
+              ..where(hiddenStudentTable.hiddenId.equals(id))
+            )
+          )
+        ).getSingleOrNull();
 
-        if(result.isEmpty) throw NawiError.onRepository(message: "No se pudo desarchivar el estudiante, porque no existe o no esta archivado");
-        final hiddenResult = await (delete(hiddenStudentTable)..where((tbl) => tbl.hiddenId.equals(id))).go();
-        if(hiddenResult == 0) throw NawiError.onRepository(message: "Ha ocurrido un error al desarchivar al estudiante");
-        return Success(data: result.first );
+        if(studentUnarchived == null) throw NawiError.onRepository(message: "No se pudo desarchivar el estudiante, porque no existe o no esta archivado");
+
+        final deleteRows = await (
+          delete(hiddenStudentTable)..where((tbl) => tbl.hiddenId.equals(id))
+        ).go();
+
+        if(deleteRows == 0) throw NawiError.onRepository(message: "Ha ocurrido un error al desarchivar al estudiante");
+
+        return Success(data: studentUnarchived);
       } catch (e) { return NawiRepositoryTools.onCatch(e); }
     });
   }

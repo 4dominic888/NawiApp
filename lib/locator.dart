@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:nawiapp/data/database_connection.dart';
+import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/repositories/register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_repository.dart';
