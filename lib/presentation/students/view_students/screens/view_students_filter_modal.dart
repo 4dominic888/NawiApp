@@ -4,7 +4,7 @@ import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
-import 'package:nawiapp/infrastructure/providers/filter_provider.dart';
+import 'package:nawiapp/presentation/students/view_students/providers/student_filter_provider.dart';
 import 'package:nawiapp/presentation/students/view_students/widgets/labeled_checkbox.dart';
 
 class ViewStudentsFilterModal extends ConsumerStatefulWidget {

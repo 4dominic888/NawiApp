@@ -5,7 +5,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/records/button_controller_with_process.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
-import 'package:nawiapp/infrastructure/providers/filter_provider.dart';
+import 'package:nawiapp/presentation/students/view_students/providers/student_filter_provider.dart';
 import 'package:nawiapp/presentation/students/view_students/widgets/student_element.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
