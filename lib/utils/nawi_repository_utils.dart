@@ -3,30 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
-import 'package:nawiapp/domain/models/student/entity/student_age.dart';
-import 'package:uuid/uuid.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-
-/// Utilidades generales de la aplicación
-class NawiTools {
-  static Uuid uuid = Uuid();
-
-  /// Limpia los espacios de más, incluyendo los de en medio del texto
-  static String clearSpaces(String text) => text.trim().replaceAll(RegExp(r'\s+'), ' ');
-}
-
-/// Utilidades para la capa de servicio
-class NawiServiceTools{  
-  
-  /// [NawiError] por defecto en bloques try catch
-  static NawiError<T> onCatch<T>(Object e) {
-    if(e is NawiError<T>) return e;
-    return NawiError.onService(message: e.toString());
-  }
-}
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 
 /// Utilidades para los repositorios, que en resumen son cosas de filtros y detalles extras
-class NawiRepositoryTools {
+class NawiRepositoryUtils {
 
   /// Para convertir un [HiddenStudentViewSummaryVersionData] a un [StudentViewSummaryVersionData]
   static StudentViewSummaryVersionData studentHiddenToPublic(HiddenStudentViewSummaryVersionData data) => StudentViewSummaryVersionData(
@@ -109,24 +90,5 @@ class NawiRepositoryTools {
     if(ageEnumIndex1 != null) orExpression.add((table.age as GeneratedColumnWithTypeConverter<StudentAge, int>).equals(ageEnumIndex1));
     if(ageEnumIndex2 != null) orExpression.add((table.age as GeneratedColumnWithTypeConverter<StudentAge, int>).equals(ageEnumIndex2));
     if(orExpression.isNotEmpty) expressions.add(Expression.or(orExpression));
-  }
-}
-
-/// Clase para seleccionar colores recurrentes en la aplicación Ñawi
-class NawiColor {
-
-  /// Colores para estudiantes según su edad
-  /// 
-  /// Rango entre `3-5`, cualquier otro se colococará uno por defecto
-  /// 
-  /// `withOpacity` hace que el color sea más pálido, ideal para fondos
-  static Color iconColorMap(int age, {bool? withOpacity = false}) {
-    final colorMap = {
-      3: Colors.blue,
-      4: Colors.orange.shade700,
-      5: Colors.purple
-    }[age] ?? Colors.black;
-
-    return (withOpacity ?? false) ? colorMap.withAlpha(50) : colorMap;
   }
 }

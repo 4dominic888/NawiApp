@@ -1,4 +1,4 @@
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 import 'package:recase/recase.dart';
 
 class MapperUtils {
@@ -11,6 +11,6 @@ class MapperUtils {
       buffer.write(word);
       buffer.write(' ');
     }
-    return NawiTools.clearSpaces(buffer.toString());
+    return NawiGeneralUtils.clearSpaces(buffer.toString());
   }
 }

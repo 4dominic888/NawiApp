@@ -9,7 +9,7 @@ import 'package:nawiapp/domain/models/register_book/entity/register_book_type.da
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/widgets/button_speech_field.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class MentionStudentFormField extends StatefulWidget {
   const MentionStudentFormField({super.key, this.registerBook, required this.formFieldKey, required this.typeRegisterFormFieldKey});
@@ -162,8 +162,8 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
                           setState(() => mentionValue = null);
                         },
                         leading: CircleAvatar(
-                          backgroundColor: NawiColor.iconColorMap(item.age.value, withOpacity: true),
-                          child: Icon(Icons.person, color: NawiColor.iconColorMap(item.age.value)),
+                          backgroundColor: NawiColorUtils.iconColorMap(item.age.value, withOpacity: true),
+                          child: Icon(Icons.person, color: NawiColorUtils.iconColorMap(item.age.value)),
                         ),
                         subtitle: Text(item.age.name),
                         title: Text(item.mentionLabel)

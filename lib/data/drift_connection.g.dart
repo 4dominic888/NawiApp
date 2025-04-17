@@ -15,7 +15,7 @@ class $StudentTableTable extends StudentTable
       'id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      clientDefault: () => NawiTools.uuid.v4());
+      clientDefault: () => NawiGeneralUtils.uuid.v4());
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -327,7 +327,7 @@ class $RegisterBookTableTable extends RegisterBookTable
       'id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      clientDefault: () => NawiTools.uuid.v4());
+      clientDefault: () => NawiGeneralUtils.uuid.v4());
   static const VerificationMeta _actionMeta = const VerificationMeta('action');
   @override
   late final GeneratedColumn<String> action =

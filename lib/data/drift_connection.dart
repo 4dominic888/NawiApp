@@ -20,7 +20,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
 //* Important dependecies for database_connection.g.dart
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 
 part 'drift_connection.g.dart';
 

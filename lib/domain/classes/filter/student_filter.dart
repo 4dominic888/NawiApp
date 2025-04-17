@@ -1,7 +1,7 @@
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 
 class StudentFilter extends FilterData {
   /// Tipo de ordenamiento
@@ -21,7 +21,7 @@ class StudentFilter extends FilterData {
     this.orderBy = StudentViewOrderByType.timestampRecently,
     this.ageEnumIndex1, this.ageEnumIndex2,
     String? nameLike, super.showHidden
-  }) : nameLike = NawiTools.clearSpaces(nameLike ?? '');
+  }) : nameLike = NawiGeneralUtils.clearSpaces(nameLike ?? '');
 
   @override
   Map<String, dynamic> toMap() => {

@@ -4,8 +4,9 @@ import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
+import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class AddStudentsScreen extends StatefulWidget {
@@ -95,11 +96,11 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                       Center(
                         child: CircleAvatar(
                           radius: screenWidth / 9,
-                          backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0, withOpacity: true),
+                          backgroundColor: NawiColorUtils.iconColorMap(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0, withOpacity: true),
                           child: Icon(
                             Icons.person,
                             size: screenWidth / 9,
-                            color: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0)
+                            color: NawiColorUtils.iconColorMap(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0)
                           )
                         )
                       ),
@@ -116,7 +117,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                         ),
                         validator: (value) {
                           if(value == null || value.trim().isEmpty) return "No se ha proporcionado un nombre";
-                          value = NawiTools.clearSpaces(value);
+                          value = NawiGeneralUtils.clearSpaces(value);
                           if(value.length <= 2) return "El nombre es demasiado corto";
                           return null;
                         },

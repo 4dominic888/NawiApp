@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/records/button_controller_with_process.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/presentation/students/add_students/screens/add_students_screen.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:nawiapp/presentation/widgets/warning_awesome_dialog.dart';
+import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class StudentElement extends StatelessWidget {
   const StudentElement({
@@ -86,8 +86,8 @@ class StudentElement extends StatelessWidget {
             subtitle: Text(item.age.name),
             tileColor: index % 2 == 0 ? colorTile.withAlpha(80) : colorTile.withAlpha(100),
             leading: CircleAvatar(
-              backgroundColor: NawiColor.iconColorMap(item.age.value, withOpacity: true),
-              child: Icon(Icons.person, color: NawiColor.iconColorMap(item.age.value)),
+              backgroundColor: NawiColorUtils.iconColorMap(item.age.value, withOpacity: true),
+              child: Icon(Icons.person, color: NawiColorUtils.iconColorMap(item.age.value)),
             ),
           ),
         ),

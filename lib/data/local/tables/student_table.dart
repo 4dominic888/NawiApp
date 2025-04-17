@@ -1,12 +1,12 @@
 import 'package:drift/drift.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 
 @TableIndex(name: 'name', columns: {#name})
 @TableIndex(name: 'age', columns: {#age})
 @TableIndex(name: 'timestamp', columns: {#timestamp})
 class StudentTable extends Table {
-  late final id = text().clientDefault(() => NawiTools.uuid.v4())();
+  late final id = text().clientDefault(() => NawiGeneralUtils.uuid.v4())();
   late final name = text().withLength(min: 2, max: 50)();
   late final age = intEnum<StudentAge>()();
   late final notes = text().nullable()();

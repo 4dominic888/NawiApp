@@ -6,7 +6,7 @@ import 'package:nawiapp/domain/interfaces/model_drift_repository.dart';
 import 'package:nawiapp/data/local/tables/register_book_table.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/utils/nawi_repository_utils.dart';
 
 part 'register_book_repository.g.dart';
 
@@ -27,7 +27,7 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
       final addedRegister = await into(registerBookTable).insertReturningOrNull(data);
       if(addedRegister != null) return Success(data: addedRegister);
       throw NawiError.onRepository(message: "Cuaderno de registro no agregado");
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   @override
@@ -58,14 +58,14 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
             filterExpressions.add((tbl as $RegisterBookViewSummaryVersionView).type.equals(params.searchByType!.index));
           }
 
-          NawiRepositoryTools.actionFilter(
+          NawiRepositoryUtils.actionFilter(
             expressions: filterExpressions, table: tbl,
             textLike: params.actionLike
           );
 
-          NawiRepositoryTools.timestampRangeFilter(expressions: filterExpressions, table: tbl, range: params.timestampRange);
+          NawiRepositoryUtils.timestampRangeFilter(expressions: filterExpressions, table: tbl, range: params.timestampRange);
 
-          NawiRepositoryTools.nameStudentFilter(
+          NawiRepositoryUtils.nameStudentFilter(
             expressions: filterExpressions, table: tbl,
             textLike: params.studentNameLike
           );
@@ -73,8 +73,8 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
           return Expression.and(filterExpressions);
         });
 
-      query = NawiRepositoryTools.orderByAction(query: query, orderBy: params.orderBy);
-      query = NawiRepositoryTools.infiniteScrollFilter(
+      query = NawiRepositoryUtils.orderByAction(query: query, orderBy: params.orderBy);
+      query = NawiRepositoryUtils.infiniteScrollFilter(
         query: query,
         pageSize: params.pageSize,
         currentPage: params.currentPage
@@ -88,11 +88,11 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
 
       return Success(data:
         (result as List<HiddenRegisterBookViewSummaryVersionData>).map(
-          (e) => NawiRepositoryTools.registerBookHiddenToPublic(e),
+          (e) => NawiRepositoryUtils.registerBookHiddenToPublic(e),
         )
       );
 
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   @override
@@ -101,7 +101,7 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
       final gottenRegister = await (select(registerBookTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
       if(gottenRegister != null) return Success(data: gottenRegister);
       throw NawiError.onRepository(message: "Cuaderno de registro no encontrado");
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   @override
@@ -110,7 +110,7 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
       final isUpdated = await update(registerBookTable).replace(data);
       if(!isUpdated) throw NawiError.onRepository(message: "Cuaderno de registro no actualizado");
       return Success(data: true);
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   @override
@@ -127,7 +127,7 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
           ).first
         );
 
-      } catch (e) { return NawiRepositoryTools.onCatch(e); }
+      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
     });
   }
 
@@ -148,7 +148,7 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
         if(addingStatement == null) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar archivar al cuaderno de registro");
 
         return Success(data: registerArchived);
-      } catch (e) { return NawiRepositoryTools.onCatch(e); }
+      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
     });
   }
 
@@ -168,7 +168,7 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
         if(deleteRows == 0) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar desarchivar al cuaderno de registro");
 
         return Success(data: registerUnarchived);
-      } catch (e) { return NawiRepositoryTools.onCatch(e); }
+      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
     });
   }
 

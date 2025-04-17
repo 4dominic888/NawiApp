@@ -5,7 +5,7 @@ import 'package:nawiapp/data/local/tables/register_book_table.dart';
 import 'package:nawiapp/data/local/tables/student_register_book_table.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/utils/nawi_repository_utils.dart';
 
 part 'student_register_book_repository.g.dart';
 
@@ -35,7 +35,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
           )
         )));
         return Success(data: true);
-      } catch (e) { return NawiRepositoryTools.onCatch(e); }
+      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
     });
   }
 
@@ -55,7 +55,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
         if(addedResult is NawiError<bool>) NawiError.onRepository(message: "No se pudo volver a agregar los cuadernos de registro");
 
         return Success(data: true);
-      } catch (e) { return NawiRepositoryTools.onCatch(e); }
+      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
     });
   }
 
@@ -65,7 +65,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
       final deleteStatement = delete(studentRegisterBookTable)..where((tbl) => tbl.registerBook.equals(registerBookId));
       await deleteStatement.go();
       return Success(data: true);
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   /// Elimina los registros donde exista [studentId], ademas de borrar los cuadernos de registro de la tabla [RegisterBookTable] involucrados si [deleteRegisterBooks] es `true`
@@ -88,7 +88,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
         }
 
         return Success(data: true);
-      } catch (e) { return NawiRepositoryTools.onCatch(e); }
+      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
     });
   }
 
@@ -108,7 +108,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
         )
       ).get();
       return Success(data: studentList);
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   /// Obtiene una lista de [RegisterBookViewSummaryVersionData] en base a [studentIds], solo las coincidencias encontradas.
@@ -126,6 +126,6 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
       ).get();
 
       return Success(data: registerBookList);
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 }

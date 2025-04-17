@@ -5,7 +5,7 @@ import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_repository.dart';
 import 'package:nawiapp/data/local/tables/student_table.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/utils/nawi_repository_utils.dart';
 
 part 'student_repository.g.dart';
 
@@ -26,7 +26,7 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
       final addedStudent = await into(studentTable).insertReturningOrNull(data);
       if(addedStudent != null) return Success(data: addedStudent);
       throw NawiError.onRepository(message: "Estudiante no agregado");
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   @override
@@ -46,14 +46,14 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
             );
           }
 
-          NawiRepositoryTools.ageFilter(
+          NawiRepositoryUtils.ageFilter(
             table: tbl,
             expressions: filterExpressions,
             ageEnumIndex1: params.ageEnumIndex1?.index,
             ageEnumIndex2: params.ageEnumIndex2?.index
           );
 
-          NawiRepositoryTools.nameStudentFilter(
+          NawiRepositoryUtils.nameStudentFilter(
             table: tbl,
             expressions: filterExpressions,
             textLike: params.nameLike
@@ -62,9 +62,9 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
           return Expression.and(filterExpressions);
       });
 
-      query = NawiRepositoryTools.orderByStudent(query: query, orderBy: params.orderBy);
+      query = NawiRepositoryUtils.orderByStudent(query: query, orderBy: params.orderBy);
 
-      query = NawiRepositoryTools.infiniteScrollFilter(
+      query = NawiRepositoryUtils.infiniteScrollFilter(
         query: query,
         pageSize: params.pageSize,
         currentPage: params.currentPage
@@ -78,11 +78,11 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
 
       return Success(data:
         (filteredStudents as Iterable<HiddenStudentViewSummaryVersionData>).map(
-          (e) => NawiRepositoryTools.studentHiddenToPublic(e)
+          (e) => NawiRepositoryUtils.studentHiddenToPublic(e)
         )
       );
       
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   @override
@@ -91,7 +91,7 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
       final gottenStudent = await (select(studentTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
       if(gottenStudent != null) return Success(data: gottenStudent);
       throw NawiError.onRepository(message: "No encontrado");
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   @override
@@ -100,7 +100,7 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
       final isUpdated = await update(studentTable).replace(data);
       if(!isUpdated) throw NawiError.onRepository(message: "Estudiante no actualizado");
       return Success(data: true);
-    } catch (e) { return NawiRepositoryTools.onCatch(e); }
+    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   @override
@@ -118,7 +118,7 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
           ).first
         );
 
-      } catch (e) { return NawiRepositoryTools.onCatch(e); }
+      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
     });
   }
 
@@ -142,7 +142,7 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
         if(addingStatement == null) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar archivar al estudiante");
 
         return Success(data: studentArchived);
-      } catch (e) { return NawiRepositoryTools.onCatch(e); }
+      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
     });
   }
 
@@ -169,7 +169,7 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
         if(deleteRows == 0) throw NawiError.onRepository(message: "Ha ocurrido un error al desarchivar al estudiante");
 
         return Success(data: studentUnarchived);
-      } catch (e) { return NawiRepositoryTools.onCatch(e); }
+      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
     });
   }
 }

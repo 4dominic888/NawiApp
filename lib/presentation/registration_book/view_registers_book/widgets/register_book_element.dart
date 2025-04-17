@@ -4,10 +4,10 @@ import 'package:nawiapp/data/mappers/register_book_mapper.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
 import 'package:nawiapp/domain/records/button_controller_with_process.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/screens/add_register_book_screen.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:nawiapp/presentation/widgets/warning_awesome_dialog.dart';
+import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class RegisterBookElement extends StatelessWidget {
   const RegisterBookElement({
@@ -100,7 +100,7 @@ class RegisterBookElement extends StatelessWidget {
                 children: (item.mentions.toSet()).map((student) => 
                   Chip(
                     label: Text(student.name),
-                    backgroundColor: NawiColor.iconColorMap(student.age.value).withAlpha(80),
+                    backgroundColor: NawiColorUtils.iconColorMap(student.age.value).withAlpha(80),
                     labelStyle: const TextStyle(fontWeight: FontWeight.bold)
                   )
                 ).toList(),
