@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
-import 'package:nawiapp/domain/models/register_book.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
@@ -18,7 +20,7 @@ void main() {
   test('Registro de un registro del cuaderno de registro', () async {
     final service = GetIt.I<RegisterBookServiceBase>();
 
-    final registerBook = RegisterBook(action: "Accion X", mentions: [testil.listOfStudents[1].toStudentSummary, testil.listOfStudents[0].toStudentSummary]);
+    final registerBook = RegisterBook(action: "Accion X", mentions: [testil.listOfStudents[0].toStudentSummary, testil.listOfStudents[1].toStudentSummary]);
     final errorRegisterBook = RegisterBook(id: '06b654e1-2852-4618-84a7-bb2c43a3eba1', action: 'asdasdasdasd');
 
     final result = await Future.wait([

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
@@ -49,7 +50,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
       if(!_isUpdatable) { //* Crear
         result = await _studentService.addOne(student);
       } else { //* Editar
-        result = await _studentService.updateOne(student.copyWith(id: widget.idToEdit));
+        result = await _studentService.updateOne(student.copyWith(id: widget.idToEdit!));
       }
 
       result.onValue(

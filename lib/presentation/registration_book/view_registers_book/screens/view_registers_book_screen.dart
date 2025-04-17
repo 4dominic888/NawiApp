@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:infinite_grouped_list/infinite_grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
-import 'package:nawiapp/domain/models/register_book.dart';
+import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
 import 'package:nawiapp/domain/records/button_controller_with_process.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/presentation/registration_book/view_registers_book/widgets/register_book_element.dart';

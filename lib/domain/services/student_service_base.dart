@@ -1,7 +1,8 @@
 import 'package:nawiapp/domain/classes/paginated_data.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student.dart';
+import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 
 abstract class StudentServiceBase {
   Future<Result<Student>> addOne(Student data);

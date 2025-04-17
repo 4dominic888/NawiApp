@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:uuid/uuid.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 

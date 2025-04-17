@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 @TableIndex(name: 'name', columns: {#name})

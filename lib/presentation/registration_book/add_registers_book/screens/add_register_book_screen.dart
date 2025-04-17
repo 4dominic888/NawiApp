@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/models/register_book.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/widgets/mention_student_form_field.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
@@ -46,7 +47,7 @@ class _AddRegisterBookScreenState extends State<AddRegisterBookScreen> {
       );
 
       if(_isUpdatable) { //* Editar
-        result = await _registerBookService.updateOne(registerBook.copyWith(id: widget.idToEdit));
+        result = await _registerBookService.updateOne(registerBook.copyWith(id: widget.idToEdit!));
       }
       else { //* Crear
         result = await _registerBookService.addOne(registerBook);

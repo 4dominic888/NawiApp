@@ -1,7 +1,9 @@
 import 'package:nawiapp/domain/classes/paginated_data.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student.dart';
+import 'package:nawiapp/data/mappers/student_mapper.dart';
+import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_repository.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
@@ -18,13 +20,13 @@ interface class StudentServiceImplement extends StudentServiceBase {
   Future<Result<Student>> addOne(Student data) async {
     data = data.copyWith(name: data.name.titleCase);
     final result = await studentRepo.addOne(data.toTableCompanion(withId: Uuid.isValidUUID(fromString: data.id)));
-    return result.convertTo((value) => Student.fromTableData(value!), origin: NawiErrorOrigin.service);
+    return result.convertTo((value) => StudentMapper.fromTableData(value!), origin: NawiErrorOrigin.service);
   }
 
   @override
   Future<Result<Iterable<StudentSummary>>> getAll(StudentFilter params) async {
     final result = await studentRepo.getAll(params);
-    return result.convertTo((value) => value.map((e) => StudentSummary.fromSummaryView(e)));
+    return result.convertTo((value) => value.map((e) => StudentSummaryMapper.fromSummaryView(e)));
   }
 
   @override
@@ -37,7 +39,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   Future<Result<Student>> getOne(String id) async {
     final studentTableDataResult = await studentRepo.getOne(id);
     return studentTableDataResult.convertTo(
-      (value) => Student.fromTableData(studentTableDataResult.getValue!)
+      (value) => StudentMapper.fromTableData(studentTableDataResult.getValue!)
     );
   }
 
@@ -55,19 +57,19 @@ interface class StudentServiceImplement extends StudentServiceBase {
       final deleteStudentResult = await studentRepo.deleteOne(id);
       if(deleteStudentResult is NawiError) return deleteStudentResult.getError()!;
 
-      return deleteStudentResult.convertTo((value) => Student.fromTableData(deleteStudentResult.getValue!));
+      return deleteStudentResult.convertTo((value) => StudentMapper.fromTableData(deleteStudentResult.getValue!));
     });
   }
   
   @override
   Future<Result<Student>> archiveOne(String id) async {
     final result = await studentRepo.archiveOne(id);
-    return result.convertTo((value) => Student.fromTableData(value));
+    return result.convertTo((value) => StudentMapper.fromTableData(value));
   }
 
   @override
   Future<Result<Student>> unarchiveOne(String id) async {
     final result = await studentRepo.unarchiveOne(id);
-    return result.convertTo((value) => Student.fromTableData(value));
+    return result.convertTo((value) => StudentMapper.fromTableData(value));
   }
 }

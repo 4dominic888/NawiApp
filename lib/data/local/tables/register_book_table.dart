@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:nawiapp/domain/models/register_book.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 @TableIndex(name: 'created_at', columns: {#createdAt})

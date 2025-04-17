@@ -9,6 +9,8 @@ import 'package:nawiapp/data/local/tables/student_register_book_table.dart';
 import 'package:nawiapp/data/local/tables/student_table.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/repositories/register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_repository.dart';
@@ -19,8 +21,6 @@ import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
 //* Important dependecies for database_connection.g.dart
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
-import 'package:nawiapp/domain/models/student.dart';
-import 'package:nawiapp/domain/models/register_book.dart';
 
 part 'drift_connection.g.dart';
 

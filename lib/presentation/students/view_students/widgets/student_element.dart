@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/records/button_controller_with_process.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/presentation/students/add_students/screens/add_students_screen.dart';

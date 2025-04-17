@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 
 import '../nawi_test_utils.dart' as testil;
@@ -36,7 +38,7 @@ void main(){
       about: 'Valor de retorno', n: 2
     );
 
-    testil.customExpect(studentFromDatabaseSummary, goodResult.getValue!,
+    testil.customExpect(studentFromDatabaseSummary, goodResult.getValue!.toStudentSummary,
       about: 'Verificar que esté en la base de datos', n: 3
     );
 

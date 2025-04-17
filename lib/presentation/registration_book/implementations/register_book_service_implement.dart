@@ -1,8 +1,11 @@
+import 'package:nawiapp/data/mappers/register_book_mapper.dart';
+import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/classes/paginated_data.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/models/register_book.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
+import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
+import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/repositories/register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
@@ -29,7 +32,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
 
       if(addedStudentsOnRegisterBookResult is NawiError) return addedStudentsOnRegisterBookResult.getError()!;
 
-      return addedRegisterBookResult.convertTo((value) => RegisterBook.fromTableData(value, data.mentions));
+      return addedRegisterBookResult.convertTo((value) => RegisterBookMapper.fromTableData(value, data.mentions));
     });
   }
 
@@ -42,7 +45,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
       final deleteRegisterBookResult = await registerBookRepo.deleteOne(id);
       if(deleteRegisterBookResult is NawiError) return deleteRegisterBookResult.getError()!;
 
-      return deleteRegisterBookResult.convertTo((value) => RegisterBook.fromTableData(value, const []));
+      return deleteRegisterBookResult.convertTo((value) => RegisterBookMapper.fromTableData(value, const []));
     });
   }
 
@@ -75,8 +78,8 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
           final mentionsResult = await studentRegisterBookRepo.getStudentsFromRegisterBook(e.id);
 
           //* Parsing
-          return RegisterBookSummary.fromSummaryView(data: e,
-            mentions: (mentionsResult is NawiError) ? const [] : mentionsResult.getValue!.map((s) => StudentSummary.fromSummaryView(s))
+          return RegisterBookSummaryMapper.fromSummaryView(data: e,
+            mentions: (mentionsResult is NawiError) ? const [] : mentionsResult.getValue!.map((s) => StudentSummaryMapper.fromSummaryView(s))
           );
         })
       ));
@@ -97,8 +100,8 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
       final result = await registerBookRepo.getOne(id);
       return result.convertTo( 
         (value) => 
-          RegisterBook.fromTableData(value, studentOnRegisterBookResult.getValue!.map(
-            (e) => StudentSummary.fromSummaryView(e)
+          RegisterBookMapper.fromTableData(value, studentOnRegisterBookResult.getValue!.map<StudentSummary>(
+            (e) => StudentSummaryMapper.fromSummaryView(e)
           )
         )
       );
@@ -108,12 +111,12 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   @override
   Future<Result<RegisterBook>> archiveOne(String id) async {
     final result = await registerBookRepo.archiveOne(id);
-    return result.convertTo((value) => RegisterBook.fromTableData(value, const []));
+    return result.convertTo((value) => RegisterBookMapper.fromTableData(value, const []));
   }
 
   @override
   Future<Result<RegisterBook>> unarchiveOne(String id) async {
     final result = await registerBookRepo.unarchiveOne(id);
-    return result.convertTo((value) => RegisterBook.fromTableData(value, const []));
+    return result.convertTo((value) => RegisterBookMapper.fromTableData(value, const []));
   }
 }

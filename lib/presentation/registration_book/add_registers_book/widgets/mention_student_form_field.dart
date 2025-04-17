@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mention_tag_text_field/mention_tag_text_field.dart';
+import 'package:nawiapp/data/mappers/register_book_mapper.dart';
+import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
-import 'package:nawiapp/domain/models/register_book.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
+import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/presentation/registration_book/add_registers_book/widgets/button_speech_field.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
@@ -58,7 +61,7 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
   @override
   void initState() {
     super.initState();
-    _value = widget.registerBook ?? RegisterBook.empty();
+    _value = widget.registerBook ?? RegisterBookMapper.empty();
     _speechController.addListener(() => _taggerController.setText = _speechController.text);
     _taggerController.setText = _value.action;
   }

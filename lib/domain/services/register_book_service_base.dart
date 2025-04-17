@@ -1,7 +1,8 @@
 import 'package:nawiapp/domain/classes/paginated_data.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/models/register_book.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
+import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
 
 
 abstract class RegisterBookServiceBase {
