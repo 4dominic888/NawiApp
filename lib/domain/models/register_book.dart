@@ -9,20 +9,20 @@ class RegisterBook with _ActionSlugible {
   final DateTime createdAt;
   final RegisterBookType type;
   final String? notes;
-  Set<StudentDTO> _mentions = {};
+  Set<StudentSummary> _mentions = {};
 
   @override
   final String action;
 
   RegisterBook({
     this.id = '*',
-    required this.action, Iterable<StudentDTO>? mentions,
+    required this.action, Iterable<StudentSummary>? mentions,
     this.type = RegisterBookType.register, this.notes,
     DateTime? timestamp
   }) : createdAt = timestamp ?? DateTime.now() { this.mentions = mentions; }
   factory RegisterBook.empty() => RegisterBook(action: "", mentions: []);
 
-  RegisterBook.fromTableData(RegisterBookTableData data, Iterable<StudentDTO> mentions) : this(
+  RegisterBook.fromTableData(RegisterBookTableData data, Iterable<StudentSummary> mentions) : this(
     id: data.id,
     action: data.action,
     mentions: mentions,
@@ -31,8 +31,8 @@ class RegisterBook with _ActionSlugible {
     type: data.type
   );
 
-  Iterable<StudentDTO> get mentions => _mentions;
-  set mentions(Iterable<StudentDTO>? value) => _mentions = Set<StudentDTO>.from(value ?? []);
+  Iterable<StudentSummary> get mentions => _mentions;
+  set mentions(Iterable<StudentSummary>? value) => _mentions = Set<StudentSummary>.from(value ?? []);
 
   RegisterBookTableData get toTable => RegisterBookTableData(
     id: id,
@@ -47,7 +47,7 @@ class RegisterBook with _ActionSlugible {
     DateTime? createdAt,
     RegisterBookType? type,
     String? notes,
-    Iterable<StudentDTO>? mentions
+    Iterable<StudentSummary>? mentions
   }) => RegisterBook(
     id: id ?? this.id,
     action: action ?? this.action,
@@ -69,23 +69,23 @@ class RegisterBook with _ActionSlugible {
 
 //* No se si fue buena idea crear una clase aparte, sabiendo que tiene incluso la misma cantidad
 //* de atributos, quitando [notes]
-class RegisterBookDTO with _ActionSlugible {
+class RegisterBookSummary with _ActionSlugible {
   final String id;
   final String hourCreatedAt;
   final DateTime createdAt;
   final RegisterBookType type;
-  final Iterable<StudentDTO> mentions;
+  final Iterable<StudentSummary> mentions;
 
   @override
   final String action;
   
-  const RegisterBookDTO({
+  const RegisterBookSummary({
     required this.id, required this.action,
     required this.hourCreatedAt, required this.createdAt,
     required this.type, required this.mentions
   });
 
-  RegisterBookDTO.fromDTOView({required RegisterBookViewDTOVersionData data, required Iterable<StudentDTO> mentions}) : this(
+  RegisterBookSummary.fromSummaryView({required RegisterBookViewSummaryVersionData data, required Iterable<StudentSummary> mentions}) : this(
     id: data.id,
     action: data.action,
     createdAt: data.createdAt,
@@ -94,12 +94,12 @@ class RegisterBookDTO with _ActionSlugible {
     mentions: mentions
   );
 
-  RegisterBookDTO copyWith({
+  RegisterBookSummary copyWith({
     String? id, String? action,
     DateTime? createdAt, String? hourCreatedAt,
     RegisterBookType? type,
-    Iterable<StudentDTO>? mentions
-  }) => RegisterBookDTO(
+    Iterable<StudentSummary>? mentions
+  }) => RegisterBookSummary(
     id: id ?? this.id,
     action: action ?? this.action,
     hourCreatedAt: hourCreatedAt ?? this.hourCreatedAt,

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/models/views/register_book_view.dart';
+import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
@@ -18,7 +18,7 @@ void main() {
   test('Registro de un registro del cuaderno de registro', () async {
     final service = GetIt.I<RegisterBookServiceBase>();
 
-    final registerBook = RegisterBook(action: "Accion X", mentions: [testil.listOfStudents[1].toStudentDTO, testil.listOfStudents[0].toStudentDTO]);
+    final registerBook = RegisterBook(action: "Accion X", mentions: [testil.listOfStudents[1].toStudentSummary, testil.listOfStudents[0].toStudentSummary]);
     final errorRegisterBook = RegisterBook(id: '06b654e1-2852-4618-84a7-bb2c43a3eba1', action: 'asdasdasdasd');
 
     final result = await Future.wait([
@@ -85,9 +85,9 @@ void main() {
     final result = await service.updateOne(getResult.getValue!.copyWith(
       action: "Otra accion",
       mentions: [
-        testil.listOfStudents[3].toStudentDTO,
-        testil.listOfStudents[0].toStudentDTO,
-        testil.listOfStudents[5].toStudentDTO
+        testil.listOfStudents[3].toStudentSummary,
+        testil.listOfStudents[0].toStudentSummary,
+        testil.listOfStudents[5].toStudentSummary
       ],
       type: RegisterBookType.anecdotal
     ));
@@ -113,7 +113,7 @@ void main() {
       about: "La actualización no debe alterar las menciones", n: 5
     );
 
-    testil.customExpect(getAfterUpdate.getValue!.mentions.contains(testil.listOfStudents[5].toStudentDTO), true,
+    testil.customExpect(getAfterUpdate.getValue!.mentions.contains(testil.listOfStudents[5].toStudentSummary), true,
       about: "La actualización no debe modificar internamente las menciones", n: 6
     );
   });
@@ -136,7 +136,7 @@ void main() {
       about: "Obtención incorrecta, ID no existente", output: badResult.message, n: 2
     );
 
-    testil.customExpect(goodResult.getValue!.mentions.contains(testil.listOfStudents[1].toStudentDTO), true,
+    testil.customExpect(goodResult.getValue!.mentions.contains(testil.listOfStudents[1].toStudentSummary), true,
       about: "Obtención de registro con menciones obtenidas", n: 3
     );
   });
@@ -164,7 +164,7 @@ void main() {
       RegisterBook(
         action: "Alguna accion 1",
         type: RegisterBookType.incident,
-        mentions: [testil.listOfStudents[4].toStudentDTO, testil.listOfStudents[0].toStudentDTO],
+        mentions: [testil.listOfStudents[4].toStudentSummary, testil.listOfStudents[0].toStudentSummary],
       )
     );
 

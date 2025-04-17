@@ -17,7 +17,7 @@ class RegisterBookElement extends StatelessWidget {
     this.isArchived = false
   });
 
-  final RegisterBookDTO item;
+  final RegisterBookSummary item;
   final ButtonControllerWithProcess delete;
   final ButtonControllerWithProcess archive;
   final ButtonControllerWithProcess unarchive;

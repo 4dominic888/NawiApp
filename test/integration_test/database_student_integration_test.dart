@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
-import 'package:nawiapp/domain/models/views/student_view.dart';
+import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 
@@ -23,7 +23,7 @@ void main(){
       service.addOne(student),
       service.addOne(errorStudent)
     ]);
-    final studentFromDatabaseDTO = (await service.getAll(StudentFilter(nameLike: "pepe"))).getValue!.first;
+    final studentFromDatabaseSummary = (await service.getAll(StudentFilter(nameLike: "pepe"))).getValue!.first;
 
     final goodResult = result[0];
     final badResult = result[1];
@@ -36,7 +36,7 @@ void main(){
       about: 'Valor de retorno', n: 2
     );
 
-    testil.customExpect(studentFromDatabaseDTO, goodResult.getValue!,
+    testil.customExpect(studentFromDatabaseSummary, goodResult.getValue!,
       about: 'Verificar que esté en la base de datos', n: 3
     );
 

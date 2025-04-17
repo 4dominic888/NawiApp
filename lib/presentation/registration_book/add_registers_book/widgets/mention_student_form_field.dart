@@ -33,11 +33,11 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
 
   //* Some variables
   String? mentionValue;
-  List<StudentDTO> searchResults = [];
+  List<StudentSummary> searchResults = [];
 
-  Future<List<StudentDTO>> requestData(String? query) async {
+  Future<List<StudentSummary>> requestData(String? query) async {
     final result = await _studentService.getAllPaginated(pageSize: 5, currentPage: 0, params: StudentFilter(nameLike: query));
-    late final List<StudentDTO> output;
+    late final List<StudentSummary> output;
     result.onValue(
       withPopup: false,
       onSuccessfully: (data, message) => output = data.data.toList(),
@@ -107,14 +107,14 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
                     onTapOutside: (event) {
                       formState.didChange(_value.copyWith(
                         action: _taggerController.getText,
-                        mentions: _taggerController.mentions.cast<StudentDTO>()
+                        mentions: _taggerController.mentions.cast<StudentSummary>()
                       ));
                     },
                     onMention: (value) async {
                       //* Limpiando el widget de elementos antes de colocar los datos
                       formState.didChange(_value.copyWith(
                         action: _taggerController.getText,
-                        mentions: _taggerController.mentions.cast<StudentDTO>()
+                        mentions: _taggerController.mentions.cast<StudentSummary>()
                       ));
 
                       setState(() { mentionValue = value; searchResults.clear(); });

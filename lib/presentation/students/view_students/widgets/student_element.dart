@@ -17,7 +17,7 @@ class StudentElement extends StatelessWidget {
     this.isArchived = false
   });
 
-  final StudentDTO item;
+  final StudentSummary item;
   final int index;
   final ButtonControllerWithProcess delete;
   final ButtonControllerWithProcess archive;

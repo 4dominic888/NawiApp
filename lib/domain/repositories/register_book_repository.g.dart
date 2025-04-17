@@ -6,10 +6,11 @@ part of 'register_book_repository.dart';
 mixin _$RegisterBookRepositoryMixin on DatabaseAccessor<NawiDatabase> {
   $RegisterBookTableTable get registerBookTable =>
       attachedDatabase.registerBookTable;
-  $RegisterBookViewDTOVersionView get registerBookViewDTOVersion =>
-      attachedDatabase.registerBookViewDTOVersion;
+  $RegisterBookViewSummaryVersionView get registerBookViewSummaryVersion =>
+      attachedDatabase.registerBookViewSummaryVersion;
   $HiddenRegisterBookTableTable get hiddenRegisterBookTable =>
       attachedDatabase.hiddenRegisterBookTable;
-  $HiddenRegisterBookViewDTOVersionView get hiddenRegisterBookViewDTOVersion =>
-      attachedDatabase.hiddenRegisterBookViewDTOVersion;
+  $HiddenRegisterBookViewSummaryVersionView
+      get hiddenRegisterBookViewSummaryVersion =>
+          attachedDatabase.hiddenRegisterBookViewSummaryVersion;
 }

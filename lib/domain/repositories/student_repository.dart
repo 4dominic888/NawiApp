@@ -3,18 +3,18 @@ import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_repository.dart';
-import 'package:nawiapp/domain/models/tables/student_table.dart';
-import 'package:nawiapp/domain/models/views/student_view.dart';
+import 'package:nawiapp/data/local/tables/student_table.dart';
+import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 part 'student_repository.g.dart';
 
-@DriftAccessor(tables: [StudentTable], views: [StudentViewDTOVersion, HiddenStudentViewDTOVersion])
+@DriftAccessor(tables: [StudentTable], views: [StudentViewSummaryVersion, HiddenStudentViewSummaryVersion])
 class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRepositoryMixin 
   implements ModelDriftRepository<
     StudentTableData,
     StudentTableCompanion,
-    StudentViewDTOVersionData,
+    StudentViewSummaryVersionData,
     StudentFilter
   >{
 
@@ -30,15 +30,15 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
   }
 
   @override
-  Future<Result<Iterable<StudentViewDTOVersionData>>> getAll(StudentFilter params) async {
+  Future<Result<Iterable<StudentViewSummaryVersionData>>> getAll(StudentFilter params) async {
     try {
-      var query = ( params.notShowHidden ? select(studentViewDTOVersion) : select(hiddenStudentViewDTOVersion) )
+      var query = ( params.notShowHidden ? select(studentViewSummaryVersion) : select(hiddenStudentViewSummaryVersion) )
         ..where((tbl) {
           final List<Expression<bool>> filterExpressions = [];
 
           //* Excluye estudiantes marcados como ocultos
           if(params.notShowHidden) {
-            tbl = tbl as $StudentViewDTOVersionView;
+            tbl = tbl as $StudentViewSummaryVersionView;
             filterExpressions.add(
               tbl.id.isNotInQuery(
                 selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])
@@ -73,11 +73,11 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
       final filteredStudents = await query.get();
 
       if(params.notShowHidden) {
-        return Success(data: filteredStudents as Iterable<StudentViewDTOVersionData>);
+        return Success(data: filteredStudents as Iterable<StudentViewSummaryVersionData>);
       }
 
       return Success(data:
-        (filteredStudents as Iterable<HiddenStudentViewDTOVersionData>).map(
+        (filteredStudents as Iterable<HiddenStudentViewSummaryVersionData>).map(
           (e) => NawiRepositoryTools.studentHiddenToPublic(e)
         )
       );

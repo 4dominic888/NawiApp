@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
-import 'package:nawiapp/domain/models/views/register_book_view.dart';
+import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/models/register_book.dart';
 
 class RegisterBookFilter extends FilterData {

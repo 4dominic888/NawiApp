@@ -1,5 +1,5 @@
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
-import 'package:nawiapp/domain/models/views/student_view.dart';
+import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 

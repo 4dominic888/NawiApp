@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:nawiapp/data/drift_connection.dart';
-import 'package:nawiapp/domain/models/views/register_book_view.dart';
-import 'package:nawiapp/domain/models/views/student_view.dart';
+import 'package:nawiapp/data/local/views/register_book_view.dart';
+import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:uuid/uuid.dart';
 import 'package:nawiapp/domain/classes/result.dart';
@@ -28,16 +28,16 @@ class NawiServiceTools{
 /// Utilidades para los repositorios, que en resumen son cosas de filtros y detalles extras
 class NawiRepositoryTools {
 
-  /// Para convertir un [HiddenStudentViewDTOVersionData] a un [StudentViewDTOVersionData]
-  static StudentViewDTOVersionData studentHiddenToPublic(HiddenStudentViewDTOVersionData data) => StudentViewDTOVersionData(
+  /// Para convertir un [HiddenStudentViewSummaryVersionData] a un [StudentViewSummaryVersionData]
+  static StudentViewSummaryVersionData studentHiddenToPublic(HiddenStudentViewSummaryVersionData data) => StudentViewSummaryVersionData(
     id: data.id,
     name: data.name,
     age: data.age,
     timestamp: data.timestamp
   );
 
-  /// Para convertir un [HiddenRegisterBookViewDTOVersionData] a un [RegisterBookViewDTOVersionData]
-  static RegisterBookViewDTOVersionData registerBookHiddenToPublic(HiddenRegisterBookViewDTOVersionData data) => RegisterBookViewDTOVersionData(
+  /// Para convertir un [HiddenRegisterBookViewSummaryVersionData] a un [RegisterBookViewSummaryVersionData]
+  static RegisterBookViewSummaryVersionData registerBookHiddenToPublic(HiddenRegisterBookViewSummaryVersionData data) => RegisterBookViewSummaryVersionData(
     id: data.id,
     action: data.action,
     createdAt: data.createdAt,

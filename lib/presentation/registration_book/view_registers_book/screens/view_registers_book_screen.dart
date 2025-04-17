@@ -19,12 +19,12 @@ class ViewRegistersBookScreen extends StatefulWidget {
 class _ViewRegistersBookScreenState extends State<ViewRegistersBookScreen> {
 
   final _registerBookService = GetIt.I<RegisterBookServiceBase>();
-  final _paggingController = InfiniteGroupedListController<RegisterBookDTO, DateTime, String>(limit: 5);
+  final _paggingController = InfiniteGroupedListController<RegisterBookSummary, DateTime, String>(limit: 5);
   final _btnDeleteElementController = RoundedLoadingButtonController();
   final _btnArchiveElementController = RoundedLoadingButtonController();
   final _btnUnarchiveElementController = RoundedLoadingButtonController();
 
-  Future<List<RegisterBookDTO>> _fetchPage(PaginationInfo paginationInfo) async {
+  Future<List<RegisterBookSummary>> _fetchPage(PaginationInfo paginationInfo) async {
     final result = await _registerBookService.getAllPaginated(
       currentPage: paginationInfo.page,
       pageSize: paginationInfo.limit,

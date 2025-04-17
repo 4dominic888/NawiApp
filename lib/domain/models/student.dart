@@ -24,7 +24,7 @@ class Student with _MentionLabelStudent, _IdenticalStudent {
   Student.fromTableData(StudentTableData data) : 
     this(id: data.id, name: data.name,age: data.age, notes: data.notes, timestamp: data.timestamp);
 
-  StudentDTO get toStudentDTO => StudentDTO(id: id, name: name, age: age);  
+  StudentSummary get toStudentSummary => StudentSummary(id: id, name: name, age: age);  
 
   StudentTableData get toTableData => StudentTableData(
     id: id,
@@ -71,7 +71,7 @@ enum StudentAge {
   const StudentAge.notDefined(String n) : this(0, n);
 }
 
-class StudentDTO with _MentionLabelStudent, _IdenticalStudent {
+class StudentSummary with _MentionLabelStudent, _IdenticalStudent {
   @override
   final String id;
   
@@ -81,9 +81,9 @@ class StudentDTO with _MentionLabelStudent, _IdenticalStudent {
   @override
   final StudentAge age;
 
-  const StudentDTO({required this.id, required this.name, required this.age});
+  const StudentSummary({required this.id, required this.name, required this.age});
 
-  StudentDTO.fromDTOView(StudentViewDTOVersionData data) : this(id: data.id, name: data.name, age: data.age);
+  StudentSummary.fromSummaryView(StudentViewSummaryVersionData data) : this(id: data.id, name: data.name, age: data.age);
 }
 
 mixin _IdenticalStudent {
@@ -97,7 +97,7 @@ mixin _IdenticalStudent {
   @override
   bool operator ==(Object other) {
     if(identical(this, other)) return true;
-    return (other is Student || other is StudentDTO) &&
+    return (other is Student || other is StudentSummary) &&
     (other as _IdenticalStudent).name == name && other.age == age && other.id == id;
   }
 }

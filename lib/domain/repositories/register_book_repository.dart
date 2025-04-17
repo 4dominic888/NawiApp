@@ -3,19 +3,19 @@ import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_repository.dart';
-import 'package:nawiapp/domain/models/tables/register_book_table.dart';
-import 'package:nawiapp/domain/models/views/register_book_view.dart';
+import 'package:nawiapp/data/local/tables/register_book_table.dart';
+import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 part 'register_book_repository.g.dart';
 
-@DriftAccessor(tables: [RegisterBookTable], views: [RegisterBookViewDTOVersion, HiddenRegisterBookViewDTOVersion])
+@DriftAccessor(tables: [RegisterBookTable], views: [RegisterBookViewSummaryVersion, HiddenRegisterBookViewSummaryVersion])
 class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$RegisterBookRepositoryMixin
   implements ModelDriftRepository<
     RegisterBookTableData,
     RegisterBookTableCompanion,
-    RegisterBookViewDTOVersionData,
+    RegisterBookViewSummaryVersionData,
     RegisterBookFilter>
   {
 
@@ -31,31 +31,31 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
   }
 
   @override
-  Future<Result<Iterable<RegisterBookViewDTOVersionData>>> getAll(RegisterBookFilter params) async {
+  Future<Result<Iterable<RegisterBookViewSummaryVersionData>>> getAll(RegisterBookFilter params) async {
     try {
       final registersIdByStudentResult = await _getRegisterBookIdByStudents(params.searchByStudentsId);
       if(registersIdByStudentResult is NawiError) return registersIdByStudentResult.getError()!;
 
       final Iterable<String> searchedRegistersIdByStudents = registersIdByStudentResult.getValue!;
 
-      var query = (params.notShowHidden ? select(registerBookViewDTOVersion) : select(hiddenRegisterBookViewDTOVersion))
+      var query = (params.notShowHidden ? select(registerBookViewSummaryVersion) : select(hiddenRegisterBookViewSummaryVersion))
         ..where((tbl) {
           final List<Expression<bool>> filterExpressions = [];
 
           if(params.notShowHidden) {
             filterExpressions.add(
-              (tbl as $RegisterBookViewDTOVersionView).id.isNotInQuery(
+              (tbl as $RegisterBookViewSummaryVersionView).id.isNotInQuery(
                 selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
               )
             );
           }
 
           if(searchedRegistersIdByStudents.isNotEmpty) {
-            filterExpressions.add((tbl as $RegisterBookViewDTOVersionView).id.isIn(searchedRegistersIdByStudents));
+            filterExpressions.add((tbl as $RegisterBookViewSummaryVersionView).id.isIn(searchedRegistersIdByStudents));
           }
 
           if(params.searchByType != null) {
-            filterExpressions.add((tbl as $RegisterBookViewDTOVersionView).type.equals(params.searchByType!.index));
+            filterExpressions.add((tbl as $RegisterBookViewSummaryVersionView).type.equals(params.searchByType!.index));
           }
 
           NawiRepositoryTools.actionFilter(
@@ -83,11 +83,11 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
       final result = await query.get();
 
       if(params.notShowHidden) {
-        return Success(data: result as Iterable<RegisterBookViewDTOVersionData>);
+        return Success(data: result as Iterable<RegisterBookViewSummaryVersionData>);
       }
 
       return Success(data:
-        (result as List<HiddenRegisterBookViewDTOVersionData>).map(
+        (result as List<HiddenRegisterBookViewSummaryVersionData>).map(
           (e) => NawiRepositoryTools.registerBookHiddenToPublic(e),
         )
       );

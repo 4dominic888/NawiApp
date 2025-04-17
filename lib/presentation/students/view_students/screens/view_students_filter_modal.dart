@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
-import 'package:nawiapp/domain/models/views/student_view.dart';
+import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/domain/models/student.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 import 'package:nawiapp/infrastructure/providers/filter_provider.dart';

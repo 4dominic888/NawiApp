@@ -5,8 +5,8 @@ import 'package:nawiapp/domain/models/student.dart';
 
 abstract class StudentServiceBase {
   Future<Result<Student>> addOne(Student data);
-  Future<Result<PaginatedData<StudentDTO>>> getAllPaginated({required int pageSize, required int currentPage, required StudentFilter params});
-  Future<Result<Iterable<StudentDTO>>> getAll(StudentFilter params);
+  Future<Result<PaginatedData<StudentSummary>>> getAllPaginated({required int pageSize, required int currentPage, required StudentFilter params});
+  Future<Result<Iterable<StudentSummary>>> getAll(StudentFilter params);
   Future<Result<Student>> getOne(String id);
   Future<Result<bool>> updateOne(Student data);
   Future<Result<Student>> deleteOne(String id);

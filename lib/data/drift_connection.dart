@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:drift/drift.dart';
-import 'package:nawiapp/domain/models/tables/hidden_register_book_table.dart';
-import 'package:nawiapp/domain/models/tables/hidden_student_table.dart';
-import 'package:nawiapp/domain/models/tables/register_book_table.dart';
-import 'package:nawiapp/domain/models/tables/student_register_book_table.dart';
-import 'package:nawiapp/domain/models/tables/student_table.dart';
-import 'package:nawiapp/domain/models/views/register_book_view.dart';
-import 'package:nawiapp/domain/models/views/student_view.dart';
+import 'package:nawiapp/data/local/tables/hidden_register_book_table.dart';
+import 'package:nawiapp/data/local/tables/hidden_student_table.dart';
+import 'package:nawiapp/data/local/tables/register_book_table.dart';
+import 'package:nawiapp/data/local/tables/student_register_book_table.dart';
+import 'package:nawiapp/data/local/tables/student_table.dart';
+import 'package:nawiapp/data/local/views/register_book_view.dart';
+import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/domain/repositories/register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
 import 'package:nawiapp/domain/repositories/student_repository.dart';
@@ -41,7 +41,7 @@ LazyDatabase _openConnection() {
 @DriftDatabase(
   tables: [StudentTable, RegisterBookTable, StudentRegisterBookTable, HiddenStudentTable, HiddenRegisterBookTable],
   daos: [StudentRepository, RegisterBookRepository, StudentRegisterBookRepository],
-  views: [StudentViewDTOVersion, HiddenStudentViewDTOVersion, RegisterBookViewDTOVersion, HiddenRegisterBookViewDTOVersion]
+  views: [StudentViewSummaryVersion, HiddenStudentViewSummaryVersion, RegisterBookViewSummaryVersion, HiddenRegisterBookViewSummaryVersion]
 )
 class NawiDatabase extends _$NawiDatabase {
   NawiDatabase([QueryExecutor? e]) : super(e ?? _openConnection());

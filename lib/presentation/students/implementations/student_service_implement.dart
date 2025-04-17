@@ -22,13 +22,13 @@ interface class StudentServiceImplement extends StudentServiceBase {
   }
 
   @override
-  Future<Result<Iterable<StudentDTO>>> getAll(StudentFilter params) async {
+  Future<Result<Iterable<StudentSummary>>> getAll(StudentFilter params) async {
     final result = await studentRepo.getAll(params);
-    return result.convertTo((value) => value.map((e) => StudentDTO.fromDTOView(e)));
+    return result.convertTo((value) => value.map((e) => StudentSummary.fromSummaryView(e)));
   }
 
   @override
-  Future<Result<PaginatedData<StudentDTO>>> getAllPaginated({required int pageSize, required int currentPage, required StudentFilter params}) async {
+  Future<Result<PaginatedData<StudentSummary>>> getAllPaginated({required int pageSize, required int currentPage, required StudentFilter params}) async {
     final result = await getAll(params.copyWith(pageSize: pageSize, currentPage: currentPage));
     return result.convertTo((value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
   }

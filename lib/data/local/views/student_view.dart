@@ -1,15 +1,15 @@
 import 'package:drift/drift.dart';
-import 'package:nawiapp/domain/models/tables/hidden_student_table.dart';
-import 'package:nawiapp/domain/models/tables/student_table.dart';
+import 'package:nawiapp/data/local/tables/hidden_student_table.dart';
+import 'package:nawiapp/data/local/tables/student_table.dart';
 
-abstract class StudentViewDTOVersion extends View {
+abstract class StudentViewSummaryVersion extends View {
   StudentTable get student; 
 
   @override Query as() => 
     select([student.id, student.name, student.age, student.timestamp]).from(student);
 }
 
-abstract class HiddenStudentViewDTOVersion extends View {
+abstract class HiddenStudentViewSummaryVersion extends View {
   HiddenStudentTable get hiddenStudent;
   StudentTable get student;
 

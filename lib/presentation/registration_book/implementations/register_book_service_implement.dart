@@ -62,8 +62,8 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   }
 
   @override
-  Future<Result<Iterable<RegisterBookDTO>>> getAll(RegisterBookFilter params) {
-    return registerBookRepo.transaction<Result<List<RegisterBookDTO>>>(() async {
+  Future<Result<Iterable<RegisterBookSummary>>> getAll(RegisterBookFilter params) {
+    return registerBookRepo.transaction<Result<List<RegisterBookSummary>>>(() async {
 
       //* Obtiene los cuadernos de registro sin estudiantes
       final gotRawRegisterBookResult = await registerBookRepo.getAll(params);
@@ -75,8 +75,8 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
           final mentionsResult = await studentRegisterBookRepo.getStudentsFromRegisterBook(e.id);
 
           //* Parsing
-          return RegisterBookDTO.fromDTOView(data: e,
-            mentions: (mentionsResult is NawiError) ? const [] : mentionsResult.getValue!.map((s) => StudentDTO.fromDTOView(s))
+          return RegisterBookSummary.fromSummaryView(data: e,
+            mentions: (mentionsResult is NawiError) ? const [] : mentionsResult.getValue!.map((s) => StudentSummary.fromSummaryView(s))
           );
         })
       ));
@@ -84,7 +84,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
   }
 
   @override
-  Future<Result<PaginatedData<RegisterBookDTO>>> getAllPaginated({required int pageSize, required int currentPage, required RegisterBookFilter params}) async {
+  Future<Result<PaginatedData<RegisterBookSummary>>> getAllPaginated({required int pageSize, required int currentPage, required RegisterBookFilter params}) async {
     final result = await getAll(params.copyWith(pageSize: pageSize, currentPage: currentPage));
     return result.convertTo((value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
   }
@@ -98,7 +98,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
       return result.convertTo( 
         (value) => 
           RegisterBook.fromTableData(value, studentOnRegisterBookResult.getValue!.map(
-            (e) => StudentDTO.fromDTOView(e)
+            (e) => StudentSummary.fromSummaryView(e)
           )
         )
       );

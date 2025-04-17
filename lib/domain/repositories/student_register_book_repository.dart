@@ -1,10 +1,10 @@
 import 'package:drift/drift.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/models/tables/register_book_table.dart';
-import 'package:nawiapp/domain/models/tables/student_register_book_table.dart';
-import 'package:nawiapp/domain/models/views/register_book_view.dart';
-import 'package:nawiapp/domain/models/views/student_view.dart';
+import 'package:nawiapp/data/local/tables/register_book_table.dart';
+import 'package:nawiapp/data/local/tables/student_register_book_table.dart';
+import 'package:nawiapp/data/local/views/register_book_view.dart';
+import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/infrastructure/nawi_utils.dart';
 
 part 'student_register_book_repository.g.dart';
@@ -17,7 +17,7 @@ typedef RegisterBookWithEmisorsTableData = ({
   Iterable<String> mentions,
 });
 
-@DriftAccessor(tables: [StudentRegisterBookTable, RegisterBookTable], views: [StudentViewDTOVersion, RegisterBookViewDTOVersion])
+@DriftAccessor(tables: [StudentRegisterBookTable, RegisterBookTable], views: [StudentViewSummaryVersion, RegisterBookViewSummaryVersion])
 class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRegisterBookRepositoryMixin {
   
   StudentRegisterBookRepository(super.db);
@@ -92,12 +92,12 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
     });
   }
 
-  /// Obtiene una lista de [StudentViewDTOVersion] de un registro de un [RegisterBookTable] en base a la tabla many to many
+  /// Obtiene una lista de [StudentViewSummaryVersion] de un registro de un [RegisterBookTable] en base a la tabla many to many
   /// [StudentRegisterBookTable]
-  Future<Result<List<StudentViewDTOVersionData>>> getStudentsFromRegisterBook(String registerBookId) async {
+  Future<Result<List<StudentViewSummaryVersionData>>> getStudentsFromRegisterBook(String registerBookId) async {
     try {
       final studentList = await (
-        (select(studentViewDTOVersion))
+        (select(studentViewSummaryVersion))
           ..where((tblStudent) => tblStudent.id.isInQuery(
 
             selectOnly(studentRegisterBookTable)
@@ -111,13 +111,13 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
     } catch (e) { return NawiRepositoryTools.onCatch(e); }
   }
 
-  /// Obtiene una lista de [RegisterBookViewDTOVersionData] en base a [studentIds], solo las coincidencias encontradas.
+  /// Obtiene una lista de [RegisterBookViewSummaryVersionData] en base a [studentIds], solo las coincidencias encontradas.
   /// 
   /// Si se eligiera más de una id en [studentIds], la busqueda se hará como si fuera un `OR` en cada ID.
-  Future<Result<Iterable<RegisterBookViewDTOVersionData>>> getRegisterBookWithSelectedStudents(Iterable<String> studentIds) async {
+  Future<Result<Iterable<RegisterBookViewSummaryVersionData>>> getRegisterBookWithSelectedStudents(Iterable<String> studentIds) async {
     try {
       final registerBookList = await (
-        select(registerBookViewDTOVersion)..where((tbl) => tbl.id.isInQuery(
+        select(registerBookViewSummaryVersion)..where((tbl) => tbl.id.isInQuery(
           selectOnly(studentRegisterBookTable)
             ..addColumns([studentRegisterBookTable.registerBook])
             ..where(studentRegisterBookTable.student.isIn(studentIds))

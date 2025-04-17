@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:nawiapp/domain/models/tables/hidden_register_book_table.dart';
-import 'package:nawiapp/domain/models/tables/register_book_table.dart';
+import 'package:nawiapp/data/local/tables/hidden_register_book_table.dart';
+import 'package:nawiapp/data/local/tables/register_book_table.dart';
 
-abstract class RegisterBookViewDTOVersion extends View {
+abstract class RegisterBookViewSummaryVersion extends View {
   RegisterBookTable get registerBook;
   Expression<String> get hourCreatedAt => registerBook.createdAt.strftime("%H:%M");
 
@@ -13,7 +13,7 @@ abstract class RegisterBookViewDTOVersion extends View {
   ]).from(registerBook);
 }
 
-abstract class HiddenRegisterBookViewDTOVersion extends View {
+abstract class HiddenRegisterBookViewSummaryVersion extends View {
   HiddenRegisterBookTable get hiddenRegisterBook;
   RegisterBookTable get registerBook;
 
