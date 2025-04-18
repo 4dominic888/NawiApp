@@ -28,6 +28,8 @@ extension StudentMapper on Student {
     notes: Value(notes),
     timestamp: Value(timestamp)
   );
+
+  String get initalsName => MapperUtils.initialName(name);
 }
 
 
@@ -37,4 +39,6 @@ extension StudentSummaryMapper on StudentSummary {
   static StudentSummary fromSummaryView(StudentViewSummaryVersionData data) => StudentSummary(id: data.id, name: data.name, age: data.age);
 
   String get mentionLabel => MapperUtils.mentionLabel(name);
+  
+  String get initalsName => MapperUtils.initialName(name);
 }

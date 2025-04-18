@@ -96,11 +96,11 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                       Center(
                         child: CircleAvatar(
                           radius: screenWidth / 9,
-                          backgroundColor: NawiColorUtils.iconColorMap(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0, withOpacity: true),
+                          backgroundColor: NawiColorUtils.studentColorByAge(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0, withOpacity: true),
                           child: Icon(
                             Icons.person,
                             size: screenWidth / 9,
-                            color: NawiColorUtils.iconColorMap(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0)
+                            color: NawiColorUtils.studentColorByAge(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0)
                           )
                         )
                       ),

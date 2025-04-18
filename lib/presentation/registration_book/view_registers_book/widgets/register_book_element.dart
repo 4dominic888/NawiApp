@@ -100,7 +100,7 @@ class RegisterBookElement extends StatelessWidget {
                 children: (item.mentions.toSet()).map((student) => 
                   Chip(
                     label: Text(student.name),
-                    backgroundColor: NawiColorUtils.iconColorMap(student.age.value).withAlpha(80),
+                    backgroundColor: NawiColorUtils.studentColorByAge(student.age.value).withAlpha(80),
                     labelStyle: const TextStyle(fontWeight: FontWeight.bold)
                   )
                 ).toList(),

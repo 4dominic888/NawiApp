@@ -10,7 +10,7 @@ class NawiColorUtils {
   /// Rango entre `3-5`, cualquier otro se colococará uno por defecto
   /// 
   /// `withOpacity` hace que el color sea más pálido, ideal para fondos
-  static Color iconColorMap(int age, {bool? withOpacity = false}) {
+  static Color studentColorByAge(int age, {bool? withOpacity = false}) {
     final colorMap = {
       3: Colors.blue,
       4: Colors.orange.shade700,
@@ -19,6 +19,12 @@ class NawiColorUtils {
 
     return (withOpacity ?? false) ? colorMap.withAlpha(50) : colorMap;
   }
+
+  static Color accent(Color color, {final double saturationFactor = 1.2, final double lightnessFactor = 0.8}) =>
+    HSLColor.fromColor(color)
+        .withSaturation((HSLColor.fromColor(color).saturation * saturationFactor).clamp(0.0, 1.0))
+        .withLightness((HSLColor.fromColor(color).lightness * lightnessFactor).clamp(0.0, 1.0))
+        .toColor();
 
   static const Color primaryColor = Color(0xFF65558F);
   static const Color secondaryColor = Color(0xFFDECFE8);

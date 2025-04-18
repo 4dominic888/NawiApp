@@ -13,4 +13,9 @@ class MapperUtils {
     }
     return NawiGeneralUtils.clearSpaces(buffer.toString());
   }
+
+  static String initialName(String name) {
+    final separatedBySpaces = name.split(' ');
+    return "${separatedBySpaces[0][0].toUpperCase()}${separatedBySpaces.elementAtOrNull(1)?[0].toUpperCase() ?? ''}";
+  }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/locator.dart';
-import 'package:nawiapp/presentation/home/screen/home_screen.dart';
+import 'package:nawiapp/presentation/home/screens/home_screen.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:overlay_support/overlay_support.dart';
 
@@ -32,7 +32,12 @@ class NawiApp extends StatelessWidget {
           ),
           useMaterial3: true,
           elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.buttonColor)
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: NawiColorUtils.primaryColor,
+              shadowColor: Colors.black,
+              elevation: 2
+            )
           ),
           textTheme: TextTheme(
             bodyLarge: const TextStyle(color: NawiColorUtils.textColor),
@@ -60,15 +65,6 @@ class _MenuAppState extends State<MenuApp> {
   
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Ñawi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
-          centerTitle: true,
-        ),
-        body: HomeScreen()
-      ),
-    );
+    return HomeScreen();
   }
 }

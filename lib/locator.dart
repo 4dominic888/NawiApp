@@ -5,8 +5,8 @@ import 'package:nawiapp/domain/repositories/student_register_book_repository.dar
 import 'package:nawiapp/domain/repositories/student_repository.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
-import 'package:nawiapp/presentation/registration_book/implementations/register_book_service_implement.dart';
-import 'package:nawiapp/presentation/students/implementations/student_service_implement.dart';
+import 'package:nawiapp/presentation/create/implementations/register_book_service_implement.dart';
+import 'package:nawiapp/presentation/create/implementations/student_service_implement.dart';
 
 final GetIt locator = GetIt.instance;
 

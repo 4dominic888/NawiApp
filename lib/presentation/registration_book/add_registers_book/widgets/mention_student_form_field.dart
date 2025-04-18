@@ -8,7 +8,7 @@ import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
-import 'package:nawiapp/presentation/registration_book/add_registers_book/widgets/button_speech_field.dart';
+import 'package:nawiapp/presentation/create/widgets/button_speech_field.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class MentionStudentFormField extends StatefulWidget {
@@ -31,7 +31,6 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
 
   final _taggerController = MentionTagTextEditingController();
 
-  Color Function(bool hasError) get errorColor => (bool hasError) => hasError ? Colors.red : Colors.black;
   final _studentService = GetIt.I<StudentServiceBase>();
 
   //* Some variables
@@ -162,8 +161,8 @@ class _MentionStudentFormFieldState extends State<MentionStudentFormField> {
                           setState(() => mentionValue = null);
                         },
                         leading: CircleAvatar(
-                          backgroundColor: NawiColorUtils.iconColorMap(item.age.value, withOpacity: true),
-                          child: Icon(Icons.person, color: NawiColorUtils.iconColorMap(item.age.value)),
+                          backgroundColor: NawiColorUtils.studentColorByAge(item.age.value, withOpacity: true),
+                          child: Icon(Icons.person, color: NawiColorUtils.studentColorByAge(item.age.value)),
                         ),
                         subtitle: Text(item.age.name),
                         title: Text(item.mentionLabel)

@@ -86,8 +86,8 @@ class StudentElement extends StatelessWidget {
             subtitle: Text(item.age.name),
             tileColor: index % 2 == 0 ? colorTile.withAlpha(80) : colorTile.withAlpha(100),
             leading: CircleAvatar(
-              backgroundColor: NawiColorUtils.iconColorMap(item.age.value, withOpacity: true),
-              child: Icon(Icons.person, color: NawiColorUtils.iconColorMap(item.age.value)),
+              backgroundColor: NawiColorUtils.studentColorByAge(item.age.value, withOpacity: true),
+              child: Icon(Icons.person, color: NawiColorUtils.studentColorByAge(item.age.value)),
             ),
           ),
         ),
