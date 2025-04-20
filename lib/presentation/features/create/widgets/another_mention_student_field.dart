@@ -3,7 +3,7 @@ import 'package:mention_tag_text_field/mention_tag_text_field.dart';
 import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
-import 'package:nawiapp/presentation/create/widgets/button_speech_field.dart';
+import 'package:nawiapp/presentation/features/create/widgets/button_speech_field.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class AnotherMentionStudentField extends StatefulWidget {

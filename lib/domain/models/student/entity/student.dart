@@ -12,6 +12,8 @@ class Student with _$Student {
     this.notes, DateTime? timestamp
   }) : timestamp = timestamp ?? DateTime.now();
 
+  Student.empty() : this(name: '', age: StudentAge.threeYears);
+
   @override
   final String id;
 

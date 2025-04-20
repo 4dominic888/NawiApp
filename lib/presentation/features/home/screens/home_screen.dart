@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nawiapp/presentation/backups/screens/backups_screen.dart';
-import 'package:nawiapp/presentation/create/screens/create_element_screen.dart';
-import 'package:nawiapp/presentation/export/screens/export_screen.dart';
-import 'package:nawiapp/presentation/search/screens/search_element_screen.dart';
+import 'package:nawiapp/presentation/features/backups/screens/backups_screen.dart';
+import 'package:nawiapp/presentation/features/create/screens/create_element_screen.dart';
+import 'package:nawiapp/presentation/features/export/screens/export_screen.dart';
+import 'package:nawiapp/presentation/features/search/screens/search_element_screen.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class HomeScreen extends StatefulWidget {

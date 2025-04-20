@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/locator.dart';
-import 'package:nawiapp/presentation/home/screens/home_screen.dart';
+import 'package:nawiapp/presentation/features/home/screens/home_screen.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:overlay_support/overlay_support.dart';
 
