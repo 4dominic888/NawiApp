@@ -21,7 +21,7 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
 
   final GetIt _locator = GetIt.instance;
 
-  Future<void> setupTestLocator({bool withRegisterBook = false}) async {
+  Future<void> setupIntegrationTestLocator({bool withRegisterBook = false}) async {
     await _locator.reset();
 
     _locator.registerLazySingleton<NawiDatabase>(() => NawiDatabase(DatabaseConnection(
@@ -43,7 +43,7 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
     await addingTestData(withRegisterBook);
   }
 
-  Future<void> onTearDownSetupLocator() async {
+  Future<void> onTearDownSetupIntegrationTestLocator() async {
     await _locator<NawiDatabase>().close();
     await _locator.reset();
   }

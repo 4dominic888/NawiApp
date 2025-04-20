@@ -12,8 +12,8 @@ import 'package:nawiapp/domain/services/student_service_base.dart';
 import '../nawi_test_utils.dart' as testil;
 
 void main(){
-  setUp(testil.setupTestLocator);
-  tearDown(testil.onTearDownSetupLocator);
+  setUp(testil.setupIntegrationTestLocator);
+  tearDown(testil.onTearDownSetupIntegrationTestLocator);
 
   test('Registro de un estudiante', () async {
     final service = GetIt.I<StudentServiceBase>();
