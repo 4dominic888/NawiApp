@@ -1,3 +1,4 @@
+/// Clase con atributos útiles para filtros avanzados
 abstract class FilterData {
 
   /// Tamaño de cada porcion de datos seleccionados
@@ -11,6 +12,8 @@ abstract class FilterData {
   /// `false` si se desea ver el listado de datos ocultando los archivados, caso contrario, `true`
   /// muestra solo los archivados
   final bool showHidden;
+
+  bool get notShowHidden => !showHidden;
 
   FilterData({this.pageSize, this.currentPage, this.showHidden = false});
 

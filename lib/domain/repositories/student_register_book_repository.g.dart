@@ -9,8 +9,8 @@ mixin _$StudentRegisterBookRepositoryMixin on DatabaseAccessor<NawiDatabase> {
       attachedDatabase.registerBookTable;
   $StudentRegisterBookTableTable get studentRegisterBookTable =>
       attachedDatabase.studentRegisterBookTable;
-  $StudentViewDAOVersionView get studentViewDAOVersion =>
-      attachedDatabase.studentViewDAOVersion;
-  $RegisterBookViewDAOVersionView get registerBookViewDAOVersion =>
-      attachedDatabase.registerBookViewDAOVersion;
+  $StudentViewSummaryVersionView get studentViewSummaryVersion =>
+      attachedDatabase.studentViewSummaryVersion;
+  $RegisterBookViewSummaryVersionView get registerBookViewSummaryVersion =>
+      attachedDatabase.registerBookViewSummaryVersion;
 }

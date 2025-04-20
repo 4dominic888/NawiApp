@@ -1,0 +1,1 @@
+enum SubmitStatus { idle, loading, success, error }

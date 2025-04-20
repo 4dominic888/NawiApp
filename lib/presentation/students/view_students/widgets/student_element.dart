@@ -1,15 +1,10 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:nawiapp/domain/models/student.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
+import 'package:nawiapp/domain/records/button_controller_with_process.dart';
 import 'package:nawiapp/presentation/students/add_students/screens/add_students_screen.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
-import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
-
-typedef ButtonControllerWithProcess = ({
-  RoundedLoadingButtonController controller,
-  Future<void> Function() action
-});
+import 'package:nawiapp/presentation/widgets/warning_awesome_dialog.dart';
+import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class StudentElement extends StatelessWidget {
   const StudentElement({
@@ -22,7 +17,7 @@ class StudentElement extends StatelessWidget {
     this.isArchived = false
   });
 
-  final StudentDAO item;
+  final StudentSummary item;
   final int index;
   final ButtonControllerWithProcess delete;
   final ButtonControllerWithProcess archive;
@@ -36,24 +31,18 @@ class StudentElement extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: Dismissible(
-          key: Key("-"),
+          key: Key(item.id),
           direction: DismissDirection.horizontal,
           confirmDismiss: (direction) async {
             //* Edit
             if(direction == DismissDirection.startToEnd) {
               Navigator.push(context, MaterialPageRoute(builder: (_) => AddStudentsScreen(idToEdit: item.id)));
-              return false;
             }
 
             //* Delete, archive or unarchive
             if(direction == DismissDirection.endToStart) {
-              await AwesomeDialog(
+              await WarningAwesomeDialog(
                 context: context,
-                dialogType: DialogType.warning,
-                headerAnimationLoop: false,
-                showCloseIcon: true,
-                closeIcon: const Icon(Icons.close),
-                animType: AnimType.scale,
                 title: "Confirmación de eliminación",
                 desc: "¿Estás seguro que deseas eliminar este estudiante? (Esta acción eliminará todos los registros relacionados)"
                 "\n\nCaso contrario, ${!isArchived ? "¿Archivarlo?" : "¿Desarchivarlo?"}",
@@ -77,7 +66,6 @@ class StudentElement extends StatelessWidget {
                     color: Colors.green.shade200,
                   )
               ).show();
-              return false;
             }
             return false;
           },
@@ -98,8 +86,8 @@ class StudentElement extends StatelessWidget {
             subtitle: Text(item.age.name),
             tileColor: index % 2 == 0 ? colorTile.withAlpha(80) : colorTile.withAlpha(100),
             leading: CircleAvatar(
-              backgroundColor: NawiColor.iconColorMap(item.age.value, withOpacity: true),
-              child: Icon(Icons.person, color: NawiColor.iconColorMap(item.age.value)),
+              backgroundColor: NawiColorUtils.studentColorByAge(item.age.value, withOpacity: true),
+              child: Icon(Icons.person, color: NawiColorUtils.studentColorByAge(item.age.value)),
             ),
           ),
         ),
