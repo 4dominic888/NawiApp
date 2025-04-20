@@ -14,8 +14,8 @@ import 'package:nawiapp/domain/services/student_service_base.dart';
 import '../nawi_test_utils.dart' as testil;
 
 void main() {
-  setUp(() async => await testil.setupTestLocator(withRegisterBook: true));
-  tearDown(testil.onTearDownSetupLocator);
+  setUp(() async => await testil.setupIntegrationTestLocator(withRegisterBook: true));
+  tearDown(testil.onTearDownSetupIntegrationTestLocator);
 
   test('Registro de un registro del cuaderno de registro', () async {
     final service = GetIt.I<RegisterBookServiceBase>();
