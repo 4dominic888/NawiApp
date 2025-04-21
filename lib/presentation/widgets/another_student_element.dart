@@ -36,7 +36,7 @@ class AnotherStudentElement extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name, style: Theme.of(context).textTheme.titleMedium),
+                Text(item.name, style: Theme.of(context).textTheme.titleMedium, overflow: TextOverflow.ellipsis),
                 Text(item.age.name, style: Theme.of(context).textTheme.titleSmall)
               ],
             )
