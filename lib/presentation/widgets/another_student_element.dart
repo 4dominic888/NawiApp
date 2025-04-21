@@ -6,8 +6,9 @@ import 'package:nawiapp/utils/nawi_color_utils.dart';
 class AnotherStudentElement extends StatelessWidget {
 
   final StudentSummary item;
+  final bool isPreview;
 
-  const AnotherStudentElement({ super.key, required this.item });
+  const AnotherStudentElement({ super.key, required this.item, this.isPreview = false });
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +43,11 @@ class AnotherStudentElement extends StatelessWidget {
             )
           ),
 
-          IconButton(onPressed: () {}, icon: const Icon(Icons.edit), style: Theme.of(context).elevatedButtonTheme.style),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.delete), style: Theme.of(context).elevatedButtonTheme.style)
+          if(!isPreview) ...[
+            IconButton(onPressed: () {}, icon: const Icon(Icons.edit), style: Theme.of(context).elevatedButtonTheme.style),
+            IconButton(onPressed: () {}, icon: const Icon(Icons.delete), style: Theme.of(context).elevatedButtonTheme.style)
+          ]
+
         ],
       ),
     );
