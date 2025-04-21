@@ -98,6 +98,7 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
             controller: _nameController,
             validator: formNotifier.nameValidator,
             onChanged: formNotifier.setName,
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(
               labelText: 'Nombre',
               hintText: 'Nombre del estudiante',
@@ -119,6 +120,7 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
           TextFormField(
             controller: _notesController,
             onChanged: formNotifier.setNotes,
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             maxLines: 2,
             decoration: InputDecoration(
               labelText: 'Notas',
@@ -157,7 +159,4 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
       ),
     );
   }
-}
-
-class ListenerSubscription {
 }

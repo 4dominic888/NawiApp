@@ -36,6 +36,7 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
                   fillColor: NawiColorUtils.secondaryColor.withAlpha(110),                
                 ),
                 onChanged: textOnChanged,
+                onTapOutside: (_) => FocusScope.of(context).unfocus()
               ),
             ),
         
