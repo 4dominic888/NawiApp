@@ -51,9 +51,12 @@ class SearchRegisterBookModule extends StatelessWidget {
     return Scaffold(
       appBar: SearchFilterField(
         hintTextField: 'Búsqueda por acción',
-        filterDialog: AlertDialog(
-          title: const Text('Proximamente'),
-        )
+        filterAction: () {
+
+        },
+        textOnChanged: (text) {
+          
+        },
       ),
       body: CustomScrollView(
         slivers: [

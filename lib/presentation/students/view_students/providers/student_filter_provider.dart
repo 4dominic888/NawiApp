@@ -8,4 +8,4 @@ class StudentFilterNotifier extends StateNotifier<StudentFilter> {
   void setConfig(StudentFilter data) => state = data;
 }
 
-final studentFilterProvider = StateProvider<StudentFilter>((ref) => StudentFilter());
+final deprecatedStudentFilterProvider = StateProvider<StudentFilter>((ref) => StudentFilter());
