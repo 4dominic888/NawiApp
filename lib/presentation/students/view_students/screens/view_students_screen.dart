@@ -50,7 +50,7 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
     final result = await _studentService.getAllPaginated(
       currentPage: pageKey,
       pageSize: _pageSize,
-      params: ref.read(studentFilterProvider)
+      params: ref.read(deprecatedStudentFilterProvider)
     );
 
     result.onValue(
@@ -83,7 +83,7 @@ class _ViewStudentsScreenState extends ConsumerState<ViewStudentsScreen> {
             itemBuilder: (_, item, index) => StudentElement(
               item: item,
               index: index,
-              isArchived: ref.watch(studentFilterProvider).showHidden,
+              isArchived: ref.watch(deprecatedStudentFilterProvider).showHidden,
               delete: defaulVoidResultAction(
                 result: (() => _studentService.deleteOne(item.id)),
                 buttonController: _btnDeleteElementController,

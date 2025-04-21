@@ -33,7 +33,7 @@ class _ViewStudentsFilterModalState extends ConsumerState<ViewStudentsFilterModa
   @override
   void initState() {
     super.initState();
-    _studentFilter = ref.read(studentFilterProvider);
+    _studentFilter = ref.read(deprecatedStudentFilterProvider);
     _searchStudentController.text = _studentFilter.nameLike ?? '';
     if(_studentFilter.ageEnumIndex1 != null) _filterAges.update(_studentFilter.ageEnumIndex1!, (value) => true);
     if(_studentFilter.ageEnumIndex2 != null) _filterAges.update(_studentFilter.ageEnumIndex2!, (value) => true);
@@ -195,7 +195,7 @@ class _ViewStudentsFilterModalState extends ConsumerState<ViewStudentsFilterModa
               orderBy: _selectedOrder!,
               showHidden: _showHidden
             );
-            ref.read(studentFilterProvider.notifier).state = studentFiler;
+            ref.read(deprecatedStudentFilterProvider.notifier).state = studentFiler;
             Navigator.of(context).pop();
           },
           child: const Text("Aceptar")
