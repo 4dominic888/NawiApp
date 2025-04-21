@@ -25,7 +25,6 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _notesController;
-  //* late final SomeSelectedController _ageController = C;
   final _btnController = RoundedLoadingButtonController();
 
   @override
@@ -33,7 +32,7 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
     super.initState();
     final Student? initialValue = widget.data;
     _nameController = TextEditingController(text: initialValue?.name ?? '');
-    _notesController = TextEditingController(text: initialValue?.notes ?? '');
+    _notesController = TextEditingController(text: initialValue?.notes ?? '');    
   }
 
   @override
@@ -45,117 +44,114 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
 
   @override
   Widget build(BuildContext context) {
-    final form = ref.watch(studentFormProvider(widget.data));
+    final studentFormState = ref.watch(studentFormProvider(widget.data).select((e) => e.data));
     final formNotifier = ref.read(studentFormProvider(widget.data).notifier);
     ref.listen(studentFormProvider(widget.data), (_, next) => 
       NawiFormUtils.handleSubmitStatus(status: next.status, controller: _btnController) 
-    );    
+    );
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Vista previa", style: Theme.of(context).textTheme.headlineSmall),
-            
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: AnotherStudentElement(
-                item: StudentSummary(
-                  id: form.data.id, name: form.data.name, age: form.data.age
-                )
-              ),
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Vista previa", style: Theme.of(context).textTheme.headlineSmall),
+          
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: AnotherStudentElement(
+              item: StudentSummary(
+                id: studentFormState.id, name: studentFormState.name, age: studentFormState.age
+              )
             ),
-        
-            const Divider(),
-        
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    widget.data == null ? "Agregar estudiante" : "Editar estudiante",
-                    style: Theme.of(context).textTheme.headlineSmall
-                  ),
+          ),
+      
+          const Divider(),
+      
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  widget.data == null ? "Agregar estudiante" : "Editar estudiante",
+                  style: Theme.of(context).textTheme.headlineSmall
                 ),
-
-                const SizedBox(width: 10),
-
-                Expanded(
-                  child: LoadingProcessButton(
-                    controller: _btnController,
-                    proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
-                    label: const Text("Completar")
-                  ),
-                )
-              ],
-            ),
-        
-            const SizedBox(height: 20),
-        
-            TextFormField(
-              controller: _nameController,
-              validator: formNotifier.nameValidator,
-              onChanged: formNotifier.setName,
-              decoration: InputDecoration(
-                labelText: 'Nombre',
-                hintText: 'Nombre del estudiante',
-                suffix: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    formNotifier.clearName();
-                    _nameController.clear();
-                  },
+              ),
+    
+              const SizedBox(width: 10),
+    
+              Expanded(
+                child: LoadingProcessButton(
+                  controller: _btnController,
+                  proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
+                  label: const Text("Completar")
                 ),
-                filled: true,
-                fillColor: NawiColorUtils.secondaryColor.withAlpha(110),
-                floatingLabelBehavior: FloatingLabelBehavior.always
+              )
+            ],
+          ),
+      
+          const SizedBox(height: 20),
+      
+          TextFormField(
+            controller: _nameController,
+            validator: formNotifier.nameValidator,
+            onChanged: formNotifier.setName,
+            decoration: InputDecoration(
+              labelText: 'Nombre',
+              hintText: 'Nombre del estudiante',
+              suffix: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  formNotifier.clearName();
+                  _nameController.clear();
+                },
               ),
+              filled: true,
+              fillColor: NawiColorUtils.secondaryColor.withAlpha(110),
+              floatingLabelBehavior: FloatingLabelBehavior.always
             ),
-        
-            const SizedBox(height: 20),
-        
-            TextFormField(
-              controller: _notesController,
-              onChanged: formNotifier.setNotes,
-              maxLines: 2,
-              decoration: InputDecoration(
-                labelText: 'Notas',
-                hintText: 'Ingrese detalles adicionales (Opcional)',
-                suffix: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    formNotifier.clearNotes();
-                    _notesController.clear();
-                  }
-                ),
-                filled: true,
-                fillColor: NawiColorUtils.secondaryColor.withAlpha(110),
-                floatingLabelBehavior: FloatingLabelBehavior.always
+          ),
+      
+          const SizedBox(height: 20),
+      
+          TextFormField(
+            controller: _notesController,
+            onChanged: formNotifier.setNotes,
+            maxLines: 2,
+            decoration: InputDecoration(
+              labelText: 'Notas',
+              hintText: 'Ingrese detalles adicionales (Opcional)',
+              suffix: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  formNotifier.clearNotes();
+                  _notesController.clear();
+                }
               ),
+              filled: true,
+              fillColor: NawiColorUtils.secondaryColor.withAlpha(110),
+              floatingLabelBehavior: FloatingLabelBehavior.always
             ),
-        
-            const SizedBox(height: 25),
-        
-            Center(
-              child: SegmentedButton<StudentAge>(
-                segments: NawiGeneralUtils.studentAges.map(
-                  (e) => ButtonSegment(value: e, label: Text(e.name))
-                ).toList(),
-                selected: { form.data.age },
-                onSelectionChanged: formNotifier.setAge,
-                multiSelectionEnabled: false,
-              ),
+          ),
+      
+          const SizedBox(height: 25),
+      
+          Center(
+            child: SegmentedButton<StudentAge>(
+              segments: NawiGeneralUtils.studentAges.map(
+                (e) => ButtonSegment(value: e, label: Text(e.name))
+              ).toList(),
+              selected: { studentFormState.age },
+              onSelectionChanged: formNotifier.setAge,
+              multiSelectionEnabled: false,
             ),
-        
-        
-            if(NawiGeneralUtils.isKeyboardVisible(context)) Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
-            )
-          ],
-        ),
+          ),
+      
+      
+          if(NawiGeneralUtils.isKeyboardVisible(context)) Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
+          )
+        ],
       ),
     );
   }

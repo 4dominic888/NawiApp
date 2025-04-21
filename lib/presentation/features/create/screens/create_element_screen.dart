@@ -17,8 +17,8 @@ class _CreateElementScreenState extends State<CreateElementScreen> {
 
     return SelectableModelBased(
       padding: const EdgeInsets.all(20.0),
-      studentModule: AnotherCreateStudentModule(),
-      registerBookModule: AnotherCreateRegisterBookModule()
+      studentModule: SingleChildScrollView(child: AnotherCreateStudentModule()),
+      registerBookModule: SingleChildScrollView(child: AnotherCreateRegisterBookModule())
     );
   }
 }
