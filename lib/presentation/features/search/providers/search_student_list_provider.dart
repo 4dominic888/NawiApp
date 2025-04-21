@@ -7,7 +7,7 @@ import 'package:nawiapp/domain/services/student_service_base.dart';
 
 final studentFilterProvider = StateProvider<StudentFilter>((ref) => StudentFilter());
 
-final studentSummarySearchProvider = Provider.autoDispose<StudentSummarySearchNotifier>((ref) {
+final studentSummarySearchProvider = Provider<StudentSummarySearchNotifier>((ref) {
   final notifier = StudentSummarySearchNotifier(ref);
   ref.onDispose(() => notifier.dispose());
   return notifier;

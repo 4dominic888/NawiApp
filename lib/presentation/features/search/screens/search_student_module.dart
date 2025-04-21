@@ -17,11 +17,11 @@ class SearchStudentModule extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
-    final notifier = ref.watch(studentSummarySearchProvider);
+
+    Timer? debounce;
+    final notifier = ref.read(studentSummarySearchProvider);
     final controller = notifier.pagingController;
     final filterNotifier = ref.read(studentFilterProvider.notifier);
-    Timer? _debounce;
 
     return Scaffold(
       appBar: SearchFilterField(
@@ -36,8 +36,8 @@ class SearchStudentModule extends ConsumerWidget {
           }
         },
         textOnChanged: (text) {
-          _debounce?.cancel();
-          _debounce = Timer(const Duration(milliseconds: 500), () {
+          debounce?.cancel();
+          debounce = Timer(const Duration(milliseconds: 500), () {
             final newFilter = filterNotifier.state.copyWith(nameLike: text);
 
             if(filterNotifier.state != newFilter) {
