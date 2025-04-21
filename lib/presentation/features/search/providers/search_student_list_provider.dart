@@ -15,8 +15,8 @@ final studentSummarySearchProvider = Provider<StudentSummarySearchNotifier>((ref
 
 class StudentSummarySearchNotifier {
   final Ref ref;
-  final PagingController<int, StudentSummary> pagingController = PagingController(firstPageKey: 0);
-  static const int pageSize = 10;
+  final PagingController<int, StudentSummary> pagingController = PagingController(firstPageKey: 1);
+  static const int pageSize = 8;
 
   bool _isLoadingStarted = false;
   late final bool _paggingStatusCondition;
