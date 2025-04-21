@@ -4,6 +4,7 @@ import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/presentation/features/create/providers/create_student_form_provider.dart';
+import 'package:nawiapp/presentation/shared/submit_status.dart';
 import 'package:nawiapp/presentation/widgets/another_student_element.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
@@ -84,7 +85,8 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
                 child: LoadingProcessButton(
                   controller: _btnController,
                   proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
-                  label: const Text("Completar")
+                  label: const Text("Completar"),
+                  onReset: () => formNotifier.setStatus(SubmitStatus.idle),
                 ),
               )
             ],
