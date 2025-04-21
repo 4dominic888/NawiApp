@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 
-class RegisterBookFilter extends FilterData {
+class RegisterBookFilter extends FilterData with EquatableMixin {
 
   /// Filtro por nombre de accion
   final String? actionLike;
@@ -65,5 +66,12 @@ class RegisterBookFilter extends FilterData {
       orderBy: orderBy ?? this.orderBy,
       timestampRange: timestampRange ?? this.timestampRange
     );
+
+  @override
+  List<Object?> get props => [
+    studentNameLike, actionLike, searchByStudentsId,
+    searchByType, pageSize, currentPage, showHidden,
+    orderBy, timestampRange
+  ];
   
 }
