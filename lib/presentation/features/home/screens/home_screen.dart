@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/presentation/features/backups/screens/backups_screen.dart';
 import 'package:nawiapp/presentation/features/create/screens/create_element_screen.dart';
 import 'package:nawiapp/presentation/features/export/screens/export_screen.dart';
+import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
 import 'package:nawiapp/presentation/features/search/screens/search_element_screen.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({ super.key });
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProviderStateMixin {
 
   static Map<BottomNavigationBarItem, Widget> listOfScreens = {
     BottomNavigationBarItem(label: "Agregar", icon: const Icon(Icons.add) ) : CreateElementScreen(),
@@ -28,10 +30,28 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _tabController = TabController(length: listOfScreens.length, vsync: this);
+    _tabController.addListener(() {
+      if(!_tabController.indexIsChanging) {
+        ref.read(tabIndexProvider.notifier).state = _tabController.index;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final tabIndex = ref.watch(tabIndexProvider);
+
+    if(_tabController.index != tabIndex) {
+      _tabController.animateTo(tabIndex);
+    }    
+
     return DefaultTabController(
       length: listOfScreens.length,
       child: Scaffold(
@@ -41,8 +61,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ),
         resizeToAvoidBottomInset: false,
         bottomSheet: BottomNavigationBar(
-          currentIndex: _tabController.index,
-          onTap: (value) => setState(() => _tabController.index = value),
+          currentIndex: tabIndex,
+          onTap: (index) => ref.read(tabIndexProvider.notifier).state = index,
           backgroundColor: Theme.of(context).colorScheme.secondary,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           selectedItemColor: NawiColorUtils.primaryColor,
@@ -56,11 +76,5 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         )
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 }
