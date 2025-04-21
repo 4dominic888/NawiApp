@@ -57,25 +57,25 @@ class StudentFormNotifier extends StateNotifier<_StudentFormState> {
   Future<void> submit({String? idToEdit}) async {
     setStatus(SubmitStatus.loading);
 
-    final Result<Object> result;
     bool isUpdatable = idToEdit != null;
+    final Result<Object> result;
 
-    if(isUpdatable) { //* Crear
+    if(isUpdatable) {
+      result = await service.updateOne(state.data.copyWith(id: idToEdit));
+    }
+    else {
       result = await service.addOne(state.data);
-    } else { //* Editar
-      result = await service.updateOne(state.data.copyWith(id: idToEdit!));
     }
 
     result.onValue(
-      onError: (_, message) => setStatus(SubmitStatus.error),
-      onSuccessfully: (_, message) => setStatus(SubmitStatus.success),
+      onError: (_, __) => setStatus(SubmitStatus.error),
+      onSuccessfully: (_, __) => setStatus(SubmitStatus.success),
     );
-  }  
-
+  }
 }
 
-final studentFormProvider = StateNotifierProvider.autoDispose
+final studentFormProvider = StateNotifierProvider
+  .autoDispose
   .family<StudentFormNotifier, _StudentFormState, Student?>(
     (ref, student) => StudentFormNotifier(student, service: GetIt.I<StudentServiceBase>())
-    
 );

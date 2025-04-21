@@ -64,7 +64,7 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
               padding: const EdgeInsets.all(15.0),
               child: AnotherStudentElement(
                 item: StudentSummary(
-                  id: form.data.id, name: form.data.name, age: StudentAge.fiveYears
+                  id: form.data.id, name: form.data.name, age: form.data.age
                 )
               ),
             ),
