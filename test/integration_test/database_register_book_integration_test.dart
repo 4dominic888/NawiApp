@@ -7,7 +7,7 @@ import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
-import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
+import 'package:nawiapp/domain/repositories/student_register_book_dao.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 

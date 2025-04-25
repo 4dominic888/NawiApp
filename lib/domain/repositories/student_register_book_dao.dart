@@ -7,7 +7,7 @@ import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/utils/nawi_repository_utils.dart';
 
-part 'student_register_book_repository.g.dart';
+part 'student_register_book_dao.g.dart';
 
 /// [registerBook] es el modelo de tabla de [RegisterBookTable]
 /// 

@@ -7,7 +7,7 @@ import 'package:nawiapp/data/local/tables/student_table.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/utils/nawi_repository_utils.dart';
 
-part 'student_repository.g.dart';
+part 'student_dao.g.dart';
 
 @DriftAccessor(tables: [StudentTable], views: [StudentViewSummaryVersion, HiddenStudentViewSummaryVersion])
 class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRepositoryMixin 
