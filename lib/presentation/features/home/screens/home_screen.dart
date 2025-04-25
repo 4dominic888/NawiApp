@@ -50,7 +50,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(tabMenuProvider, (_, next) => _tabController.animateTo(next.index) );
+    ref.listen(tabMenuProvider, (_, next) =>_tabController.animateTo(next.index));
+
+    final reactiveMenuTab = ref.watch(tabMenuProvider);
 
     return DefaultTabController(
       length: NawiMenuTabs.values.length,
@@ -61,7 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
         ),
         resizeToAvoidBottomInset: false,
         bottomSheet: BottomNavigationBar(
-          currentIndex: _tabController.index,
+          currentIndex: reactiveMenuTab.index,
           onTap: ref.read(tabMenuProvider.notifier).onIndexChanged,
           backgroundColor: Theme.of(context).colorScheme.secondary,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
