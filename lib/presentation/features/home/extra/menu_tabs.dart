@@ -1,0 +1,1 @@
+enum NawiMenuTabs { create, search, export, backups }

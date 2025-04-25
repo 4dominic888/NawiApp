@@ -73,8 +73,8 @@ class AnotherStudentElement extends ConsumerWidget {
 
                     //* Ir al formulario de estudiante con el dato a editar
                     ref.read(initialStudentFormDataProvider.notifier).state = data;
-                    ref.read(tabIndexProvider.notifier).state = 0;
                     ref.read(selectableElementForCreateProvider.notifier).state = Student;
+                    ref.read(tabIndexProvider.notifier).goCreate();
                   },
                 );
               },
