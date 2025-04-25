@@ -15,7 +15,7 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStateMixin {
 
   Map<BottomNavigationBarItem, Widget> _getMenu(NawiMenuTabs menuTab) {
     return switch (menuTab) {
@@ -34,34 +34,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
     };
   }
   
-  late TabIndexNotifier _tabIndexNotifier;
+  late final TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-
-    ref.read(tabControllerProvider.notifier).state = TabController(
-      length: NawiMenuTabs.values.length,
-      vsync: this
-    );
-
-    _tabIndexNotifier = ref.read(tabIndexProvider.notifier);
+    _tabController = TabController(length: NawiMenuTabs.values.length, vsync: this);
   }
 
   @override
   void dispose() {
-    _tabIndexNotifier.tabController.dispose();
     super.dispose();
+    _tabController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final reactiveTab = ref.watch(tabIndexProvider);
-
-    if(_tabIndexNotifier.tabController.index != reactiveTab.index) {
-      _tabIndexNotifier.tabController.animateTo(reactiveTab.index);
-    }
+    ref.listen(tabMenuProvider, (_, next) => _tabController.animateTo(next.index) );
 
     return DefaultTabController(
       length: NawiMenuTabs.values.length,
@@ -72,8 +61,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         ),
         resizeToAvoidBottomInset: false,
         bottomSheet: BottomNavigationBar(
-          currentIndex: reactiveTab.index,
-          onTap: (index) => _getMenu(NawiMenuTabs.values[index]),
+          currentIndex: _tabController.index,
+          onTap: ref.read(tabMenuProvider.notifier).onIndexChanged,
           backgroundColor: Theme.of(context).colorScheme.secondary,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           selectedItemColor: NawiColorUtils.primaryColor,
@@ -82,7 +71,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
           items: NawiMenuTabs.values.map( (e) => _getMenu(e).keys.first ).toList(),
         ),
         body: TabBarView(
-          controller: _tabIndexNotifier.tabController,
+          controller: _tabController,
           children: NawiMenuTabs.values.map( (e) => _getMenu(e).values.first ).toList(),
         )
       ),

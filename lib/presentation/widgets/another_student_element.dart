@@ -7,6 +7,7 @@ import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/presentation/features/create/providers/initial_student_form_data_provider.dart';
 import 'package:nawiapp/presentation/features/create/providers/selectable_element_for_create_provider.dart';
+import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/general_loading_search_student_provider.dart';
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
@@ -74,7 +75,7 @@ class AnotherStudentElement extends ConsumerWidget {
                     //* Ir al formulario de estudiante con el dato a editar
                     ref.read(initialStudentFormDataProvider.notifier).state = data;
                     ref.read(selectableElementForCreateProvider.notifier).state = Student;
-                    ref.read(tabIndexProvider.notifier).goCreate();
+                    ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.create);
                   },
                 );
               },
