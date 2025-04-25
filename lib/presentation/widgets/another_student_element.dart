@@ -10,6 +10,8 @@ import 'package:nawiapp/presentation/features/create/providers/selectable_elemen
 import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/general_loading_search_student_provider.dart';
+import 'package:nawiapp/presentation/features/search/providers/search_student_list_provider.dart';
+import 'package:nawiapp/presentation/features/search/screens/delete_student_dialog.dart';
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
@@ -18,7 +20,7 @@ class AnotherStudentElement extends StatelessWidget {
   final StudentSummary item;
   final bool isPreview;
 
-  const AnotherStudentElement({ super.key, required this.item, this.isPreview = false });
+  const AnotherStudentElement({ super.key, required this.item, this.isPreview = false});
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +50,7 @@ class AnotherStudentElement extends StatelessWidget {
             child: _StudentElementInfo(item: item)
           ),
 
-          if(!isPreview) ...[
-            _StudentElementOptions(item: item),
-
-            IconButton(
-              icon: const Icon(Icons.delete), style: Theme.of(context).elevatedButtonTheme.style,
-              onPressed: () {
-
-              },
-            )
-          ]
-
+          if(!isPreview) _StudentElementOptions(item: item)
         ],
       ),
     );
@@ -72,30 +64,54 @@ class _StudentElementOptions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return IconButton(
-      icon: const Icon(Icons.edit), style: Theme.of(context).elevatedButtonTheme.style,
-      onPressed: () async {
-        final loading = ref.read(generalLoadingSearchStudentProvider.notifier);
-        loading.state = true;
-    
-        final studentToEdit = await GetIt.I<StudentServiceBase>().getOne(item.id);
-    
-        studentToEdit.onValue(
-          withPopup: false,
-          onError: (_, message) {
-            loading.state = false;
-            NotificationMessage.showErrorNotification(message);
+    return Row(
+      children: [
+        //* Editar
+        IconButton(
+          icon: const Icon(Icons.edit), style: Theme.of(context).elevatedButtonTheme.style,
+          onPressed: () async {
+            final loading = ref.read(generalLoadingSearchStudentProvider.notifier);
+            loading.state = true;
+        
+            final studentToEdit = await GetIt.I<StudentServiceBase>().getOne(item.id);
+        
+            studentToEdit.onValue(
+              withPopup: false,
+              onError: (_, message) {
+                loading.state = false;
+                NotificationMessage.showErrorNotification(message);
+              },
+              onSuccessfully: (data, _) {
+                loading.state = false;
+        
+                //* Ir al formulario de estudiante con el dato a editar
+                ref.read(initialStudentFormDataProvider.notifier).state = data;
+                ref.read(selectableElementForCreateProvider.notifier).state = Student;
+                ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.create);
+              },
+            );
           },
-          onSuccessfully: (data, _) {
-            loading.state = false;
-    
-            //* Ir al formulario de estudiante con el dato a editar
-            ref.read(initialStudentFormDataProvider.notifier).state = data;
-            ref.read(selectableElementForCreateProvider.notifier).state = Student;
-            ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.create);
+        ),
+
+        //* Eliminar / Archivar
+        IconButton(
+          icon: const Icon(Icons.delete), style: Theme.of(context).elevatedButtonTheme.style,
+          onPressed: () async {
+            final service = GetIt.I<StudentServiceBase>();
+            await DeleteStudentAwesomeDialog(
+              isArchived: !ref.read(studentFilterProvider).notShowHidden,
+              context: context,
+              deleteAction: (() => service.deleteOne(item.id)),
+              archieveAction: (() => service.archiveOne(item.id)),
+              unarchieveAction: (() => service.unarchiveOne(item.id)),
+              onActionSelected: () async {
+                await ref.read(studentSummarySearchProvider.notifier).refresh();
+                if(context.mounted) Navigator.of(context).pop();
+              },
+            ).show();
           },
-        );
-      },
+        )
+      ],
     );
   }
 }
