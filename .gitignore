@@ -46,3 +46,7 @@ app.*.map.json
 
 # Android debug stuffs
 /android/app/.cxx
+
+# Auto generated code
+*.freezed.dart
+*.g.dart

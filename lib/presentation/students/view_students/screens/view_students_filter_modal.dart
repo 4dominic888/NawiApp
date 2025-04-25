@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nawiapp/domain/classes/student_filter.dart';
-import 'package:nawiapp/domain/models/models_views/student_view.dart';
-import 'package:nawiapp/domain/models/student.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
-import 'package:nawiapp/infrastructure/providers/filter_provider.dart';
+import 'package:nawiapp/domain/classes/filter/student_filter.dart';
+import 'package:nawiapp/data/local/views/student_view.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
+import 'package:nawiapp/presentation/students/view_students/providers/student_filter_provider.dart';
 import 'package:nawiapp/presentation/students/view_students/widgets/labeled_checkbox.dart';
 
 class ViewStudentsFilterModal extends ConsumerStatefulWidget {
@@ -33,7 +33,7 @@ class _ViewStudentsFilterModalState extends ConsumerState<ViewStudentsFilterModa
   @override
   void initState() {
     super.initState();
-    _studentFilter = ref.read(studentFilterProvider);
+    _studentFilter = ref.read(deprecatedStudentFilterProvider);
     _searchStudentController.text = _studentFilter.nameLike ?? '';
     if(_studentFilter.ageEnumIndex1 != null) _filterAges.update(_studentFilter.ageEnumIndex1!, (value) => true);
     if(_studentFilter.ageEnumIndex2 != null) _filterAges.update(_studentFilter.ageEnumIndex2!, (value) => true);
@@ -189,13 +189,13 @@ class _ViewStudentsFilterModalState extends ConsumerState<ViewStudentsFilterModa
             }
 
             final studentFiler = StudentFilter(
-              nameLike: NawiTools.clearSpacesOnText(_searchStudentController.text),
+              nameLike: NawiGeneralUtils.clearSpaces(_searchStudentController.text),
               ageEnumIndex1: age1,
               ageEnumIndex2: age2,
               orderBy: _selectedOrder!,
               showHidden: _showHidden
             );
-            ref.read(studentFilterProvider.notifier).state = studentFiler;
+            ref.read(deprecatedStudentFilterProvider.notifier).state = studentFiler;
             Navigator.of(context).pop();
           },
           child: const Text("Aceptar")

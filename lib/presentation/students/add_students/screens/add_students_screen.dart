@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
-import 'package:nawiapp/infrastructure/nawi_utils.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
+import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class AddStudentsScreen extends StatefulWidget {
@@ -18,8 +20,6 @@ class AddStudentsScreen extends StatefulWidget {
 
 class _AddStudentsScreenState extends State<AddStudentsScreen> {
 
-  bool _isUpdatable = false;
-
   final _studentService = GetIt.I<StudentServiceBase>();
 
   final _formKey = GlobalKey<FormState>();
@@ -27,8 +27,15 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
   final _ageKey = GlobalKey<FormFieldState<StudentAge>>();
   final _btnController = RoundedLoadingButtonController();
 
-  Student? _studentforEditing;
+  bool _isUpdatable = false;
+  Student? _getData;
   late final Future<Result<Student>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = _studentService.getOne(widget.idToEdit ?? '0');
+  }
 
   Future<void> onSubmit() async {
     if(_formKey.currentState!.validate()) {
@@ -37,14 +44,14 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
       final Student student = Student(
         name: _nameKey.currentState!.value!,
         age: _ageKey.currentState!.value!,
-        notes: _studentforEditing?.notes,
-        timestamp: _studentforEditing?.timestamp
+        notes: _getData?.notes,
+        timestamp: _getData?.timestamp
       );
 
       if(!_isUpdatable) { //* Crear
         result = await _studentService.addOne(student);
       } else { //* Editar
-        result = await _studentService.updateOne(student.copyWith(id: widget.idToEdit));
+        result = await _studentService.updateOne(student.copyWith(id: widget.idToEdit!));
       }
 
       result.onValue(
@@ -55,12 +62,6 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
       return;
     }
     _btnController.error();
-  }
-  
-  @override
-  void initState() {
-    super.initState();
-    _future = _studentService.getOne(widget.idToEdit ?? '0');
   }
 
   @override
@@ -80,8 +81,8 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
           builder: (_, snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
             
-            _studentforEditing = snapshot.data?.getValue;
-            _isUpdatable = _studentforEditing != null;
+            _getData = snapshot.data?.getValue;
+            _isUpdatable = _getData != null;
 
             return SingleChildScrollView(
               child: Padding(
@@ -95,11 +96,11 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                       Center(
                         child: CircleAvatar(
                           radius: screenWidth / 9,
-                          backgroundColor: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? _studentforEditing?.age.value ?? 0, withOpacity: true),
+                          backgroundColor: NawiColorUtils.studentColorByAge(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0, withOpacity: true),
                           child: Icon(
                             Icons.person,
                             size: screenWidth / 9,
-                            color: NawiColor.iconColorMap(_ageKey.currentState?.value?.value ?? _studentforEditing?.age.value ?? 0)
+                            color: NawiColorUtils.studentColorByAge(_ageKey.currentState?.value?.value ?? _getData?.age.value ?? 0)
                           )
                         )
                       ),
@@ -108,7 +109,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                   
                       TextFormField(
                         key: _nameKey,
-                        initialValue: _studentforEditing?.name,
+                        initialValue: _getData?.name,
                         decoration: const InputDecoration(
                           labelText: "Nombre",
                           prefixIcon: Icon(Icons.accessibility_new_rounded),
@@ -116,7 +117,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                         ),
                         validator: (value) {
                           if(value == null || value.trim().isEmpty) return "No se ha proporcionado un nombre";
-                          value = NawiTools.clearSpacesOnText(value);
+                          value = NawiGeneralUtils.clearSpaces(value);
                           if(value.length <= 2) return "El nombre es demasiado corto";
                           return null;
                         },
@@ -126,7 +127,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                   
                       DropdownButtonFormField<StudentAge>(
                         key: _ageKey,
-                        value: _studentforEditing?.age,
+                        value: _getData?.age,
                         decoration: const InputDecoration(
                           labelText: "Selecciona la edad",
                           prefixIcon: Icon(Icons.apple),
@@ -153,14 +154,14 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                         color: _isUpdatable ? Colors.lightBlueAccent.shade100 : Theme.of(context).colorScheme.inversePrimary,
                         proccess: onSubmit,
                       )
-                    ],
-                  ),
-                ),
-              ),
+                    ]
+                  )
+                )
+              )
             );
           }
-        ),
-      ),
+        )
+      )
     );
   }
 }

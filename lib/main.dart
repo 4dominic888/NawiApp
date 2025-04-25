@@ -1,12 +1,8 @@
-import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/locator.dart';
-import 'package:nawiapp/presentation/registration_book/add_registers_book/screens/add_register_book_screen.dart';
-import 'package:nawiapp/presentation/registration_book/view_registers_book/screens/view_registers_book_screen.dart';
-import 'package:nawiapp/presentation/students/add_students/screens/add_students_screen.dart';
-import 'package:nawiapp/presentation/students/view_students/screens/view_students_filter_modal.dart';
-import 'package:nawiapp/presentation/students/view_students/screens/view_students_screen.dart';
+import 'package:nawiapp/presentation/features/home/screens/home_screen.dart';
+import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 void main() {
@@ -30,11 +26,28 @@ class NawiApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: const MenuApp(),
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 178, 134, 254)),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: NawiColorUtils.primaryColor, brightness: Brightness.light,
+            secondary: NawiColorUtils.secondaryColor
+          ),
+          useMaterial3: true,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: NawiColorUtils.primaryColor,
+              shadowColor: Colors.black,
+              elevation: 2
+            )
+          ),
+          textTheme: TextTheme(
+            bodyLarge: const TextStyle(color: NawiColorUtils.textColor),
+            bodyMedium: const TextStyle(color: NawiColorUtils.textColor),
+            headlineMedium: const TextStyle(color: NawiColorUtils.titlesColor)
+          ),
+          hoverColor: NawiColorUtils.hoverColor,
           scrollbarTheme: ScrollbarThemeData(
             thumbVisibility: WidgetStateProperty.all<bool>(true)
           ),
-          useMaterial3: true,
         ),
       ),
     );
@@ -48,80 +61,10 @@ class MenuApp extends StatefulWidget {
   State<MenuApp> createState() => _MenuAppState();
 }
 
-class _MenuAppState extends State<MenuApp> with SingleTickerProviderStateMixin {
+class _MenuAppState extends State<MenuApp> {
   
-  late TabController _tabController;
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() {
-      if(_tabController.indexIsChanging == false) setState(() => _currentIndex = _tabController.index);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Ñawi Menu", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
-          centerTitle: true,
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          bottom: TabBar(
-            controller: _tabController,
-            tabs: const [
-              Tab(text: "Estudiantes", icon: Icon(Icons.group)),
-              Tab(text: "Registros", icon: Icon(Icons.assignment_ind))
-            ]
-          ),
-        ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            ViewStudentsScreen(),
-            ViewRegistersBookScreen()
-          ]
-        ),
-        floatingActionButton: AnimatedFloatingActionButton(
-          fabButtons: [
-            //TODO Cambiar los null por las pantallas que correspondan al siguiente modulo
-            //* Create
-            FloatingActionButton(
-              onPressed: () => _currentIndex == 0 ?
-                Navigator.push(context, MaterialPageRoute(builder: (_) => AddStudentsScreen())) :
-                Navigator.push(context, MaterialPageRoute(builder: (_) => AddRegisterBookScreen())),
-              heroTag: "Create",
-              tooltip: "Crear nuevo elemento",
-              child: const Icon(Icons.add),
-            ),
-
-            //* Filter
-            FloatingActionButton(
-              onPressed: () => _currentIndex == 0 ?
-                showDialog(context: context, builder: (_) => ViewStudentsFilterModal()) :
-                null,
-              heroTag: "Filter",
-              tooltip: "Filtrar elementos",
-              child: const Icon(Icons.sort),
-            )
-          ],
-          animatedIconData: AnimatedIcons.list_view,
-          tooltip: "Más opciones",
-          colorStartAnimation: Theme.of(context).colorScheme.inversePrimary,
-          colorEndAnimation: Colors.purpleAccent.shade100,
-          spaceBetween: -10,
-        )
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+    return HomeScreen();
   }
 }

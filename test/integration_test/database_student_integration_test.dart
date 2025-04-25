@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/classes/student_filter.dart';
-import 'package:nawiapp/domain/models/models_views/student_view.dart';
-import 'package:nawiapp/domain/models/student.dart';
+import 'package:nawiapp/domain/classes/filter/student_filter.dart';
+import 'package:nawiapp/data/local/views/student_view.dart';
+import 'package:nawiapp/domain/models/student/entity/student.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 
 import '../nawi_test_utils.dart' as testil;
 
 void main(){
-  setUp(testil.setupTestLocator);
-  tearDown(testil.onTearDownSetupLocator);
+  setUp(testil.setupIntegrationTestLocator);
+  tearDown(testil.onTearDownSetupIntegrationTestLocator);
 
   test('Registro de un estudiante', () async {
     final service = GetIt.I<StudentServiceBase>();
@@ -23,7 +25,7 @@ void main(){
       service.addOne(student),
       service.addOne(errorStudent)
     ]);
-    final studentFromDatabaseDAO = (await service.getAll(StudentFilter(nameLike: "pepe"))).getValue!.first;
+    final studentFromDatabaseSummary = (await service.getAll(StudentFilter(nameLike: "pepe"))).getValue!.first;
 
     final goodResult = result[0];
     final badResult = result[1];
@@ -36,7 +38,7 @@ void main(){
       about: 'Valor de retorno', n: 2
     );
 
-    testil.customExpect(studentFromDatabaseDAO, goodResult.getValue!,
+    testil.customExpect(studentFromDatabaseSummary, goodResult.getValue!.toStudentSummary,
       about: 'Verificar que esté en la base de datos', n: 3
     );
 
