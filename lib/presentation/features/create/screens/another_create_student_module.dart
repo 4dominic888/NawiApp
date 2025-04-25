@@ -84,10 +84,10 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
     
               Expanded(
                 child: LoadingProcessButton(
-                  color: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade600,
+                  color: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade400,
                   controller: _btnController,
                   proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
-                  label: const Text("Completar"),
+                  label: Text(widget.data == null ? "Agregar" : "Editar"),
                   onReset: () => formNotifier.setStatus(SubmitStatus.idle),
                 ),
               )
