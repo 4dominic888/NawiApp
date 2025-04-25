@@ -12,16 +12,29 @@ import 'package:nawiapp/presentation/widgets/another_student_element.dart';
 import 'package:nawiapp/presentation/features/search/screens/another_advanced_student_filter_modal.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 
-class SearchStudentModule extends ConsumerWidget {
+class SearchStudentModule extends ConsumerStatefulWidget {
   const SearchStudentModule({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SearchStudentModule> createState() => _SearchStudentModuleState();
+}
 
-    Timer? debounce;
-    final notifier = ref.read(studentSummarySearchProvider);
+class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
+
+  Timer? debounce;
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    final notifier = ref.read(studentSummarySearchProvider.notifier);
     final controller = notifier.pagingController;
     final filterNotifier = ref.read(studentFilterProvider.notifier);
 

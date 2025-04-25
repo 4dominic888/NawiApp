@@ -13,7 +13,7 @@ import 'package:nawiapp/presentation/features/search/providers/general_loading_s
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
-class AnotherStudentElement extends ConsumerWidget {
+class AnotherStudentElement extends StatelessWidget {
 
   final StudentSummary item;
   final bool isPreview;
@@ -21,14 +21,14 @@ class AnotherStudentElement extends ConsumerWidget {
   const AnotherStudentElement({ super.key, required this.item, this.isPreview = false });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
 
     final backgroundColor = NawiColorUtils.studentColorByAge(item.age.value, withOpacity: true);
 
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor.withAlpha(20),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
         border: Border.all(
           color: backgroundColor.withAlpha(30),
           width: 1.5
@@ -45,41 +45,11 @@ class AnotherStudentElement extends ConsumerWidget {
           const SizedBox(width: 12),
 
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item.name, style: Theme.of(context).textTheme.titleMedium, overflow: TextOverflow.ellipsis),
-                Text(item.age.name, style: Theme.of(context).textTheme.titleSmall)
-              ],
-            )
+            child: _StudentElementInfo(item: item)
           ),
 
           if(!isPreview) ...[
-            IconButton(
-              icon: const Icon(Icons.edit), style: Theme.of(context).elevatedButtonTheme.style,
-              onPressed: () async {
-                final loading = ref.read(generalLoadingSearchStudentProvider.notifier);
-                loading.state = true;
-
-                final studentToEdit = await GetIt.I<StudentServiceBase>().getOne(item.id);
-
-                studentToEdit.onValue(
-                  withPopup: false,
-                  onError: (_, message) {
-                    loading.state = false;
-                    NotificationMessage.showErrorNotification(message);
-                  },
-                  onSuccessfully: (data, _) {
-                    loading.state = false;
-
-                    //* Ir al formulario de estudiante con el dato a editar
-                    ref.read(initialStudentFormDataProvider.notifier).state = data;
-                    ref.read(selectableElementForCreateProvider.notifier).state = Student;
-                    ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.create);
-                  },
-                );
-              },
-            ),
+            _StudentElementOptions(item: item),
 
             IconButton(
               icon: const Icon(Icons.delete), style: Theme.of(context).elevatedButtonTheme.style,
@@ -91,6 +61,58 @@ class AnotherStudentElement extends ConsumerWidget {
 
         ],
       ),
+    );
+  }
+}
+
+class _StudentElementOptions extends ConsumerWidget {
+  const _StudentElementOptions({ required this.item });
+
+  final StudentSummary item;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return IconButton(
+      icon: const Icon(Icons.edit), style: Theme.of(context).elevatedButtonTheme.style,
+      onPressed: () async {
+        final loading = ref.read(generalLoadingSearchStudentProvider.notifier);
+        loading.state = true;
+    
+        final studentToEdit = await GetIt.I<StudentServiceBase>().getOne(item.id);
+    
+        studentToEdit.onValue(
+          withPopup: false,
+          onError: (_, message) {
+            loading.state = false;
+            NotificationMessage.showErrorNotification(message);
+          },
+          onSuccessfully: (data, _) {
+            loading.state = false;
+    
+            //* Ir al formulario de estudiante con el dato a editar
+            ref.read(initialStudentFormDataProvider.notifier).state = data;
+            ref.read(selectableElementForCreateProvider.notifier).state = Student;
+            ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.create);
+          },
+        );
+      },
+    );
+  }
+}
+
+class _StudentElementInfo extends StatelessWidget {
+  const _StudentElementInfo({ required this.item });
+
+  final StudentSummary item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(item.name, style: Theme.of(context).textTheme.titleMedium, overflow: TextOverflow.ellipsis),
+        Text(item.age.name, style: Theme.of(context).textTheme.titleSmall)
+      ],
     );
   }
 }
