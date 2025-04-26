@@ -11,11 +11,11 @@ extension RegisterBookMapper on RegisterBook {
     action: data.action,
     mentions: mentions,
     notes: data.notes,
-    timestamp: data.createdAt,
+    createdAt: data.createdAt,
     type: data.type
   );
 
-  static RegisterBook empty() => RegisterBook(action: "");
+  static RegisterBook empty() => RegisterBook(action: "", createdAt: DateTime.now());
 
   RegisterBookTableData get toTable => RegisterBookTableData(
     id: id,

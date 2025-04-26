@@ -29,6 +29,6 @@ class RegisterBook with _$RegisterBook {
     this.id = '*',
     required this.action, this.mentions = const [],
     this.type = RegisterBookType.register, this.notes,
-    DateTime? timestamp
-  }) : createdAt = timestamp ?? DateTime.now();
+    required this.createdAt
+  });
 }
