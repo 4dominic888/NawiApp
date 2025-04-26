@@ -5,7 +5,7 @@ import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/presentation/features/create/providers/student/create_student_form_provider.dart';
 import 'package:nawiapp/presentation/shared/submit_status.dart';
-import 'package:nawiapp/presentation/widgets/another_student_element.dart';
+import 'package:nawiapp/presentation/widgets/student_element.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:nawiapp/utils/nawi_form_utils.dart';
@@ -60,7 +60,7 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
           
           Padding(
             padding: const EdgeInsets.all(15.0),
-            child: AnotherStudentElement(
+            child: StudentElement(
               isPreview: true,
               item: StudentSummary(
                 id: studentFormState.id, name: studentFormState.name, age: studentFormState.age

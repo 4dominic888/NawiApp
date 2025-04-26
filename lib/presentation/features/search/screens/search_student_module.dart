@@ -8,7 +8,7 @@ import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/presentation/features/search/providers/general_loading_search_student_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/search_student_list_provider.dart';
-import 'package:nawiapp/presentation/widgets/another_student_element.dart';
+import 'package:nawiapp/presentation/widgets/student_element.dart';
 import 'package:nawiapp/presentation/features/search/screens/modals/advanced_student_filter_modal.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 
@@ -72,7 +72,7 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
             builderDelegate: PagedChildBuilderDelegate<StudentSummary>(
               itemBuilder: (_, item, __) => Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: AnotherStudentElement(item: item),
+                child: StudentElement(item: item),
               ),
               firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
               newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),

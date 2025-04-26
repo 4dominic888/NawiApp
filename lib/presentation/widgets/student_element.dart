@@ -15,12 +15,12 @@ import 'package:nawiapp/presentation/features/search/screens/modals/delete_stude
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
-class AnotherStudentElement extends StatelessWidget {
+class StudentElement extends StatelessWidget {
 
   final StudentSummary item;
   final bool isPreview;
 
-  const AnotherStudentElement({ super.key, required this.item, this.isPreview = false});
+  const StudentElement({ super.key, required this.item, this.isPreview = false});
 
   @override
   Widget build(BuildContext context) {
