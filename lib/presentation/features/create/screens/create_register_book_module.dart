@@ -28,7 +28,6 @@ class _CreateRegisterBookModuleState extends State<CreateRegisterBookModule> {
             item: RegisterBookSummary(
               id: '*',
               action: 'Accion X creada por pepepepeppepe',
-              hourCreatedAt: "45h 33m",
               createdAt: DateTime.now(),
               type: RegisterBookType.anecdotal,
               mentions: [

@@ -15,7 +15,6 @@ class SearchRegisterBookModule extends StatelessWidget {
     RegisterBookSummary(
       id: '*',
       action: 'Algo paso pero debo colocar algo para testear aaaaaaa',
-      hourCreatedAt: '44a',
       createdAt: DateTime.now(),
       type: RegisterBookType.anecdotal,
       mentions: []
@@ -24,7 +23,6 @@ class SearchRegisterBookModule extends StatelessWidget {
     RegisterBookSummary(
       id: '*',
       action: 'Algo paso pero debo colocar algo para testear aaaaaaa',
-      hourCreatedAt: '44a',
       createdAt: DateTime.now().subtract(const Duration(days: 1)),
       type: RegisterBookType.register,
       mentions: [
@@ -36,7 +34,6 @@ class SearchRegisterBookModule extends StatelessWidget {
     RegisterBookSummary(
       id: '*',
       action: 'Algo paso pero debo colocar algo para testear aaaaaaa',
-      hourCreatedAt: '44a',
       createdAt: DateTime.now().subtract(const Duration(days: 1)),
       type: RegisterBookType.incident,
       mentions: [

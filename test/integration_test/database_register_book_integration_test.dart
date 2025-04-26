@@ -20,8 +20,8 @@ void main() {
   test('Registro de un registro del cuaderno de registro', () async {
     final service = GetIt.I<RegisterBookServiceBase>();
 
-    final registerBook = RegisterBook(action: "Accion X", mentions: [testil.listOfStudents[0].toStudentSummary, testil.listOfStudents[1].toStudentSummary]);
-    final errorRegisterBook = RegisterBook(id: '06b654e1-2852-4618-84a7-bb2c43a3eba1', action: 'asdasdasdasd');
+    final registerBook = RegisterBook(action: "Accion X", mentions: [testil.listOfStudents[0].toStudentSummary, testil.listOfStudents[1].toStudentSummary], createdAt: DateTime.now());
+    final errorRegisterBook = RegisterBook(id: '06b654e1-2852-4618-84a7-bb2c43a3eba1', action: 'asdasdasdasd', createdAt: DateTime.now());
 
     final result = await Future.wait([
       service.addOne(registerBook), service.addOne(errorRegisterBook)
@@ -166,6 +166,7 @@ void main() {
       RegisterBook(
         action: "Alguna accion 1",
         type: RegisterBookType.incident,
+        createdAt: DateTime.now(),
         mentions: [testil.listOfStudents[4].toStudentSummary, testil.listOfStudents[0].toStudentSummary],
       )
     );

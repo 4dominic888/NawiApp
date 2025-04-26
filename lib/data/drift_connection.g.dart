@@ -1444,13 +1444,11 @@ class $HiddenStudentViewSummaryVersionView extends ViewInfo<
 class RegisterBookViewSummaryVersionData extends DataClass {
   final String id;
   final String action;
-  final String? hourCreatedAt;
   final DateTime createdAt;
   final RegisterBookType type;
   const RegisterBookViewSummaryVersionData(
       {required this.id,
       required this.action,
-      this.hourCreatedAt,
       required this.createdAt,
       required this.type});
   factory RegisterBookViewSummaryVersionData.fromJson(Map<String, dynamic> json,
@@ -1459,7 +1457,6 @@ class RegisterBookViewSummaryVersionData extends DataClass {
     return RegisterBookViewSummaryVersionData(
       id: serializer.fromJson<String>(json['id']),
       action: serializer.fromJson<String>(json['action']),
-      hourCreatedAt: serializer.fromJson<String?>(json['hourCreatedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       type: $RegisterBookTableTable.$convertertype
           .fromJson(serializer.fromJson<int>(json['type'])),
@@ -1471,7 +1468,6 @@ class RegisterBookViewSummaryVersionData extends DataClass {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'action': serializer.toJson<String>(action),
-      'hourCreatedAt': serializer.toJson<String?>(hourCreatedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'type': serializer
           .toJson<int>($RegisterBookTableTable.$convertertype.toJson(type)),
@@ -1481,14 +1477,11 @@ class RegisterBookViewSummaryVersionData extends DataClass {
   RegisterBookViewSummaryVersionData copyWith(
           {String? id,
           String? action,
-          Value<String?> hourCreatedAt = const Value.absent(),
           DateTime? createdAt,
           RegisterBookType? type}) =>
       RegisterBookViewSummaryVersionData(
         id: id ?? this.id,
         action: action ?? this.action,
-        hourCreatedAt:
-            hourCreatedAt.present ? hourCreatedAt.value : this.hourCreatedAt,
         createdAt: createdAt ?? this.createdAt,
         type: type ?? this.type,
       );
@@ -1497,7 +1490,6 @@ class RegisterBookViewSummaryVersionData extends DataClass {
     return (StringBuffer('RegisterBookViewSummaryVersionData(')
           ..write('id: $id, ')
           ..write('action: $action, ')
-          ..write('hourCreatedAt: $hourCreatedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('type: $type')
           ..write(')'))
@@ -1505,14 +1497,13 @@ class RegisterBookViewSummaryVersionData extends DataClass {
   }
 
   @override
-  int get hashCode => Object.hash(id, action, hourCreatedAt, createdAt, type);
+  int get hashCode => Object.hash(id, action, createdAt, type);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is RegisterBookViewSummaryVersionData &&
           other.id == this.id &&
           other.action == this.action &&
-          other.hourCreatedAt == this.hourCreatedAt &&
           other.createdAt == this.createdAt &&
           other.type == this.type);
 }
@@ -1527,8 +1518,7 @@ class $RegisterBookViewSummaryVersionView extends ViewInfo<
   $RegisterBookTableTable get registerBook =>
       attachedDatabase.registerBookTable.createAlias('t0');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, action, hourCreatedAt, createdAt, type];
+  List<GeneratedColumn> get $columns => [id, action, createdAt, type];
   @override
   String get aliasedName => _alias ?? entityName;
   @override
@@ -1546,8 +1536,6 @@ class $RegisterBookViewSummaryVersionView extends ViewInfo<
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       action: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}action'])!,
-      hourCreatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}hour_created_at']),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       type: $RegisterBookTableTable.$convertertype.fromSql(attachedDatabase
@@ -1563,11 +1551,6 @@ class $RegisterBookViewSummaryVersionView extends ViewInfo<
   late final GeneratedColumn<String> action = GeneratedColumn<String>(
       'action', aliasedName, false,
       generatedAs: GeneratedAs(registerBook.action, false),
-      type: DriftSqlType.string);
-  late final GeneratedColumn<String> hourCreatedAt = GeneratedColumn<String>(
-      'hour_created_at', aliasedName, true,
-      generatedAs: GeneratedAs(
-          DateTimeExpressions(registerBook.createdAt).strftime("%H:%M"), false),
       type: DriftSqlType.string);
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
       'created_at', aliasedName, false,
@@ -1594,13 +1577,11 @@ class $RegisterBookViewSummaryVersionView extends ViewInfo<
 class HiddenRegisterBookViewSummaryVersionData extends DataClass {
   final String id;
   final String action;
-  final String? hourCreatedAt;
   final DateTime createdAt;
   final RegisterBookType type;
   const HiddenRegisterBookViewSummaryVersionData(
       {required this.id,
       required this.action,
-      this.hourCreatedAt,
       required this.createdAt,
       required this.type});
   factory HiddenRegisterBookViewSummaryVersionData.fromJson(
@@ -1610,7 +1591,6 @@ class HiddenRegisterBookViewSummaryVersionData extends DataClass {
     return HiddenRegisterBookViewSummaryVersionData(
       id: serializer.fromJson<String>(json['id']),
       action: serializer.fromJson<String>(json['action']),
-      hourCreatedAt: serializer.fromJson<String?>(json['hourCreatedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       type: $RegisterBookTableTable.$convertertype
           .fromJson(serializer.fromJson<int>(json['type'])),
@@ -1622,7 +1602,6 @@ class HiddenRegisterBookViewSummaryVersionData extends DataClass {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'action': serializer.toJson<String>(action),
-      'hourCreatedAt': serializer.toJson<String?>(hourCreatedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'type': serializer
           .toJson<int>($RegisterBookTableTable.$convertertype.toJson(type)),
@@ -1632,14 +1611,11 @@ class HiddenRegisterBookViewSummaryVersionData extends DataClass {
   HiddenRegisterBookViewSummaryVersionData copyWith(
           {String? id,
           String? action,
-          Value<String?> hourCreatedAt = const Value.absent(),
           DateTime? createdAt,
           RegisterBookType? type}) =>
       HiddenRegisterBookViewSummaryVersionData(
         id: id ?? this.id,
         action: action ?? this.action,
-        hourCreatedAt:
-            hourCreatedAt.present ? hourCreatedAt.value : this.hourCreatedAt,
         createdAt: createdAt ?? this.createdAt,
         type: type ?? this.type,
       );
@@ -1648,7 +1624,6 @@ class HiddenRegisterBookViewSummaryVersionData extends DataClass {
     return (StringBuffer('HiddenRegisterBookViewSummaryVersionData(')
           ..write('id: $id, ')
           ..write('action: $action, ')
-          ..write('hourCreatedAt: $hourCreatedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('type: $type')
           ..write(')'))
@@ -1656,14 +1631,13 @@ class HiddenRegisterBookViewSummaryVersionData extends DataClass {
   }
 
   @override
-  int get hashCode => Object.hash(id, action, hourCreatedAt, createdAt, type);
+  int get hashCode => Object.hash(id, action, createdAt, type);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is HiddenRegisterBookViewSummaryVersionData &&
           other.id == this.id &&
           other.action == this.action &&
-          other.hourCreatedAt == this.hourCreatedAt &&
           other.createdAt == this.createdAt &&
           other.type == this.type);
 }
@@ -1681,8 +1655,7 @@ class $HiddenRegisterBookViewSummaryVersionView extends ViewInfo<
   $RegisterBookTableTable get registerBook =>
       attachedDatabase.registerBookTable.createAlias('t1');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, action, hourCreatedAt, createdAt, type];
+  List<GeneratedColumn> get $columns => [id, action, createdAt, type];
   @override
   String get aliasedName => _alias ?? entityName;
   @override
@@ -1700,8 +1673,6 @@ class $HiddenRegisterBookViewSummaryVersionView extends ViewInfo<
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       action: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}action'])!,
-      hourCreatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}hour_created_at']),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       type: $RegisterBookTableTable.$convertertype.fromSql(attachedDatabase
@@ -1717,11 +1688,6 @@ class $HiddenRegisterBookViewSummaryVersionView extends ViewInfo<
   late final GeneratedColumn<String> action = GeneratedColumn<String>(
       'action', aliasedName, false,
       generatedAs: GeneratedAs(registerBook.action, false),
-      type: DriftSqlType.string);
-  late final GeneratedColumn<String> hourCreatedAt = GeneratedColumn<String>(
-      'hour_created_at', aliasedName, true,
-      generatedAs: GeneratedAs(
-          DateTimeExpressions(registerBook.createdAt).strftime("%H:%M"), false),
       type: DriftSqlType.string);
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
       'created_at', aliasedName, false,

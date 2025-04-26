@@ -10,9 +10,6 @@ class RegisterBookSummary with _$RegisterBookSummary {
   final String id;
 
   @override
-  final String hourCreatedAt;
-
-  @override
   final DateTime createdAt;
 
   @override
@@ -26,7 +23,7 @@ class RegisterBookSummary with _$RegisterBookSummary {
   
   const RegisterBookSummary({
     required this.id, required this.action,
-    required this.hourCreatedAt, required this.createdAt,
+    required this.createdAt,
     required this.type, required this.mentions
   });
 }

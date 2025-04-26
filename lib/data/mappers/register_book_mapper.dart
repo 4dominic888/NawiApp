@@ -46,7 +46,6 @@ extension RegisterBookSummaryMapper on RegisterBookSummary {
       id: data.id,
       action: data.action,
       createdAt: data.createdAt,
-      hourCreatedAt: data.hourCreatedAt ?? "hour error",
       type: data.type,
       mentions: mentions
     );  
