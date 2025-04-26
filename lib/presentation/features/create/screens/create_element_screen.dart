@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
-import 'package:nawiapp/presentation/features/create/providers/initial_student_form_data_provider.dart';
-import 'package:nawiapp/presentation/features/create/providers/selectable_element_for_create_provider.dart';
+import 'package:nawiapp/presentation/features/create/providers/student/initial_student_form_data_provider.dart';
+import 'package:nawiapp/presentation/features/create/providers/student/selectable_element_for_create_provider.dart';
 import 'package:nawiapp/presentation/features/create/screens/create_register_book_module.dart';
 import 'package:nawiapp/presentation/features/create/screens/create_student_module.dart';
 import 'package:nawiapp/presentation/widgets/selectable_model_based.dart';
