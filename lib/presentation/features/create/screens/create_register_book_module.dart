@@ -7,14 +7,14 @@ import 'package:nawiapp/presentation/features/create/widgets/another_mention_stu
 import 'package:nawiapp/presentation/widgets/another_register_book_element.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
-class AnotherCreateRegisterBookModule extends StatefulWidget {
-  const AnotherCreateRegisterBookModule({ super.key });
+class CreateRegisterBookModule extends StatefulWidget {
+  const CreateRegisterBookModule({ super.key });
 
   @override
-  State<AnotherCreateRegisterBookModule> createState() => _AnotherCreateRegisterBookModuleState();
+  State<CreateRegisterBookModule> createState() => _CreateRegisterBookModuleState();
 }
 
-class _AnotherCreateRegisterBookModuleState extends State<AnotherCreateRegisterBookModule> {
+class _CreateRegisterBookModuleState extends State<CreateRegisterBookModule> {
   @override
   Widget build(BuildContext context) {
     return Column(

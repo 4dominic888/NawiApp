@@ -12,16 +12,16 @@ import 'package:nawiapp/utils/nawi_form_utils.dart';
 import 'package:nawiapp/utils/nawi_general_utils.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
-class AnotherCreateStudentModule extends ConsumerStatefulWidget {
+class CreateStudentModule extends ConsumerStatefulWidget {
 
   final Student? data;
-  const AnotherCreateStudentModule({super.key, this.data});
+  const CreateStudentModule({super.key, this.data});
 
   @override
-  ConsumerState<AnotherCreateStudentModule> createState() => _AnotherCreateStudentModuleState();
+  ConsumerState<CreateStudentModule> createState() => _CreateStudentModuleState();
 }
 
-class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStudentModule> {
+class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
 
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;

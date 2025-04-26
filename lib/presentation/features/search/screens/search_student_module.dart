@@ -9,7 +9,7 @@ import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/presentation/features/search/providers/general_loading_search_student_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/search_student_list_provider.dart';
 import 'package:nawiapp/presentation/widgets/another_student_element.dart';
-import 'package:nawiapp/presentation/features/search/screens/another_advanced_student_filter_modal.dart';
+import 'package:nawiapp/presentation/features/search/screens/modals/advanced_student_filter_modal.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 
 class SearchStudentModule extends ConsumerStatefulWidget {
@@ -47,7 +47,7 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
           filterAction: () async {
             final newFilter = await showDialog<StudentFilter?>(
               context: context,
-              builder: (_) => AnotherAdvancedStudentFilterModal(currentFilter: filterNotifier.state));
+              builder: (_) => AdvancedStudentFilterModal(currentFilter: filterNotifier.state));
             if(newFilter != null) {
               filterNotifier.state = newFilter;
               notifier.refresh();

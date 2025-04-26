@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/presentation/features/create/providers/initial_student_form_data_provider.dart';
 import 'package:nawiapp/presentation/features/create/providers/selectable_element_for_create_provider.dart';
-import 'package:nawiapp/presentation/features/create/screens/another_create_register_book_module.dart';
-import 'package:nawiapp/presentation/features/create/screens/another_create_student_module.dart';
+import 'package:nawiapp/presentation/features/create/screens/create_register_book_module.dart';
+import 'package:nawiapp/presentation/features/create/screens/create_student_module.dart';
 import 'package:nawiapp/presentation/widgets/selectable_model_based.dart';
 
 class CreateElementScreen extends ConsumerStatefulWidget {
@@ -38,8 +38,8 @@ class _CreateElementScreenState extends ConsumerState<CreateElementScreen> {
 
     return SelectableModelBased(
       padding: const EdgeInsets.all(20.0),
-      studentModule: SingleChildScrollView(child: AnotherCreateStudentModule(data: _studentInitialData)),
-      registerBookModule: SingleChildScrollView(child: AnotherCreateRegisterBookModule()),
+      studentModule: SingleChildScrollView(child: CreateStudentModule(data: _studentInitialData)),
+      registerBookModule: SingleChildScrollView(child: CreateRegisterBookModule()),
       controller: selectableElementForCreateProvider
     );
   }

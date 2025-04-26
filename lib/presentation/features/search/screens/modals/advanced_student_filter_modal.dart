@@ -4,16 +4,16 @@ import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/utils/nawi_general_utils.dart';
 
-class AnotherAdvancedStudentFilterModal extends StatefulWidget {
+class AdvancedStudentFilterModal extends StatefulWidget {
   final StudentFilter currentFilter;
 
-  const AnotherAdvancedStudentFilterModal({ super.key, required this.currentFilter });
+  const AdvancedStudentFilterModal({ super.key, required this.currentFilter });
 
   @override
-  State<AnotherAdvancedStudentFilterModal> createState() => _AnotherAdvancedStudentFilterModal();
+  State<AdvancedStudentFilterModal> createState() => _AdvancedStudentFilterModal();
 }
 
-class _AnotherAdvancedStudentFilterModal extends State<AnotherAdvancedStudentFilterModal> {
+class _AdvancedStudentFilterModal extends State<AdvancedStudentFilterModal> {
 
   late StudentFilter _filter;
   Set<StudentAge> _pseudoAgeSelected = {};

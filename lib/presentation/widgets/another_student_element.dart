@@ -11,7 +11,7 @@ import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/general_loading_search_student_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/search_student_list_provider.dart';
-import 'package:nawiapp/presentation/features/search/screens/delete_student_dialog.dart';
+import 'package:nawiapp/presentation/features/search/screens/modals/delete_student_dialog.dart';
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
