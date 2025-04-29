@@ -26,7 +26,7 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _notesController;
-  final _btnController = RoundedLoadingButtonController();
+  final _submitBtnController = RoundedLoadingButtonController();
 
   @override
   void initState() {
@@ -48,7 +48,7 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
     final studentFormState = ref.watch(studentFormProvider(widget.data).select((e) => e.data));
     final formNotifier = ref.read(studentFormProvider(widget.data).notifier);
     ref.listen(studentFormProvider(widget.data), (_, next) => 
-      NawiFormUtils.handleSubmitStatus(status: next.status, controller: _btnController) 
+      NawiFormUtils.handleSubmitStatus(status: next.status, controller: _submitBtnController) 
     );
 
     return Form(
@@ -85,7 +85,7 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
               Expanded(
                 child: LoadingProcessButton(
                   color: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade400,
-                  controller: _btnController,
+                  controller: _submitBtnController,
                   proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
                   label: Text(widget.data == null ? "Agregar" : "Editar"),
                   onReset: () => formNotifier.setStatus(SubmitStatus.idle),
