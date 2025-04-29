@@ -98,8 +98,9 @@ class _StudentElementOptions extends ConsumerWidget {
           icon: const Icon(Icons.delete), style: Theme.of(context).elevatedButtonTheme.style,
           onPressed: () async {
             final service = GetIt.I<StudentServiceBase>();
-            await DeleteStudentAwesomeDialog(
-              isArchived: !ref.read(studentFilterProvider).notShowHidden,
+            await DeleteElementAwesomeDialog(
+              aboutDescription: "¿Estás seguro que deseas eliminar este estudiante? \n(Esta acción eliminará todos los registros relacionados al estudiante)",
+              isArchived: ref.read(studentFilterProvider).showHidden,
               context: context,
               deleteAction: (() => service.deleteOne(item.id)),
               archieveAction: (() => service.archiveOne(item.id)),

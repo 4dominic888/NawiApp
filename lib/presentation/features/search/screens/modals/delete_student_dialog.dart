@@ -5,11 +5,12 @@ import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:nawiapp/presentation/widgets/warning_awesome_dialog.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
-class DeleteStudentAwesomeDialog extends WarningAwesomeDialog {
+class DeleteElementAwesomeDialog extends WarningAwesomeDialog {
 
   final bool isArchived;
   final RoundedLoadingButtonController leftButtonController;
   final RoundedLoadingButtonController rightButtonController;
+  final String aboutDescription;
 
   final Future<Result> Function() deleteAction;
   final Future<Result> Function() archieveAction;
@@ -20,7 +21,7 @@ class DeleteStudentAwesomeDialog extends WarningAwesomeDialog {
   String? get title => "Confirmación de eliminación";
 
   @override
-  String? get desc => "¿Estás seguro que deseas eliminar este estudiante? \n(Esta acción eliminará todos los registros relacionados al estudiante)"
+  String? get desc => "$aboutDescription"
               "\n\nCaso contrario, ${!isArchived ? "¿Archivarlo?" : "¿Desarchivarlo?"}";
 
   @override
@@ -58,12 +59,13 @@ class DeleteStudentAwesomeDialog extends WarningAwesomeDialog {
       color: Colors.green.shade200,
     );
 
-  DeleteStudentAwesomeDialog({
+  DeleteElementAwesomeDialog({
     required super.context,
     this.isArchived = false,
     required this.deleteAction,
     required this.archieveAction,
     required this.unarchieveAction,
+    required this.aboutDescription,
     this.onActionSelected,
     super.title,
     super.desc,
