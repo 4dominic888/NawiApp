@@ -14,18 +14,21 @@ final registerBookSummarySearchProvider = NotifierProvider<RegisterBookSummarySe
 class RegisterBookSummarySearchNotifier extends Notifier<void> {
 
   final service = GetIt.I<RegisterBookServiceBase>();
+  final controller = InfiniteGroupedListController<RegisterBookSummary, DateTime, String>(limit: 5);
 
   @override
   void build() {}
 
   Future<List<RegisterBookSummary>> fetchPage(PaginationInfo paginationInfo) async {
     final paginatedResult = await service.getAllPaginated(
-      pageSize: paginationInfo.page,
-      currentPage: paginationInfo.limit,
+      pageSize: paginationInfo.limit,
+      currentPage: paginationInfo.page,
       params: ref.read(registerBookFilterProvider)
     );
 
     return paginatedResult.getValue?.data.toList() ?? [];
   }
+
+  Future<void> refresh() => controller.refresh();
 
 }
