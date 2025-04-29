@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/result.dart';
@@ -37,22 +36,20 @@ class StudentFormNotifier extends StateNotifier<_StudentFormState> {
   void setNotes(String notes) => state = state.copyWith(notes: notes);
   void setStatus(SubmitStatus status) => state = state.copyWith(status: status);
 
-  FormFieldValidator<String>? nameValidator = (value) {
-    if(value == null || value.trim().isEmpty) return "No se ha proporcionado un nombre";
-    value = NawiGeneralUtils.clearSpaces(value);
-    if(value.length <= 2) return "El nombre es demasiado corto";
+  String? get nameErrorText {
+    final name = NawiGeneralUtils.clearSpaces(state.data.name);
+    if(name.isEmpty) return null;
+    if(name.length <= 2) return "El nombre es demasiado corto";
     return null;    
-  };
-
-  FormFieldValidator<StudentAge>? ageValidator = (value) {
-    if(value == null) return "Debes seleccionar una opción";
-    return null;
-  };
+  }
 
   void clearName() => setName('');
   void clearNotes() => setNotes('');
 
-  bool get isValid => state.data.name.length > 2 && state.data.age != StudentAge.custom;
+  bool get validatorsOk => [nameErrorText].every((v) => v == null);
+  bool get noEmptyFields => NawiGeneralUtils.clearSpaces(state.data.name).isNotEmpty;
+
+  bool get isValid => validatorsOk && noEmptyFields;
 
   Future<void> submit({String? idToEdit}) async {
     setStatus(SubmitStatus.loading);

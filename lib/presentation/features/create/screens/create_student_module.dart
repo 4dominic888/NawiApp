@@ -98,12 +98,12 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
       
           TextFormField(
             controller: _nameController,
-            validator: formNotifier.nameValidator,
             onChanged: formNotifier.setName,
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(
               labelText: 'Nombre',
               hintText: 'Nombre del estudiante',
+              errorText: formNotifier.nameErrorText,
               suffix: IconButton(
                 icon: const Icon(Icons.clear),
                 onPressed: () {
