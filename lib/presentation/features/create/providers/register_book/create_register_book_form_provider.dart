@@ -7,6 +7,7 @@ import 'package:nawiapp/domain/models/register_book/entity/register_book_type.da
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/presentation/shared/submit_status.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 
 class _RegisterBookFormState {
   final RegisterBook data;
@@ -51,7 +52,22 @@ class RegisterBookFormNotifier extends StateNotifier<_RegisterBookFormState> {
   void clearNotes() => setNotes('');
   void clearAction() => setAction('');
 
-  bool get isValid => state.data.action.length >= 2;
+  String? get createdAtErrorText {
+    if(state.data.createdAt.isAfter(DateTime.now())) return "No puedes ingresar una hora futura";
+    return null;
+  }
+
+  String? get actionErrorText {
+    final action = NawiGeneralUtils.clearSpaces(state.data.action);
+    if(action.isEmpty) return null;
+    if(action.length <= 2) return "Acción muy corta";
+    return null;
+  }
+
+  bool get validatorsOk => [createdAtErrorText, actionErrorText].every((v) => v == null);
+  bool get noEmptyFields => NawiGeneralUtils.clearSpaces(state.data.action).isNotEmpty;
+
+  bool get isValid =>  validatorsOk && noEmptyFields;
 
   Future<void> submit({String? idToEdit}) async {
     setStatus(SubmitStatus.loading);

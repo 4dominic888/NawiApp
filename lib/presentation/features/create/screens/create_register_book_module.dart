@@ -1,6 +1,7 @@
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
@@ -163,11 +164,13 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
                 filled: true,
                 fillColor: NawiColorUtils.secondaryColor.withAlpha(110),
                 floatingLabelBehavior: FloatingLabelBehavior.always,
+                errorText: formNotifier.actionErrorText,
                 suffix: IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _actionController.clear();
                     formNotifier.clearMentions();
+                    formNotifier.clearAction();
                   },
                 ),
               )
@@ -176,14 +179,18 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
             const SizedBox(height: 20),
         
             DateTimeFormField(
-              initialValue: widget.data?.createdAt ?? DateTime.now(),
-              initialPickerDateTime: widget.data?.createdAt ?? DateTime.now(),
+              initialValue: widget.data?.createdAt ?? registerBookFormState.createdAt,
+              firstDate: DateTime(2023),
+              lastDate: DateTime.now(),
               onChanged: formNotifier.setTimestamp,
+              dateFormat: DateFormat('dd/MM/y hh:mm a'),
+              canClear: false,
               decoration: InputDecoration(
                 labelText: 'Fecha de creación',
                 filled: true,
                 fillColor: NawiColorUtils.secondaryColor.withAlpha(110),
-                floatingLabelBehavior: FloatingLabelBehavior.always
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                errorText: formNotifier.createdAtErrorText
               ),
             ),
         
