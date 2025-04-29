@@ -5,11 +5,13 @@ import 'package:nawiapp/presentation/features/home/screens/home_screen.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:overlay_support/overlay_support.dart';
 
-void main() {
+Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
   setupLocator();
+
+  // await findSystemLocale(); //* Initialize the systems locale. If not, users might see AM/PM even when they configured their system to use 24h format.
 
   //* Originalmente llamado Ñawi, pero para evitar futuros errores con caracteres especiales, se reemplaza la Ñ por N.
   runApp(ProviderScope(child: const NawiApp()));
