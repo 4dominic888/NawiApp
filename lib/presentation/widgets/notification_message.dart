@@ -6,7 +6,7 @@ class NotificationMessage{
   static void showSuccessNotification(description) {
     showSimpleNotification(
       const Text('Exito'),
-      position: NotificationPosition.bottom,
+      position: NotificationPosition.top,
       subtitle: Text(description),
       autoDismiss: true,
       foreground: Colors.white,
@@ -19,7 +19,7 @@ class NotificationMessage{
   static void showErrorNotification(description) {
     showSimpleNotification(
       const Text('Error'),
-      position: NotificationPosition.bottom,
+      position: NotificationPosition.top,
       subtitle: Text(description),
       autoDismiss: true,
       foreground: Colors.white,
