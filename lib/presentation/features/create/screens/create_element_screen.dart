@@ -26,8 +26,12 @@ class _CreateElementScreenState extends ConsumerState<CreateElementScreen> {
     final dataProviderInitialData = ref.read(stateProvider);
     if(dataProviderInitialData != null) {
       //* Dato inicializado para que el formulario edite el elemento en vez de crearlo
-      if(T is Student?) { _studentInitialData = dataProviderInitialData as Student?; }
-      else { _registerBookInitialData = dataProviderInitialData as RegisterBook?; }
+      if(dataProviderInitialData.runtimeType == Student) {
+        _studentInitialData = dataProviderInitialData as Student;
+      }
+      else {
+        _registerBookInitialData = dataProviderInitialData as RegisterBook;
+      }
 
       //* Resuelve el siguiente error, al igual que usar esto en didChangeDependencies
       //? Tried to modify a provider while the widget tree was building.
