@@ -8,8 +8,9 @@ import 'package:nawiapp/utils/nawi_color_utils.dart';
 class AnotherRegisterBookElement extends StatelessWidget {
 
   final RegisterBookSummary item;
+  final bool isPreview;
 
-  const AnotherRegisterBookElement({ super.key, required this.item });
+  const AnotherRegisterBookElement({ super.key, required this.item, this.isPreview = false });
 
   @override
   Widget build(BuildContext context) {
