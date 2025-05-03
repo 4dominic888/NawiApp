@@ -7,15 +7,12 @@ import 'package:nawiapp/domain/services/student_service_base.dart';
 
 final studentFilterProvider = StateProvider<StudentFilter>((ref) => StudentFilter());
 
-final studentSummarySearchProvider = Provider<StudentSummarySearchNotifier>((ref) {
-  final notifier = StudentSummarySearchNotifier(ref);
-  ref.onDispose(() => notifier.dispose());
-  return notifier;
+final studentSummarySearchProvider = NotifierProvider<StudentSummarySearchNotifier, void>(() {
+  return StudentSummarySearchNotifier();
 });
 
-class StudentSummarySearchNotifier {
-  final Ref ref;
-  final PagingController<int, StudentSummary> pagingController = PagingController(firstPageKey: 1);
+class StudentSummarySearchNotifier extends Notifier<void> {
+  late final PagingController<int, StudentSummary> pagingController;
   static const int pageSize = 8;
 
   bool _isLoadingStarted = false;
@@ -23,7 +20,9 @@ class StudentSummarySearchNotifier {
 
   final service = GetIt.I<StudentServiceBase>();
 
-  StudentSummarySearchNotifier(this.ref) {
+  @override
+  void build() {
+    pagingController = PagingController(firstPageKey: 1);
 
     _paggingStatusCondition = (
           pagingController.value.status == PagingStatus.loadingFirstPage ||
@@ -34,8 +33,10 @@ class StudentSummarySearchNotifier {
       if(_paggingStatusCondition) return; 
       _isLoadingStarted = true;
       _fetchPage(pageKey);
-    });
+    });    
   }
+
+  StudentSummarySearchNotifier();
 
   Future<void> _fetchPage(int pageKey) async {
     final filter = ref.read(studentFilterProvider);
@@ -60,4 +61,5 @@ class StudentSummarySearchNotifier {
   void dispose() {
     pagingController.dispose();
   }
+
 }

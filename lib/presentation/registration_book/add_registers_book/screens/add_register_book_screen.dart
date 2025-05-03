@@ -43,7 +43,8 @@ class _AddRegisterBookScreenState extends State<AddRegisterBookScreen> {
       final registerBook = RegisterBook(
         action: _actionKey.currentState!.value!.action,
         mentions: _actionKey.currentState!.value!.mentions,
-        type: _typeRegisterKey.currentState!.value!
+        type: _typeRegisterKey.currentState!.value!,
+        createdAt: DateTime.now()
       );
 
       if(_isUpdatable) { //* Editar

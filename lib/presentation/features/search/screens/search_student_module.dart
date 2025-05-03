@@ -6,22 +6,35 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
-import 'package:nawiapp/presentation/features/search/providers/general_loading_search_student_provider.dart';
-import 'package:nawiapp/presentation/features/search/providers/search_student_list_provider.dart';
-import 'package:nawiapp/presentation/widgets/another_student_element.dart';
-import 'package:nawiapp/presentation/features/search/screens/another_advanced_student_filter_modal.dart';
+import 'package:nawiapp/presentation/features/search/providers/student/general_loading_search_student_provider.dart';
+import 'package:nawiapp/presentation/features/search/providers/student/search_student_list_provider.dart';
+import 'package:nawiapp/presentation/widgets/student_element.dart';
+import 'package:nawiapp/presentation/features/search/screens/modals/advanced_student_filter_modal.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 
-class SearchStudentModule extends ConsumerWidget {
+class SearchStudentModule extends ConsumerStatefulWidget {
   const SearchStudentModule({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SearchStudentModule> createState() => _SearchStudentModuleState();
+}
 
-    Timer? debounce;
-    final notifier = ref.read(studentSummarySearchProvider);
+class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
+
+  Timer? debounce;
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    final notifier = ref.read(studentSummarySearchProvider.notifier);
     final controller = notifier.pagingController;
     final filterNotifier = ref.read(studentFilterProvider.notifier);
 
@@ -34,7 +47,7 @@ class SearchStudentModule extends ConsumerWidget {
           filterAction: () async {
             final newFilter = await showDialog<StudentFilter?>(
               context: context,
-              builder: (_) => AnotherAdvancedStudentFilterModal(currentFilter: filterNotifier.state));
+              builder: (_) => AdvancedStudentFilterModal(currentFilter: filterNotifier.state));
             if(newFilter != null) {
               filterNotifier.state = newFilter;
               notifier.refresh();
@@ -59,7 +72,7 @@ class SearchStudentModule extends ConsumerWidget {
             builderDelegate: PagedChildBuilderDelegate<StudentSummary>(
               itemBuilder: (_, item, __) => Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: AnotherStudentElement(item: item),
+                child: StudentElement(item: item),
               ),
               firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
               newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),

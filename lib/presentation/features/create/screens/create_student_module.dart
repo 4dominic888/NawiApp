@@ -3,30 +3,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
-import 'package:nawiapp/presentation/features/create/providers/create_student_form_provider.dart';
+import 'package:nawiapp/presentation/features/create/providers/student/create_student_form_provider.dart';
 import 'package:nawiapp/presentation/shared/submit_status.dart';
-import 'package:nawiapp/presentation/widgets/another_student_element.dart';
+import 'package:nawiapp/presentation/widgets/student_element.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:nawiapp/utils/nawi_form_utils.dart';
 import 'package:nawiapp/utils/nawi_general_utils.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
-class AnotherCreateStudentModule extends ConsumerStatefulWidget {
+class CreateStudentModule extends ConsumerStatefulWidget {
 
   final Student? data;
-  const AnotherCreateStudentModule({super.key, this.data});
+  const CreateStudentModule({super.key, this.data});
 
   @override
-  ConsumerState<AnotherCreateStudentModule> createState() => _AnotherCreateStudentModuleState();
+  ConsumerState<CreateStudentModule> createState() => _CreateStudentModuleState();
 }
 
-class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStudentModule> {
+class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
 
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _notesController;
-  final _btnController = RoundedLoadingButtonController();
+  final _submitBtnController = RoundedLoadingButtonController();
 
   @override
   void initState() {
@@ -48,7 +48,7 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
     final studentFormState = ref.watch(studentFormProvider(widget.data).select((e) => e.data));
     final formNotifier = ref.read(studentFormProvider(widget.data).notifier);
     ref.listen(studentFormProvider(widget.data), (_, next) => 
-      NawiFormUtils.handleSubmitStatus(status: next.status, controller: _btnController) 
+      NawiFormUtils.handleSubmitStatus(status: next.status, controller: _submitBtnController) 
     );
 
     return Form(
@@ -60,7 +60,7 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
           
           Padding(
             padding: const EdgeInsets.all(15.0),
-            child: AnotherStudentElement(
+            child: StudentElement(
               isPreview: true,
               item: StudentSummary(
                 id: studentFormState.id, name: studentFormState.name, age: studentFormState.age
@@ -84,10 +84,10 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
     
               Expanded(
                 child: LoadingProcessButton(
-                  color: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade600,
-                  controller: _btnController,
+                  color: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade400,
+                  controller: _submitBtnController,
                   proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
-                  label: const Text("Completar"),
+                  label: Text(widget.data == null ? "Agregar" : "Editar"),
                   onReset: () => formNotifier.setStatus(SubmitStatus.idle),
                 ),
               )
@@ -98,12 +98,12 @@ class _AnotherCreateStudentModuleState extends ConsumerState<AnotherCreateStuden
       
           TextFormField(
             controller: _nameController,
-            validator: formNotifier.nameValidator,
             onChanged: formNotifier.setName,
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(
               labelText: 'Nombre',
               hintText: 'Nombre del estudiante',
+              errorText: formNotifier.nameErrorText,
               suffix: IconButton(
                 icon: const Icon(Icons.clear),
                 onPressed: () {

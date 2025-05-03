@@ -11,11 +11,11 @@ extension RegisterBookMapper on RegisterBook {
     action: data.action,
     mentions: mentions,
     notes: data.notes,
-    timestamp: data.createdAt,
+    createdAt: data.createdAt,
     type: data.type
   );
 
-  static RegisterBook empty() => RegisterBook(action: "");
+  static RegisterBook empty() => RegisterBook(action: "", createdAt: DateTime.now());
 
   RegisterBookTableData get toTable => RegisterBookTableData(
     id: id,
@@ -46,7 +46,6 @@ extension RegisterBookSummaryMapper on RegisterBookSummary {
       id: data.id,
       action: data.action,
       createdAt: data.createdAt,
-      hourCreatedAt: data.hourCreatedAt ?? "hour error",
       type: data.type,
       mentions: mentions
     );  

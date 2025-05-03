@@ -1,42 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_grouped_list/infinite_grouped_list.dart';
 import 'package:intl/intl.dart';
-import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
-import 'package:nawiapp/domain/records/button_controller_with_process.dart';
-import 'package:nawiapp/domain/services/register_book_service_base.dart';
-import 'package:nawiapp/presentation/registration_book/view_registers_book/widgets/register_book_element.dart';
-import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
+import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
+import 'package:nawiapp/presentation/widgets/another_register_book_element.dart';
 
-class ViewRegistersBookScreen extends StatefulWidget {
+class ViewRegistersBookScreen extends ConsumerStatefulWidget {
   const ViewRegistersBookScreen({super.key});
 
   @override
-  State<ViewRegistersBookScreen> createState() => _ViewRegistersBookScreenState();
+  ConsumerState<ViewRegistersBookScreen> createState() => _ViewRegistersBookScreenState();
 }
 
-class _ViewRegistersBookScreenState extends State<ViewRegistersBookScreen> {
+class _ViewRegistersBookScreenState extends ConsumerState<ViewRegistersBookScreen> {
 
-  final _registerBookService = GetIt.I<RegisterBookServiceBase>();
   final _paggingController = InfiniteGroupedListController<RegisterBookSummary, DateTime, String>(limit: 5);
-  final _btnDeleteElementController = RoundedLoadingButtonController();
-  final _btnArchiveElementController = RoundedLoadingButtonController();
-  final _btnUnarchiveElementController = RoundedLoadingButtonController();
-
-  Future<List<RegisterBookSummary>> _fetchPage(PaginationInfo paginationInfo) async {
-    final result = await _registerBookService.getAllPaginated(
-      currentPage: paginationInfo.page,
-      pageSize: paginationInfo.limit,
-      params: RegisterBookFilter()
-    );
-
-    return result.getValue?.data.toList() ?? [];
-  }
 
   @override
   Widget build(BuildContext context) {
-    quitPopup() { if(context.mounted) Navigator.of(context).pop(); _paggingController.refresh(); }
+    // quitPopup() { if(context.mounted) Navigator.of(context).pop(); _paggingController.refresh(); }
+    final notifier = ref.read(registerBookSummarySearchProvider.notifier);
 
     return Scaffold(
       body: Padding(
@@ -51,25 +35,29 @@ class _ViewRegistersBookScreenState extends State<ViewRegistersBookScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Text(DateFormat('EEEE, d MMM y').format(groupBy), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
           ),
-          itemBuilder: (item) => RegisterBookElement(
-            item: item,
-            delete: defaulVoidResultAction(
-              result: (() => _registerBookService.deleteOne(item.id)),
-              buttonController: _btnDeleteElementController,
-              onAction: quitPopup
-            ),
-            archive: defaulVoidResultAction(
-              result: (() => _registerBookService.archiveOne(item.id)),
-              buttonController: _btnArchiveElementController,
-              onAction: quitPopup
-            ),
-            unarchive: defaulVoidResultAction(
-              result: (() => _registerBookService.unarchiveOne(item.id)),
-              buttonController: _btnUnarchiveElementController,
-              onAction: quitPopup
-            ),
+          itemBuilder: (item) => AnotherRegisterBookElement(
+            isPreview: false,
+            item: item
           ),
-          onLoadMore: _fetchPage,
+          // itemBuilder: (item) => RegisterBookElement(
+          //   item: item,
+          //   delete: defaulVoidResultAction(
+          //     result: (() => _registerBookService.deleteOne(item.id)),
+          //     buttonController: _btnDeleteElementController,
+          //     onAction: quitPopup
+          //   ),
+          //   archive: defaulVoidResultAction(
+          //     result: (() => _registerBookService.archiveOne(item.id)),
+          //     buttonController: _btnArchiveElementController,
+          //     onAction: quitPopup
+          //   ),
+          //   unarchive: defaulVoidResultAction(
+          //     result: (() => _registerBookService.unarchiveOne(item.id)),
+          //     buttonController: _btnUnarchiveElementController,
+          //     onAction: quitPopup
+          //   ),
+          // ),
+          onLoadMore: notifier.fetchPage,
           groupCreator: (date) => '${date.year}-${date.month}-${date.day}',
           loadingWidget: const Center(child: CircularProgressIndicator()),
           showRefreshIndicator: true,

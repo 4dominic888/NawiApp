@@ -23,7 +23,6 @@ class NawiRepositoryUtils {
     action: data.action,
     createdAt: data.createdAt,
     type: data.type,
-    hourCreatedAt: data.hourCreatedAt
   );
 
   /// [NawiError] por defecto en bloques try catch
