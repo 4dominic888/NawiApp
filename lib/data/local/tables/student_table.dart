@@ -7,13 +7,16 @@ import 'package:nawiapp/utils/nawi_general_utils.dart';
 @TableIndex(name: 'timestamp', columns: {#timestamp})
 class StudentTable extends Table {
   late final id = text().clientDefault(() => NawiGeneralUtils.uuid.v4())();
-  late final name = text().unique().withLength(min: 2, max: 50)();
+  late final name = text().withLength(min: 2, max: 50)();
   late final age = intEnum<StudentAge>()();
   late final notes = text().nullable()();
   late final timestamp = dateTime()();
 
   @override
   Set<Column<Object>>? get primaryKey => {id};
+
+  @override
+  List<Set<Column<Object>>>? get uniqueKeys => [{name, age}];
 
   @override
   String? get tableName => 'student';
