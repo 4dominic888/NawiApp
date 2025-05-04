@@ -20,15 +20,18 @@ void main(){
 
     final student = Student(name: "Pepe Gonzales", age: StudentAge.fourYears);
     final errorStudent = Student(id: '980bbf70-48de-4946-8d8f-de06a39d7611', name: 'adasdasdasd', age: StudentAge.fiveYears); //* ID existente
+    final sameStudent = Student(name: " pepe    gonzales    ", age: StudentAge.fourYears);
 
     final result = await Future.wait([
       service.addOne(student),
-      service.addOne(errorStudent)
+      service.addOne(errorStudent),
+      service.addOne(sameStudent)
     ]);
     final studentFromDatabaseSummary = (await service.getAll(StudentFilter(nameLike: "pepe"))).getValue!.first;
 
     final goodResult = result[0];
     final badResult = result[1];
+    final sameBadResult = result[2];
 
     testil.customExpect(goodResult, isA<Success>(),
       about: 'Agregar estudiando a la base de datos', output: goodResult.message, n: 1
@@ -44,6 +47,10 @@ void main(){
 
     testil.customExpect(badResult, isA<NawiError>(),
       about: 'Estudiante con ID existente no debe de registrarse', output: badResult.message, n: 4
+    );
+
+    testil.customExpect(sameBadResult, isA<NawiError>(),
+      about: 'Estudiante con igual nombre', n: 5, output: sameBadResult.message
     );
   });
 
