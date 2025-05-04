@@ -65,7 +65,8 @@ abstract mixin class $RegisterBookCopyWith<$Res> {
       String action,
       Iterable<StudentSummary> mentions,
       RegisterBookType type,
-      String? notes});
+      String? notes,
+      DateTime createdAt});
 }
 
 /// @nodoc
@@ -85,6 +86,7 @@ class _$RegisterBookCopyWithImpl<$Res> implements $RegisterBookCopyWith<$Res> {
     Object? mentions = null,
     Object? type = null,
     Object? notes = freezed,
+    Object? createdAt = null,
   }) {
     return _then(RegisterBook(
       id: null == id
@@ -107,6 +109,10 @@ class _$RegisterBookCopyWithImpl<$Res> implements $RegisterBookCopyWith<$Res> {
           ? _self.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as String?,
+      createdAt: null == createdAt
+          ? _self.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ));
   }
 }

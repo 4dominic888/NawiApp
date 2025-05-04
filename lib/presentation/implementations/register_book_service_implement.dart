@@ -6,8 +6,8 @@ import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
-import 'package:nawiapp/domain/repositories/register_book_repository.dart';
-import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
+import 'package:nawiapp/domain/daos/register_book_dao.dart';
+import 'package:nawiapp/domain/daos/student_register_book_dao.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:uuid/uuid.dart';
 

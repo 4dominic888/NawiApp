@@ -16,7 +16,6 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RegisterBookSummary {
   String get id;
-  String get hourCreatedAt;
   DateTime get createdAt;
   RegisterBookType get type;
   Iterable<StudentSummary> get mentions;
@@ -36,8 +35,6 @@ mixin _$RegisterBookSummary {
         (other.runtimeType == runtimeType &&
             other is RegisterBookSummary &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.hourCreatedAt, hourCreatedAt) ||
-                other.hourCreatedAt == hourCreatedAt) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.type, type) || other.type == type) &&
@@ -46,12 +43,12 @@ mixin _$RegisterBookSummary {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, hourCreatedAt, createdAt,
-      type, const DeepCollectionEquality().hash(mentions), action);
+  int get hashCode => Object.hash(runtimeType, id, createdAt, type,
+      const DeepCollectionEquality().hash(mentions), action);
 
   @override
   String toString() {
-    return 'RegisterBookSummary(id: $id, hourCreatedAt: $hourCreatedAt, createdAt: $createdAt, type: $type, mentions: $mentions, action: $action)';
+    return 'RegisterBookSummary(id: $id, createdAt: $createdAt, type: $type, mentions: $mentions, action: $action)';
   }
 }
 
@@ -64,7 +61,6 @@ abstract mixin class $RegisterBookSummaryCopyWith<$Res> {
   $Res call(
       {String id,
       String action,
-      String hourCreatedAt,
       DateTime createdAt,
       RegisterBookType type,
       Iterable<StudentSummary> mentions});
@@ -85,7 +81,6 @@ class _$RegisterBookSummaryCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? action = null,
-    Object? hourCreatedAt = null,
     Object? createdAt = null,
     Object? type = null,
     Object? mentions = null,
@@ -98,10 +93,6 @@ class _$RegisterBookSummaryCopyWithImpl<$Res>
       action: null == action
           ? _self.action
           : action // ignore: cast_nullable_to_non_nullable
-              as String,
-      hourCreatedAt: null == hourCreatedAt
-          ? _self.hourCreatedAt
-          : hourCreatedAt // ignore: cast_nullable_to_non_nullable
               as String,
       createdAt: null == createdAt
           ? _self.createdAt

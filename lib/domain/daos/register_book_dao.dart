@@ -5,10 +5,10 @@ import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_repository.dart';
 import 'package:nawiapp/data/local/tables/register_book_table.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
-import 'package:nawiapp/domain/repositories/student_register_book_repository.dart';
+import 'package:nawiapp/domain/daos/student_register_book_dao.dart';
 import 'package:nawiapp/utils/nawi_repository_utils.dart';
 
-part 'register_book_repository.g.dart';
+part 'register_book_dao.g.dart';
 
 @DriftAccessor(tables: [RegisterBookTable], views: [RegisterBookViewSummaryVersion, HiddenRegisterBookViewSummaryVersion])
 class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$RegisterBookRepositoryMixin

@@ -1,72 +1,76 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
-import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
-import 'package:nawiapp/domain/models/student/entity/student_age.dart';
-import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:infinite_grouped_list/infinite_grouped_list.dart';
+import 'package:intl/intl.dart';
+import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
 import 'package:nawiapp/presentation/widgets/another_register_book_element.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 
-class SearchRegisterBookModule extends StatelessWidget {
+class SearchRegisterBookModule extends ConsumerStatefulWidget {
   const SearchRegisterBookModule({
     super.key,
   });
 
-  static final registerBookData = [
-    RegisterBookSummary(
-      id: '*',
-      action: 'Algo paso pero debo colocar algo para testear aaaaaaa',
-      hourCreatedAt: '44a',
-      createdAt: DateTime.now(),
-      type: RegisterBookType.anecdotal,
-      mentions: []
-    ),
+  @override
+  ConsumerState<SearchRegisterBookModule> createState() => _SearchRegisterBookModuleState();
+}
 
-    RegisterBookSummary(
-      id: '*',
-      action: 'Algo paso pero debo colocar algo para testear aaaaaaa',
-      hourCreatedAt: '44a',
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      type: RegisterBookType.register,
-      mentions: [
-        StudentSummary(id: '*', name: 'Pedro pablo XY', age: StudentAge.fiveYears),
-        StudentSummary(id: '*', name: 'Pedro pablo XY', age: StudentAge.threeYears)
-      ]
-    ),
+class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookModule> {
 
-    RegisterBookSummary(
-      id: '*',
-      action: 'Algo paso pero debo colocar algo para testear aaaaaaa',
-      hourCreatedAt: '44a',
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      type: RegisterBookType.incident,
-      mentions: [
-        StudentSummary(id: '*', name: 'Pedro pablo XY', age: StudentAge.fiveYears),
-        StudentSummary(id: '*', name: 'Pedro pablo XY', age: StudentAge.threeYears)
-      ]
-    ),
-  ];
+  Timer? debounce;
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
+    final searchNotifier = ref.read(registerBookSummarySearchProvider.notifier);
+    final infiniteListController = searchNotifier.controller;
+    final filterNotifier = ref.read(registerBookFilterProvider.notifier);
+
     return Scaffold(
       appBar: SearchFilterField(
         hintTextField: 'Búsqueda por acción',
-        filterDialog: AlertDialog(
-          title: const Text('Proximamente'),
-        )
+        filterAction: () {
+
+        },
+        textOnChanged: (text) {
+          debounce?.cancel();
+          debounce = Timer(const Duration(milliseconds: 500), () {
+            final newFilter = filterNotifier.state.copyWith(actionLike: text);
+    
+            if(filterNotifier.state != newFilter) {
+              filterNotifier.state = newFilter;
+              searchNotifier.refresh();
+            }
+          });
+        },
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverList.list(
-            children: registerBookData.map(
-              (e) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: AnotherRegisterBookElement(item: e),
-              )
-            ).toList()
-          )
-        ],
-      ),
+      body: InfiniteGroupedList(
+        controller: infiniteListController,
+        onLoadMore: searchNotifier.fetchPage,
+        groupBy: (item) => item.createdAt,
+        sortGroupBy: (item) => item.createdAt,
+        groupCreator: (date) => '${date.year}-${date.month}-${date.day}',
+        initialItemsErrorWidget: (error) => Text(error.toString()),
+        loadingWidget: const Center(child: CircularProgressIndicator()),
+        showRefreshIndicator: true,
+        stickyGroups: false,
+        noItemsFoundWidget: const Center(child: Text('No hay registros agregados')),
+        groupTitleBuilder: (title, groupBy, isPinned, _) => Container(
+          color: Colors.grey.shade200,
+          padding: const EdgeInsets.all(8.0),
+          child: Text(DateFormat('EEEE, d MMM y').format(groupBy), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+        ),
+        itemBuilder: (item) => AnotherRegisterBookElement(item: item, isPreview: false),
+      )
     );
   }
 }

@@ -1,33 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/utils/nawi_general_utils.dart';
 
-class SelectableModelBased extends StatefulWidget {
-  const SelectableModelBased({ super.key, required this.studentModule, required this.registerBookModule , this.padding});
+class SelectableModelBased extends ConsumerWidget {
+  const SelectableModelBased({ 
+    super.key,
+    required this.studentModule,
+    required this.registerBookModule,
+    required this.controller,
+    this.padding
+  });
 
   final Widget studentModule;
   final Widget registerBookModule;
+  final StateProvider<Type> controller;
   final EdgeInsetsGeometry? padding;
 
   @override
-  State<SelectableModelBased> createState() => _SelectableModelBasedState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
 
-class _SelectableModelBasedState extends State<SelectableModelBased> {
+    final selectedType = ref.watch(controller);
+    final notifier = ref.read(controller.notifier);
 
-  Type _selectedItem = Student;
-
-  @override
-  Widget build(BuildContext context) {
     return Column(
       children: [
-
         Expanded(
           flex: 14,
           child: Padding(
-            padding: widget.padding ?? const EdgeInsets.all(8.0),
-            child: _selectedItem == Student ? widget.studentModule : widget.registerBookModule,
+            padding: padding ?? const EdgeInsets.all(8.0),
+            child: selectedType == Student ? studentModule : registerBookModule,
           )
         ),
 
@@ -41,13 +44,13 @@ class _SelectableModelBasedState extends State<SelectableModelBased> {
               children: [
                 FilterChip(
                   label: Text("Estudiantes"),
-                  onSelected: (_) => setState(() => _selectedItem = Student),
-                  selected: _selectedItem == Student
+                  onSelected: (_) => notifier.state = Student,
+                  selected: selectedType == Student
                 ),
                 FilterChip(
                   label: Text("Registros"),
-                  onSelected: (_) => setState(() => _selectedItem = RegisterBook),
-                  selected: _selectedItem == RegisterBook
+                  onSelected: (_) => notifier.state = RegisterBook,
+                  selected: selectedType == RegisterBook
                 )
               ],
             ),
@@ -55,5 +58,5 @@ class _SelectableModelBasedState extends State<SelectableModelBased> {
         ]        
       ],
     );
-  }
+  }  
 }

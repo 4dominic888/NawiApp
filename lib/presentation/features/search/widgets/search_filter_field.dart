@@ -5,11 +5,13 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
 
   const SearchFilterField({
     super.key, this.hintTextField,
-    required this.filterDialog
+    required this.filterAction,
+    required this.textOnChanged
   });
 
   final String? hintTextField;
-  final Widget filterDialog;
+  final VoidCallback filterAction;
+  final void Function(String text) textOnChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,8 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
                   filled: true,
                   fillColor: NawiColorUtils.secondaryColor.withAlpha(110),                
                 ),
+                onChanged: textOnChanged,
+                onTapOutside: (_) => FocusScope.of(context).unfocus()
               ),
             ),
         
@@ -41,9 +45,7 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
                 backgroundColor: NawiColorUtils.secondaryColor
               ),
               icon: const Icon(Icons.more_horiz_outlined),
-              onPressed: () {
-                showDialog(context: context, builder: (context) => filterDialog);
-              },
+              onPressed: filterAction
             ),
         
             IconButton(
