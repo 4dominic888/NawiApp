@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:drift/remote.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
@@ -26,7 +27,14 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
       final addedStudent = await into(studentTable).insertReturningOrNull(data);
       if(addedStudent != null) return Success(data: addedStudent);
       throw NawiError.onRepository(message: "Estudiante no agregado");
-    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+    } on DriftRemoteException catch (e) {
+      if(e.remoteCause.toString().contains('UNIQUE constraint failed')) {
+        return NawiRepositoryUtils.onCatch("Parece que esta intentando ingresar un estudiante ya existente, intentelo nuevamente");
+      }
+      return NawiRepositoryUtils.onCatch(e);
+    }
+    catch (e) { return NawiRepositoryUtils.onCatch(e); }
+    
   }
 
   @override
@@ -100,7 +108,13 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
       final isUpdated = await update(studentTable).replace(data);
       if(!isUpdated) throw NawiError.onRepository(message: "Estudiante no actualizado");
       return Success(data: true);
-    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+    } on DriftRemoteException catch (e) {
+      if(e.remoteCause.toString().contains('UNIQUE constraint failed')) {
+        return NawiRepositoryUtils.onCatch("Ya hay un estudiante con estos campos, no es posible sobreescribirlo");
+      }
+      return NawiRepositoryUtils.onCatch(e);
+    }
+    catch (e) { return NawiRepositoryUtils.onCatch(e); }
   }
 
   @override
