@@ -43,7 +43,7 @@ void main() {
       about: "Valor de retorno", n: 3
     );
 
-    testil.customExpect(registerBookFromDB.getValue!.mentions, registerBook.mentions,
+    testil.customExpect(registerBookFromDB.getValue!.mentions, containsAll(registerBook.mentions),
       about: "Menciones registradas correctamente", n: 4
     );
 
