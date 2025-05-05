@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_grouped_list/infinite_grouped_list.dart';
 import 'package:intl/intl.dart';
+import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
+import 'package:nawiapp/presentation/features/search/screens/modals/advanced_register_book_filter_modal.dart';
 import 'package:nawiapp/presentation/widgets/another_register_book_element.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 
@@ -38,8 +40,15 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
     return Scaffold(
       appBar: SearchFilterField(
         hintTextField: 'Búsqueda por acción',
-        filterAction: () {
-
+        filterAction: () async {
+          final newFilter = await showDialog<RegisterBookFilter?>(
+            context: context,
+            builder: (_) => AdvancedRegisterBookFilterModal(currentFilter: filterNotifier.state)
+          );
+          if(newFilter != null) {
+            filterNotifier.state = newFilter;
+            searchNotifier.refresh();
+          }
         },
         textOnChanged: (text) {
           debounce?.cancel();
