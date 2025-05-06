@@ -12,7 +12,7 @@ class NotificationMessage{
       foreground: Colors.white,
       background: Colors.green,
       trailing: const Icon(Icons.check),
-      duration: const Duration(seconds: 3)
+      duration: const Duration(seconds: 1)
     );
   }
 

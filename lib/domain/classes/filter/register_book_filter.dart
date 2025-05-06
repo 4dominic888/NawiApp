@@ -54,12 +54,13 @@ class RegisterBookFilter extends FilterData with EquatableMixin {
     RegisterBookType? searchByType,
     RegisterBookViewOrderByType? orderBy,
     DateTimeRange? timestampRange,
+    bool setTypeAsNull = false
   }) =>
     RegisterBookFilter(
       studentNameLike: studentNameLike ?? this.studentNameLike,
       actionLike: actionLike ?? this.actionLike,
       searchByStudentsId: searchByStudentsId ?? this.searchByStudentsId,
-      searchByType: searchByType ?? this.searchByType,
+      searchByType: setTypeAsNull ? null : searchByType ?? this.searchByType,
       pageSize: pageSize ?? this.pageSize,
       currentPage: currentPage ?? this.currentPage,
       showHidden: showHidden ?? this.showHidden,
