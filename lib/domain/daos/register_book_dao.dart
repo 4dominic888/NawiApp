@@ -50,8 +50,10 @@ class RegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$Regis
             );
           }
 
-          if(searchedRegistersIdByStudents.isNotEmpty) {
-            filterExpressions.add((tbl as $RegisterBookViewSummaryVersionView).id.isIn(searchedRegistersIdByStudents));
+          if(params.searchByStudentsId.isNotEmpty) {
+            filterExpressions.add((tbl as $RegisterBookViewSummaryVersionView).id.isIn(
+              searchedRegistersIdByStudents
+            ));
           }
 
           if(params.searchByType != null) {
