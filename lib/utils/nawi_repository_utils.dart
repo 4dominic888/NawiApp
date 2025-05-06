@@ -57,7 +57,7 @@ class NawiRepositoryUtils {
 
   static void timestampRangeFilter({required List<Expression<bool>> expressions, DateTimeRange? range, required dynamic table}) {
     if(range != null) {
-      expressions.add((table.createdAt as GeneratedColumn<DateTime>).isBetweenValues(range.start, range.end));
+      expressions.add((table.createdAt as GeneratedColumn<DateTime>).isBetweenValues(range.start, range.end.add(const Duration(days: 1))));
     }
   }
 

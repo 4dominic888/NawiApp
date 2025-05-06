@@ -321,7 +321,11 @@ void main() {
         about: "Busqueda por un estudiante", n: 2
       );
 
-      result = await service.getAll(RegisterBookFilter(searchByStudentsId: ['1d03982a-7a0a-40f2-adb4-1e90c2550485', '8722e6e9-6178-4296-948a-7fb3db196d44', '194c4084-0fdf-49f2-86d7-766b7607ce0b']));
+      result = await service.getAll(RegisterBookFilter(searchByStudentsId: [
+        '1d03982a-7a0a-40f2-adb4-1e90c2550485',
+        '8722e6e9-6178-4296-948a-7fb3db196d44',
+        '194c4084-0fdf-49f2-86d7-766b7607ce0b'
+      ]));
 
       testil.customExpect(result.getValue!.length, 3,
         about: "Búsqueda por 3 estudiantes, se debe aplicar una operacion OR", n: 3
@@ -331,6 +335,11 @@ void main() {
 
       testil.customExpect(result.getValue!.length, 6,
         about: "Búsqueda sin estudiantes, debe aplicarse el filtro normal", n: 4
+      );
+
+      result = await service.getAll(RegisterBookFilter(searchByStudentsId: ['580e4114-98c8-4b80-92ea-b44c140f26e3']));
+      testil.customExpect(result.getValue!, isEmpty,
+        about: "Busqueda por un estudiante que no esta registrado en ningun cuaderno de registro", n: 5
       );
     });
 
