@@ -7,7 +7,7 @@ import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 
 /// Utilidades para los repositorios, que en resumen son cosas de filtros y detalles extras
-class NawiRepositoryUtils {
+class NawiDAOUtils {
 
   /// Para convertir un [HiddenStudentViewSummaryVersionData] a un [StudentViewSummaryVersionData]
   static StudentViewSummaryVersionData studentHiddenToPublic(HiddenStudentViewSummaryVersionData data) => StudentViewSummaryVersionData(
@@ -28,7 +28,7 @@ class NawiRepositoryUtils {
   /// [NawiError] por defecto en bloques try catch
   static NawiError<T> onCatch<T>(Object e) {
     if(e is NawiError<T>) return e;
-    return NawiError.onRepository(message: e.toString());
+    return NawiError.onDAO(message: e.toString());
   }
   
   /// Para aplicar scroll infinito

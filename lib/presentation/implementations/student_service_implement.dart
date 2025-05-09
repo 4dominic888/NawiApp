@@ -12,8 +12,8 @@ import 'package:uuid/uuid.dart';
 
 interface class StudentServiceImplement extends StudentServiceBase {
 
-  final StudentRepository studentRepo;
-  final StudentRegisterBookRepository studentRegisterBookRepo;
+  final StudentDAO studentRepo;
+  final StudentRegisterBookDAO studentRegisterBookRepo;
   StudentServiceImplement(this.studentRepo, this.studentRegisterBookRepo);
 
   @override

@@ -5,7 +5,7 @@ import 'package:nawiapp/data/local/tables/register_book_table.dart';
 import 'package:nawiapp/data/local/tables/student_register_book_table.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
-import 'package:nawiapp/utils/nawi_repository_utils.dart';
+import 'package:nawiapp/utils/nawi_dao_utils.dart';
 
 part 'student_register_book_dao.g.dart';
 
@@ -18,9 +18,9 @@ typedef RegisterBookWithEmisorsTableData = ({
 });
 
 @DriftAccessor(tables: [StudentRegisterBookTable, RegisterBookTable], views: [StudentViewSummaryVersion, RegisterBookViewSummaryVersion])
-class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRegisterBookRepositoryMixin {
+class StudentRegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$StudentRegisterBookDAOMixin {
   
-  StudentRegisterBookRepository(super.db);
+  StudentRegisterBookDAO(super.db);
 
   /// De un [RegisterBookTableData] con una lista de [StudentTableData] comprimido en [RegisterBookWithEmisorsTableData], se llenan en la tabla de
   /// [StudentRegisterBookTable]
@@ -35,7 +35,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
           )
         )));
         return Success(data: true);
-      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+      } catch (e) { return NawiDAOUtils.onCatch(e); }
     });
   }
 
@@ -48,14 +48,14 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
       try {
         //* Se elimina primero
         final deletedResult = await deleteManyByRegisterBookID(data.registerBookId);
-        if(deletedResult is NawiError<bool>) throw NawiError.onRepository(message: "No se pudo borrar los cuadernos de registro previos");
+        if(deletedResult is NawiError<bool>) throw NawiError.onDAO(message: "No se pudo borrar los cuadernos de registro previos");
 
         //* Y se vuelven a agregar
         final addedResult = await addMany(data);
-        if(addedResult is NawiError<bool>) NawiError.onRepository(message: "No se pudo volver a agregar los cuadernos de registro");
+        if(addedResult is NawiError<bool>) NawiError.onDAO(message: "No se pudo volver a agregar los cuadernos de registro");
 
         return Success(data: true);
-      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+      } catch (e) { return NawiDAOUtils.onCatch(e); }
     });
   }
 
@@ -65,7 +65,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
       final deleteStatement = delete(studentRegisterBookTable)..where((tbl) => tbl.registerBook.equals(registerBookId));
       await deleteStatement.go();
       return Success(data: true);
-    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+    } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
   /// Elimina los registros donde exista [studentId], ademas de borrar los cuadernos de registro de la tabla [RegisterBookTable] involucrados si [deleteRegisterBooks] es `true`
@@ -88,7 +88,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
         }
 
         return Success(data: true);
-      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+      } catch (e) { return NawiDAOUtils.onCatch(e); }
     });
   }
 
@@ -108,7 +108,7 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
         )
       ).get();
       return Success(data: studentList);
-    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+    } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
   /// Obtiene una lista de [RegisterBookViewSummaryVersionData] en base a [studentIds], solo las coincidencias encontradas.
@@ -126,6 +126,6 @@ class StudentRegisterBookRepository extends DatabaseAccessor<NawiDatabase> with 
       ).get();
 
       return Success(data: registerBookList);
-    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+    } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 }

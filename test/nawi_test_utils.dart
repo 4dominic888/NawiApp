@@ -29,15 +29,15 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
       closeStreamsSynchronously: true
     )));
 
-    _locator.registerLazySingleton<StudentRepository>(() => StudentRepository(_locator<NawiDatabase>()));
-    _locator.registerLazySingleton<RegisterBookRepository>(() => RegisterBookRepository(_locator<NawiDatabase>()));
-    _locator.registerLazySingleton<StudentRegisterBookRepository>(() => StudentRegisterBookRepository(_locator<NawiDatabase>()));
+    _locator.registerLazySingleton<StudentDAO>(() => StudentDAO(_locator<NawiDatabase>()));
+    _locator.registerLazySingleton<RegisterBookDAO>(() => RegisterBookDAO(_locator<NawiDatabase>()));
+    _locator.registerLazySingleton<StudentRegisterBookDAO>(() => StudentRegisterBookDAO(_locator<NawiDatabase>()));
 
     _locator.registerLazySingleton<StudentServiceBase>(() => 
-      StudentServiceImplement(_locator<StudentRepository>(), _locator<StudentRegisterBookRepository>())
+      StudentServiceImplement(_locator<StudentDAO>(), _locator<StudentRegisterBookDAO>())
     );
     _locator.registerLazySingleton<RegisterBookServiceBase>(() => 
-      RegisterBookServiceImplement(_locator<RegisterBookRepository>(), _locator<StudentRegisterBookRepository>())
+      RegisterBookServiceImplement(_locator<RegisterBookDAO>(), _locator<StudentRegisterBookDAO>())
     );
 
     await addingTestData(withRegisterBook);

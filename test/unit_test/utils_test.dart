@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nawiapp/utils/mapper_utils.dart';
+import 'package:nawiapp/utils/nawi_mapper_utils.dart';
 
 import '../nawi_test_utils.dart';
 
