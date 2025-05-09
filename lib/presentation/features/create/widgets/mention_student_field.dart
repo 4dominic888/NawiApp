@@ -8,18 +8,18 @@ import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/presentation/features/create/widgets/button_speech_field.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
-class AnotherMentionStudentField extends StatefulWidget {
+class MentionStudentField extends StatefulWidget {
 
   final String? action;
   final Iterable<StudentSummary>? mentions;
 
-  const AnotherMentionStudentField({ super.key, this.action, this.mentions });
+  const MentionStudentField({ super.key, this.action, this.mentions });
 
   @override
-  State<AnotherMentionStudentField> createState() => _AnotherMentionStudentFieldState();
+  State<MentionStudentField> createState() => _MentionStudentFieldState();
 }
 
-class _AnotherMentionStudentFieldState extends State<AnotherMentionStudentField> {
+class _MentionStudentFieldState extends State<MentionStudentField> {
 
   String? mentionValue;
   final _speechController = TextEditingController();

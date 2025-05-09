@@ -17,12 +17,12 @@ import 'package:nawiapp/presentation/widgets/delete_element_dialog.dart';
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
-class AnotherRegisterBookElement extends StatelessWidget {
+class RegisterBookElement extends StatelessWidget {
 
   final RegisterBookSummary item;
   final bool isPreview;
 
-  const AnotherRegisterBookElement({ super.key, required this.item, this.isPreview = false });
+  const RegisterBookElement({ super.key, required this.item, this.isPreview = false });
 
   @override
   Widget build(BuildContext context) {

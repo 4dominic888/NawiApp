@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
 import 'package:nawiapp/presentation/features/search/screens/modals/advanced_register_book_filter_modal.dart';
-import 'package:nawiapp/presentation/widgets/another_register_book_element.dart';
+import 'package:nawiapp/presentation/widgets/register_book_element.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 
 class SearchRegisterBookModule extends ConsumerStatefulWidget {
@@ -78,7 +78,7 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
           padding: const EdgeInsets.all(8.0),
           child: Text(DateFormat('EEEE, d MMM y').format(groupBy), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
         ),
-        itemBuilder: (item) => AnotherRegisterBookElement(item: item, isPreview: false),
+        itemBuilder: (item) => RegisterBookElement(item: item, isPreview: false),
       )
     );
   }
