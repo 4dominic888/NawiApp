@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
@@ -74,5 +75,6 @@ class RegisterBookFilter extends FilterData with EquatableMixin {
     searchByType, pageSize, currentPage, showHidden,
     orderBy, timestampRange
   ];
-  
+
+  bool get isEmpty => props.equals(RegisterBookFilter().props);
 }
