@@ -1,6 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
+import 'package:nawiapp/data/mappers/register_book_mapper.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
+import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/infrastructure/export_report_manager.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
@@ -35,7 +38,7 @@ class RegisterBookExportByDate extends ExportReportManager {
             Expanded(
               child: Container(
                 color: const PdfColor.fromInt(0xe9e9e9),
-                child: Bullet(text: element.action),
+                child: Bullet(text: element.actionUnslug),
               )
             ),
 
@@ -69,7 +72,10 @@ class RegisterBookExportByStudent extends ExportReportManager {
   @override
   List<Widget> buildContent(Context context, Iterable<RegisterBookSummary> data) {
 
-    final mapStudentRegisterBook = data.expand((rb) => rb.mentions.map((s) => MapEntry(s, rb)));
+    final mapStudentRegisterBook = data.expand((rb) {
+      if(rb.mentions.isEmpty) return [MapEntry(StudentSummary(id: '*', name: '[Sin registrar]', age: StudentAge.custom), rb)];
+      return rb.mentions.map((s) => MapEntry(s, rb));
+    });
     final dataOrderedByStudent = groupBy(mapStudentRegisterBook, (entry) => entry.key)
       .map((key, value) => MapEntry(key, value.map((e) => e.value)));
 
@@ -85,7 +91,7 @@ class RegisterBookExportByStudent extends ExportReportManager {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Bullet(text: element.action, textAlign: TextAlign.start),
+                    Bullet(text: element.actionUnslug, textAlign: TextAlign.start),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
