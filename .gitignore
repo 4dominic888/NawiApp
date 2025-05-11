@@ -52,3 +52,6 @@ app.*.map.json
 # Auto generated code
 *.freezed.dart
 *.g.dart
+
+# Report generate
+/test/pdf_test_output/
