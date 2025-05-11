@@ -16,12 +16,15 @@ import 'package:nawiapp/domain/daos/student_register_book_dao.dart';
 import 'package:nawiapp/domain/daos/student_dao.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
+import 'package:nawiapp/infrastructure/fonts/open_sans_font.dart';
 import 'package:nawiapp/presentation/implementations/register_book_service_implement.dart';
 import 'package:nawiapp/presentation/implementations/student_service_implement.dart';
 
   final GetIt _locator = GetIt.instance;
 
   Future<void> setupIntegrationTestLocator({bool withRegisterBook = false}) async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+
     await _locator.reset();
 
     _locator.registerLazySingleton<NawiDatabase>(() => NawiDatabase(DatabaseConnection(
@@ -39,6 +42,7 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
     _locator.registerLazySingleton<RegisterBookServiceBase>(() => 
       RegisterBookServiceImplement(_locator<RegisterBookDAO>(), _locator<StudentRegisterBookDAO>())
     );
+    if(withRegisterBook) _locator.registerLazySingletonAsync<OpenSansFont>(() async => await OpenSansFont.load());
 
     await addingTestData(withRegisterBook);
   }
