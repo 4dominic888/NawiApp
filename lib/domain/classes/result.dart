@@ -1,7 +1,7 @@
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
 
 enum NawiErrorOrigin{
-  repository,
+  dao,
   service,
   presentation,
   other
@@ -14,8 +14,8 @@ interface class NawiError<T> extends Result<T> implements Exception {
 
   NawiError({required super.message, required this.origin, this.stackTrace});
 
-  NawiError.onRepository({required String message, StackTrace? stackTrace}) : 
-    this(message: message, stackTrace: stackTrace, origin: NawiErrorOrigin.repository);
+  NawiError.onDAO({required String message, StackTrace? stackTrace}) : 
+    this(message: message, stackTrace: stackTrace, origin: NawiErrorOrigin.dao);
 
   NawiError.onService({required String message, StackTrace? stackTrace}) : 
     this(message: message, stackTrace: stackTrace, origin: NawiErrorOrigin.service);

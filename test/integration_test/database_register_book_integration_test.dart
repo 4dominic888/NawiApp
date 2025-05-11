@@ -54,7 +54,7 @@ void main() {
 
   test('Eliminado de un registro del cuaderno de registro', () async {
     final service = GetIt.I<RegisterBookServiceBase>();
-    final manyToManyRepo = GetIt.I<StudentRegisterBookRepository>();
+    final manyToManyRepo = GetIt.I<StudentRegisterBookDAO>();
 
     final getResult = await service.getOne('e0449ae1-ec4d-4eec-a0c2-3b6be2ff46f6'); //* Antes de eliminarlo
     final result = await service.deleteOne('e0449ae1-ec4d-4eec-a0c2-3b6be2ff46f6');

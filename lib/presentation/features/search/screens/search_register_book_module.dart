@@ -7,8 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
 import 'package:nawiapp/presentation/features/search/screens/modals/advanced_register_book_filter_modal.dart';
-import 'package:nawiapp/presentation/widgets/another_register_book_element.dart';
+import 'package:nawiapp/presentation/widgets/register_book_element.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
+import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class SearchRegisterBookModule extends ConsumerStatefulWidget {
   const SearchRegisterBookModule({
@@ -36,6 +37,7 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
     final searchNotifier = ref.read(registerBookSummarySearchProvider.notifier);
     final infiniteListController = searchNotifier.controller;
     final filterNotifier = ref.read(registerBookFilterProvider.notifier);
+    final filterWatcher = ref.watch(registerBookFilterProvider);
 
     return Scaffold(
       appBar: SearchFilterField(
@@ -45,6 +47,7 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
             context: context,
             builder: (_) => AdvancedRegisterBookFilterModal(currentFilter: filterNotifier.state)
           );
+
           if(newFilter != null) {
             filterNotifier.state = newFilter;
             searchNotifier.refresh();
@@ -61,6 +64,14 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
             }
           });
         },
+        extraWidget: IconButton(
+          style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
+          icon: const Icon(Icons.cleaning_services),
+          onPressed: filterWatcher.isEmpty ? null : () {
+            filterNotifier.state = RegisterBookFilter();
+            searchNotifier.refresh();
+          }
+        ),
       ),
       body: InfiniteGroupedList(
         controller: infiniteListController,
@@ -78,7 +89,7 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
           padding: const EdgeInsets.all(8.0),
           child: Text(DateFormat('EEEE, d MMM y').format(groupBy), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
         ),
-        itemBuilder: (item) => AnotherRegisterBookElement(item: item, isPreview: false),
+        itemBuilder: (item) => RegisterBookElement(item: item, isPreview: false),
       )
     );
   }

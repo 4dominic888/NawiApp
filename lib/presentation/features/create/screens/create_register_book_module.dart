@@ -6,9 +6,9 @@ import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
 import 'package:nawiapp/presentation/features/create/providers/register_book/create_register_book_form_provider.dart';
-import 'package:nawiapp/presentation/features/create/widgets/another_mention_student_field.dart';
+import 'package:nawiapp/presentation/features/create/widgets/mention_student_field.dart';
 import 'package:nawiapp/presentation/shared/submit_status.dart';
-import 'package:nawiapp/presentation/widgets/another_register_book_element.dart';
+import 'package:nawiapp/presentation/widgets/register_book_element.dart';
 import 'package:nawiapp/presentation/widgets/dropdown_menu_form_field.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
@@ -81,7 +81,7 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
         
             Padding(
               padding: EdgeInsets.all(2),
-              child: AnotherRegisterBookElement(
+              child: RegisterBookElement(
                 isPreview: true,
                 item: RegisterBookSummary(
                   id: registerBookFormState.id,
@@ -146,7 +146,7 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
               readOnly: true,
               onTap: () async {
                 final actionMentionsRecord = await Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => AnotherMentionStudentField(
+                  MaterialPageRoute(builder: (context) => MentionStudentField(
                     action: registerBookFormState.action,
                     mentions: registerBookFormState.mentions,
                   ))

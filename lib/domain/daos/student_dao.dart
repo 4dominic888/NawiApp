@@ -3,37 +3,37 @@ import 'package:drift/remote.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
-import 'package:nawiapp/domain/interfaces/model_drift_repository.dart';
+import 'package:nawiapp/domain/interfaces/model_drift_dao.dart';
 import 'package:nawiapp/data/local/tables/student_table.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
-import 'package:nawiapp/utils/nawi_repository_utils.dart';
+import 'package:nawiapp/utils/nawi_dao_utils.dart';
 
 part 'student_dao.g.dart';
 
 @DriftAccessor(tables: [StudentTable], views: [StudentViewSummaryVersion, HiddenStudentViewSummaryVersion])
-class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRepositoryMixin 
-  implements ModelDriftRepository<
+class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
+  implements ModelDriftDAO<
     StudentTableData,
     StudentTableCompanion,
     StudentViewSummaryVersionData,
     StudentFilter
   >{
 
-  StudentRepository(super.db);
+  StudentDAO(super.db);
 
   @override
   Future<Result<StudentTableData?>> addOne(StudentTableCompanion data) async {
     try {
       final addedStudent = await into(studentTable).insertReturningOrNull(data);
       if(addedStudent != null) return Success(data: addedStudent);
-      throw NawiError.onRepository(message: "Estudiante no agregado");
+      throw NawiError.onDAO(message: "Estudiante no agregado");
     } on DriftRemoteException catch (e) {
       if(e.remoteCause.toString().contains('UNIQUE constraint failed')) {
-        return NawiRepositoryUtils.onCatch("Parece que esta intentando ingresar un estudiante ya existente, intentelo nuevamente");
+        return NawiDAOUtils.onCatch("Parece que esta intentando ingresar un estudiante ya existente, intentelo nuevamente");
       }
-      return NawiRepositoryUtils.onCatch(e);
+      return NawiDAOUtils.onCatch(e);
     }
-    catch (e) { return NawiRepositoryUtils.onCatch(e); }
+    catch (e) { return NawiDAOUtils.onCatch(e); }
     
   }
 
@@ -54,14 +54,14 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
             );
           }
 
-          NawiRepositoryUtils.ageFilter(
+          NawiDAOUtils.ageFilter(
             table: tbl,
             expressions: filterExpressions,
             ageEnumIndex1: params.ageEnumIndex1?.index,
             ageEnumIndex2: params.ageEnumIndex2?.index
           );
 
-          NawiRepositoryUtils.nameStudentFilter(
+          NawiDAOUtils.nameStudentFilter(
             table: tbl,
             expressions: filterExpressions,
             textLike: params.nameLike
@@ -70,9 +70,9 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
           return Expression.and(filterExpressions);
       });
 
-      query = NawiRepositoryUtils.orderByStudent(query: query, orderBy: params.orderBy);
+      query = NawiDAOUtils.orderByStudent(query: query, orderBy: params.orderBy);
 
-      query = NawiRepositoryUtils.infiniteScrollFilter(
+      query = NawiDAOUtils.infiniteScrollFilter(
         query: query,
         pageSize: params.pageSize,
         currentPage: params.currentPage
@@ -86,11 +86,11 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
 
       return Success(data:
         (filteredStudents as Iterable<HiddenStudentViewSummaryVersionData>).map(
-          (e) => NawiRepositoryUtils.studentHiddenToPublic(e)
+          (e) => NawiDAOUtils.studentHiddenToPublic(e)
         )
       );
       
-    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+    } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
   @override
@@ -98,23 +98,23 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
     try {
       final gottenStudent = await (select(studentTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
       if(gottenStudent != null) return Success(data: gottenStudent);
-      throw NawiError.onRepository(message: "No encontrado");
-    } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+      throw NawiError.onDAO(message: "No encontrado");
+    } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
   @override
   Future<Result<bool>> updateOne(StudentTableData data) async {
     try {
       final isUpdated = await update(studentTable).replace(data);
-      if(!isUpdated) throw NawiError.onRepository(message: "Estudiante no actualizado");
+      if(!isUpdated) throw NawiError.onDAO(message: "Estudiante no actualizado");
       return Success(data: true);
     } on DriftRemoteException catch (e) {
       if(e.remoteCause.toString().contains('UNIQUE constraint failed')) {
-        return NawiRepositoryUtils.onCatch("Ya hay un estudiante con estos campos, no es posible sobreescribirlo");
+        return NawiDAOUtils.onCatch("Ya hay un estudiante con estos campos, no es posible sobreescribirlo");
       }
-      return NawiRepositoryUtils.onCatch(e);
+      return NawiDAOUtils.onCatch(e);
     }
-    catch (e) { return NawiRepositoryUtils.onCatch(e); }
+    catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
   @override
@@ -132,7 +132,7 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
           ).first
         );
 
-      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+      } catch (e) { return NawiDAOUtils.onCatch(e); }
     });
   }
 
@@ -150,13 +150,13 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
           )
         ).getSingleOrNull();
         
-        if(studentArchived == null) throw NawiError.onRepository(message: "No se pudo archivar el estudiante, porque no existe o ya ha sido archivado");
+        if(studentArchived == null) throw NawiError.onDAO(message: "No se pudo archivar el estudiante, porque no existe o ya ha sido archivado");
 
         final addingStatement = await into(hiddenStudentTable).insertReturningOrNull(HiddenStudentTableData(hiddenId: id));
-        if(addingStatement == null) throw NawiError.onRepository(message: "Ha ocurrido un problema al intentar archivar al estudiante");
+        if(addingStatement == null) throw NawiError.onDAO(message: "Ha ocurrido un problema al intentar archivar al estudiante");
 
         return Success(data: studentArchived);
-      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+      } catch (e) { return NawiDAOUtils.onCatch(e); }
     });
   }
 
@@ -174,16 +174,16 @@ class StudentRepository extends DatabaseAccessor<NawiDatabase> with _$StudentRep
           )
         ).getSingleOrNull();
 
-        if(studentUnarchived == null) throw NawiError.onRepository(message: "No se pudo desarchivar el estudiante, porque no existe o no esta archivado");
+        if(studentUnarchived == null) throw NawiError.onDAO(message: "No se pudo desarchivar el estudiante, porque no existe o no esta archivado");
 
         final deleteRows = await (
           delete(hiddenStudentTable)..where((tbl) => tbl.hiddenId.equals(id))
         ).go();
 
-        if(deleteRows == 0) throw NawiError.onRepository(message: "Ha ocurrido un error al desarchivar al estudiante");
+        if(deleteRows == 0) throw NawiError.onDAO(message: "Ha ocurrido un error al desarchivar al estudiante");
 
         return Success(data: studentUnarchived);
-      } catch (e) { return NawiRepositoryUtils.onCatch(e); }
+      } catch (e) { return NawiDAOUtils.onCatch(e); }
     });
   }
 }

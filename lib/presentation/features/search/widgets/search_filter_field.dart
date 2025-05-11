@@ -4,13 +4,14 @@ import 'package:nawiapp/utils/nawi_color_utils.dart';
 class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
 
   const SearchFilterField({
-    super.key, this.hintTextField,
+    super.key, this.hintTextField, this.extraWidget,
     required this.filterAction,
     required this.textOnChanged
   });
 
   final String? hintTextField;
   final VoidCallback filterAction;
+  final Widget? extraWidget;
   final void Function(String text) textOnChanged;
 
   @override
@@ -41,20 +42,12 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
             ),
         
             IconButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: NawiColorUtils.secondaryColor
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
               icon: const Icon(Icons.more_horiz_outlined),
               onPressed: filterAction
             ),
-        
-            IconButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: NawiColorUtils.secondaryColor
-              ),
-              icon: const Icon(Icons.cleaning_services),
-              onPressed: null
-            ),
+
+            if(extraWidget case final w?) w //* POG
           ],
         ),
       ),

@@ -12,7 +12,7 @@ import 'package:nawiapp/domain/interfaces/filter_data.dart';
 /// ``[S]`` Es la vista de la clase modelo ``[T]``
 /// 
 /// ``[F]`` es el filtro del modelo, externo a drift que extiende de ``[FilterData]``
-abstract class ModelDriftRepository<
+abstract class ModelDriftDAO<
   T extends DataClass,
   R extends UpdateCompanion<T>,
   S extends DataClass,

@@ -3,7 +3,7 @@ import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
-import 'package:nawiapp/utils/mapper_utils.dart';
+import 'package:nawiapp/utils/nawi_mapper_utils.dart';
 
 extension RegisterBookMapper on RegisterBook {
   static RegisterBook fromTableData(RegisterBookTableData data, Iterable<StudentSummary> mentions) => RegisterBook(

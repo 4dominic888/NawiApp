@@ -15,24 +15,24 @@ void setupLocator() {
   locator.registerLazySingleton<NawiDatabase>(() => NawiDatabase());
 
   //* Repositories
-  locator.registerLazySingleton<StudentRepository>(() => StudentRepository(
+  locator.registerLazySingleton<StudentDAO>(() => StudentDAO(
     locator<NawiDatabase>()
   ));
 
-  locator.registerLazySingleton<RegisterBookRepository>(() => RegisterBookRepository(
+  locator.registerLazySingleton<RegisterBookDAO>(() => RegisterBookDAO(
     locator<NawiDatabase>()
   ));
 
-  locator.registerLazySingleton<StudentRegisterBookRepository>(() => StudentRegisterBookRepository(
+  locator.registerLazySingleton<StudentRegisterBookDAO>(() => StudentRegisterBookDAO(
     locator<NawiDatabase>()
   ));
 
   //* Services
   locator.registerLazySingleton<StudentServiceBase>(() => StudentServiceImplement(
-    locator<StudentRepository>(), locator<StudentRegisterBookRepository>()
+    locator<StudentDAO>(), locator<StudentRegisterBookDAO>()
   ));
 
   locator.registerLazySingleton<RegisterBookServiceBase>(() => RegisterBookServiceImplement(
-    locator<RegisterBookRepository>(), locator<StudentRegisterBookRepository>()
+    locator<RegisterBookDAO>(), locator<StudentRegisterBookDAO>()
   ));
 }

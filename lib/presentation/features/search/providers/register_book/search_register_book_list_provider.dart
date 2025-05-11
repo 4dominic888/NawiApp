@@ -30,5 +30,4 @@ class RegisterBookSummarySearchNotifier extends Notifier<void> {
   }
 
   Future<void> refresh() => controller.refresh();
-
 }

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
@@ -62,4 +63,6 @@ class StudentFilter extends FilterData with EquatableMixin {
 
   @override
   List<Object?> get props => [orderBy, ageEnumIndex1, ageEnumIndex2, nameLike, pageSize, currentPage, showHidden];
+
+  bool get isEmpty => props.equals(StudentFilter().props);
 }

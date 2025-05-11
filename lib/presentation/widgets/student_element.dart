@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/data/mappers/student_mapper.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
@@ -9,6 +10,8 @@ import 'package:nawiapp/presentation/features/create/providers/student/initial_s
 import 'package:nawiapp/presentation/features/create/providers/selectable_element_for_create_provider.dart';
 import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
+import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
+import 'package:nawiapp/presentation/features/search/providers/selectable_element_for_search_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/student/general_loading_search_student_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/student/search_student_list_provider.dart';
 import 'package:nawiapp/presentation/widgets/delete_element_dialog.dart';
@@ -39,19 +42,40 @@ class StudentElement extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundColor: backgroundColor,
-            child: Text(item.initalsName),
-          ),
+          _StudentCircularAvatar(backgroundColor: backgroundColor, item: item),
           
           const SizedBox(width: 12),
 
-          Expanded(
-            child: _StudentElementInfo(item: item)
-          ),
+          Expanded(child: _StudentElementInfo(item: item)),
 
           if(!isPreview) _StudentElementOptions(item: item)
         ],
+      ),
+    );
+  }
+}
+
+class _StudentCircularAvatar extends ConsumerWidget {
+  const _StudentCircularAvatar({
+    required this.backgroundColor,
+    required this.item,
+  });
+
+  final Color backgroundColor;
+  final StudentSummary item;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return InkResponse(
+      containedInkWell: true,
+      customBorder: const CircleBorder(),
+      onTap: () {
+        ref.read(registerBookFilterProvider.notifier).state = ref.read(registerBookFilterProvider.notifier).state.copyWith(searchByStudentsId: [item.id]);
+        ref.read(selectableElementForSearchProvider.notifier).state = RegisterBook;
+      },
+      child: CircleAvatar(
+        backgroundColor: backgroundColor,
+        child: Text(item.initalsName),
       ),
     );
   }

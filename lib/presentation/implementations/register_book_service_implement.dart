@@ -13,8 +13,8 @@ import 'package:uuid/uuid.dart';
 
 interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
 
-  final StudentRegisterBookRepository studentRegisterBookRepo;
-  final RegisterBookRepository registerBookRepo;
+  final StudentRegisterBookDAO studentRegisterBookRepo;
+  final RegisterBookDAO registerBookRepo;
 
   RegisterBookServiceImplement(this.registerBookRepo, this.studentRegisterBookRepo);
 

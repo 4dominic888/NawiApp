@@ -11,6 +11,7 @@ import 'package:nawiapp/presentation/features/search/providers/student/search_st
 import 'package:nawiapp/presentation/widgets/student_element.dart';
 import 'package:nawiapp/presentation/features/search/screens/modals/advanced_student_filter_modal.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
+import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class SearchStudentModule extends ConsumerStatefulWidget {
   const SearchStudentModule({
@@ -34,9 +35,10 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
   @override
   Widget build(BuildContext context) {
 
-    final notifier = ref.read(studentSummarySearchProvider.notifier);
-    final controller = notifier.pagingController;
+    final seachNotifier = ref.read(studentSummarySearchProvider.notifier);
+    final controller = seachNotifier.pagingController;
     final filterNotifier = ref.read(studentFilterProvider.notifier);
+    final filterWatcher = ref.watch(studentFilterProvider);
 
     return LoadingOverlay(
       color: Colors.black.withAlpha(120),
@@ -47,10 +49,12 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
           filterAction: () async {
             final newFilter = await showDialog<StudentFilter?>(
               context: context,
-              builder: (_) => AdvancedStudentFilterModal(currentFilter: filterNotifier.state));
+              builder: (_) => AdvancedStudentFilterModal(currentFilter: filterNotifier.state)
+            );
+            
             if(newFilter != null) {
               filterNotifier.state = newFilter;
-              notifier.refresh();
+              seachNotifier.refresh();
             }
           },
           textOnChanged: (text) {
@@ -60,13 +64,21 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
       
               if(filterNotifier.state != newFilter) {
                 filterNotifier.state = newFilter;
-                notifier.refresh();
+                seachNotifier.refresh();
               }
             });
           },
+          extraWidget: IconButton(
+            style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
+            icon: const Icon(Icons.cleaning_services),
+            onPressed: filterWatcher.isEmpty ? null : () {
+              filterNotifier.state = StudentFilter();
+              seachNotifier.refresh();
+            },
+          ),
         ),
         body: RefreshIndicator(
-          onRefresh: notifier.refresh,
+          onRefresh: seachNotifier.refresh,
           child: PagedListView(
             pagingController: controller,
             builderDelegate: PagedChildBuilderDelegate<StudentSummary>(

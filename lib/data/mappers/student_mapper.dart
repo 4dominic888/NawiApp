@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
-import 'package:nawiapp/utils/mapper_utils.dart';
+import 'package:nawiapp/utils/nawi_mapper_utils.dart';
 
 extension StudentMapper on Student {
   static Student fromTableData(StudentTableData data) {
