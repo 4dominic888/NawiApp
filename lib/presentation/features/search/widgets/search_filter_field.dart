@@ -4,14 +4,14 @@ import 'package:nawiapp/utils/nawi_color_utils.dart';
 class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
 
   const SearchFilterField({
-    super.key, this.hintTextField, this.extraWidget,
+    super.key, this.hintTextField, this.extraWidget = const [],
     required this.filterAction,
     required this.textOnChanged
   });
 
   final String? hintTextField;
   final VoidCallback filterAction;
-  final Widget? extraWidget;
+  final List<Widget> extraWidget;
   final void Function(String text) textOnChanged;
 
   @override
@@ -47,7 +47,7 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
               onPressed: filterAction
             ),
 
-            if(extraWidget case final w?) w //* POG
+            Row(children: extraWidget)
           ],
         ),
       ),

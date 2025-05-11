@@ -68,14 +68,16 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
               }
             });
           },
-          extraWidget: IconButton(
-            style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
-            icon: const Icon(Icons.cleaning_services),
-            onPressed: filterWatcher.isEmpty ? null : () {
-              filterNotifier.state = StudentFilter();
-              seachNotifier.refresh();
-            },
-          ),
+          extraWidget: [
+            IconButton(
+              style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
+              icon: const Icon(Icons.cleaning_services),
+              onPressed: filterWatcher.isEmpty ? null : () {
+                filterNotifier.state = StudentFilter();
+                seachNotifier.refresh();
+              },
+            )
+          ]
         ),
         body: RefreshIndicator(
           onRefresh: seachNotifier.refresh,
