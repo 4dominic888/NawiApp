@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:file_selector/file_selector.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
@@ -10,6 +9,7 @@ import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/infrastructure/fonts/open_sans_font.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 abstract class ExportReportManager {
 
@@ -45,13 +45,19 @@ abstract class ExportReportManager {
 
   Future<Uint8List> getBytes(Document document) async => await document.save();
   
-  
-  Future<File?> saveToUserLocation(Document document) async {
-    final bytes = await document.save();
-    final fileSaveLocation = await getSaveLocation(suggestedName: 'cuaderno_de_registro_reporte_${DateFormat('ddMMyhhmm').format(DateTime.now())}.pdf');
-    if(fileSaveLocation == null) return null;
-    final file = File(fileSaveLocation.path);
-    await file.writeAsBytes(bytes);
-    return file;
+  static Future<Result<bool>> saveToUserLocation(Uint8List bytes) async {
+    try {
+      final fileSaveLocation = await FilePicker.platform.saveFile(
+        dialogTitle: 'Selecciona un directorio para guardar el reporte',
+        fileName: 'cuaderno_de_registro_reporte_${DateFormat('ddMMyhhmm').format(DateTime.now())}.pdf',
+        initialDirectory: (await path_provider.getApplicationDocumentsDirectory()).path,
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        bytes: bytes,
+      );
+      
+      if(fileSaveLocation == null) return Success(data: false);
+      return Success(data: true, message: 'Se ha guardado el archivo correctamente');
+    } catch (e) { return NawiError.onPresentation(message: e.toString()); }
   }
 }
