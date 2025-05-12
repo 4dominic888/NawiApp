@@ -11,8 +11,8 @@ import 'package:nawiapp/presentation/features/create/providers/register_book/ini
 import 'package:nawiapp/presentation/features/create/providers/selectable_element_for_create_provider.dart';
 import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
+import 'package:nawiapp/presentation/features/home/providers/general_loading_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
-import 'package:nawiapp/presentation/features/search/providers/student/general_loading_search_student_provider.dart';
 import 'package:nawiapp/presentation/widgets/delete_element_dialog.dart';
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
@@ -82,7 +82,7 @@ class _RegisterBookElementOptions extends ConsumerWidget {
         IconButton(
           icon: const Icon(Icons.edit), style: Theme.of(context).elevatedButtonTheme.style,
           onPressed: () async {
-            final loading = ref.read(generalLoadingSearchStudentProvider.notifier);
+            final loading = ref.read(generalLoadingProvider.notifier);
             loading.state = true;
 
             final studentToEdit = await GetIt.I<RegisterBookServiceBase>().getOne(item.id);

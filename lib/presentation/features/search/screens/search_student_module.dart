@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:loading_overlay/loading_overlay.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
-import 'package:nawiapp/presentation/features/search/providers/student/general_loading_search_student_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/student/search_student_list_provider.dart';
 import 'package:nawiapp/presentation/widgets/student_element.dart';
 import 'package:nawiapp/presentation/features/search/screens/modals/advanced_student_filter_modal.dart';
@@ -40,62 +38,58 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
     final filterNotifier = ref.read(studentFilterProvider.notifier);
     final filterWatcher = ref.watch(studentFilterProvider);
 
-    return LoadingOverlay(
-      color: Colors.black.withAlpha(120),
-      isLoading: ref.watch(generalLoadingSearchStudentProvider),
-      child: Scaffold(
-        appBar: SearchFilterField(
-          hintTextField: 'Búsqueda por nombre...',
-          filterAction: () async {
-            final newFilter = await showDialog<StudentFilter?>(
-              context: context,
-              builder: (_) => AdvancedStudentFilterModal(currentFilter: filterNotifier.state)
-            );
-            
-            if(newFilter != null) {
+    return Scaffold(
+      appBar: SearchFilterField(
+        hintTextField: 'Búsqueda por nombre...',
+        filterAction: () async {
+          final newFilter = await showDialog<StudentFilter?>(
+            context: context,
+            builder: (_) => AdvancedStudentFilterModal(currentFilter: filterNotifier.state)
+          );
+          
+          if(newFilter != null) {
+            filterNotifier.state = newFilter;
+            seachNotifier.refresh();
+          }
+        },
+        textOnChanged: (text) {
+          debounce?.cancel();
+          debounce = Timer(const Duration(milliseconds: 500), () {
+            final newFilter = filterNotifier.state.copyWith(nameLike: text);
+    
+            if(filterNotifier.state != newFilter) {
               filterNotifier.state = newFilter;
               seachNotifier.refresh();
             }
-          },
-          textOnChanged: (text) {
-            debounce?.cancel();
-            debounce = Timer(const Duration(milliseconds: 500), () {
-              final newFilter = filterNotifier.state.copyWith(nameLike: text);
-      
-              if(filterNotifier.state != newFilter) {
-                filterNotifier.state = newFilter;
-                seachNotifier.refresh();
-              }
-            });
-          },
-          extraWidget: [
-            IconButton(
-              style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
-              icon: const Icon(Icons.cleaning_services),
-              onPressed: filterWatcher.isEmpty ? null : () {
-                filterNotifier.state = StudentFilter();
-                seachNotifier.refresh();
-              },
-            )
-          ]
-        ),
-        body: RefreshIndicator(
-          onRefresh: seachNotifier.refresh,
-          child: PagedListView(
-            pagingController: controller,
-            builderDelegate: PagedChildBuilderDelegate<StudentSummary>(
-              itemBuilder: (_, item, __) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: StudentElement(item: item),
-              ),
-              firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
-              newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
-              noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay estudiantes registrados")),
-              noMoreItemsIndicatorBuilder: (_) => const Center(child: Text("No más estudiantes a cargar")),
-              firstPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información")),
-              newPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información"))            
-            )
-          ),
+          });
+        },
+        extraWidget: [
+          IconButton(
+            style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
+            icon: const Icon(Icons.cleaning_services),
+            onPressed: filterWatcher.isEmpty ? null : () {
+              filterNotifier.state = StudentFilter();
+              seachNotifier.refresh();
+            },
+          )
+        ]
+      ),
+      body: RefreshIndicator(
+        onRefresh: seachNotifier.refresh,
+        child: PagedListView(
+          pagingController: controller,
+          builderDelegate: PagedChildBuilderDelegate<StudentSummary>(
+            itemBuilder: (_, item, __) => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: StudentElement(item: item),
+            ),
+            firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+            newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+            noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay estudiantes registrados")),
+            noMoreItemsIndicatorBuilder: (_) => const Center(child: Text("No más estudiantes a cargar")),
+            firstPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información")),
+            newPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información"))            
+          )
         ),
       ),
     );

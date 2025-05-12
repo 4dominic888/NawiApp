@@ -7,7 +7,10 @@ import 'package:intl/intl.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/infrastructure/export_report_manager.dart';
 import 'package:nawiapp/infrastructure/register_book_export.dart';
-import 'package:nawiapp/presentation/features/export/screens/view_pdf.dart';
+import 'package:nawiapp/presentation/features/export/providers/initial_pdf_bytes_data_provider.dart';
+import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
+import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
+import 'package:nawiapp/presentation/features/home/providers/general_loading_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
 import 'package:nawiapp/presentation/features/search/screens/modals/advanced_register_book_filter_modal.dart';
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
@@ -51,7 +54,7 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
             context: context,
             builder: (_) => AdvancedRegisterBookFilterModal(currentFilter: filterNotifier.state)
           );
-
+    
           if(newFilter != null) {
             filterNotifier.state = newFilter;
             searchNotifier.refresh();
@@ -77,7 +80,7 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
               searchNotifier.refresh();
             }
           ),
-
+    
           IconButton(
             style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
             icon: const Icon(Icons.picture_as_pdf),
@@ -96,22 +99,28 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
                   )
                 ]
               );
-
+    
               if(optionToExport != null) {
                 final documentResult = await optionToExport.generate(filterNotifier.state.withouPagination);
-
+    
                 documentResult.onValue(
                   withPopup: false,
                   onError: (error, message) => NotificationMessage.showErrorNotification(message),
                   onSuccessfully: (data, message) async {
+                    //* Provider de cargado
+                    final loading = ref.read(generalLoadingProvider.notifier);
+                    loading.state = true;
+    
+                    //* Cargando PDF a exportar en memoria
                     final pdfData = await optionToExport.getBytes(data);
-                    if(!context.mounted) return;
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => ViewPdf(pdfData: pdfData),
-                    ));
+                    ref.read(initialPdfBytesDataProvider.notifier).state = pdfData;
+                    loading.state = false;
+    
+                    //* Diriengose al tab de exportar
+                    ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.export);
                   },
                 );
-
+    
               }
             },
           )
