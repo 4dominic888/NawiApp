@@ -69,6 +69,15 @@ class RegisterBookFilter extends FilterData with EquatableMixin {
       timestampRange: timestampRange ?? this.timestampRange
     );
 
+  RegisterBookFilter get withouPagination => RegisterBookFilter(
+    actionLike: actionLike,
+    orderBy: orderBy,
+    searchByStudentsId: searchByStudentsId,
+    searchByType: searchByType,
+    studentNameLike: studentNameLike,
+    timestampRange: timestampRange
+  );
+
   @override
   List<Object?> get props => [
     studentNameLike, actionLike, searchByStudentsId,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/infrastructure/export_report_manager.dart';
@@ -12,8 +13,8 @@ void main() {
   setUp(() async => await testil.setupIntegrationTestLocator(withRegisterBook: true));
   tearDown(testil.onTearDownSetupIntegrationTestLocator);  
   test("Correcta estructura de pdf", () async {
-    final query = RegisterBookFilter();
-    final ExportReportManager exporter = RegisterBookExport();
+    final query = RegisterBookFilter(orderBy: RegisterBookViewOrderByType.timestampOldy);
+    final ExportReportManager exporter = RegisterBookExportByDate();
     
     final result = await exporter.generate(query);
     testil.customExpect(result, isA<Success>(),

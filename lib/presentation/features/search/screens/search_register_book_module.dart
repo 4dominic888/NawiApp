@@ -5,8 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_grouped_list/infinite_grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
+import 'package:nawiapp/infrastructure/export_report_manager.dart';
+import 'package:nawiapp/infrastructure/register_book_export.dart';
+import 'package:nawiapp/presentation/features/export/providers/initial_pdf_bytes_data_provider.dart';
+import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
+import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
+import 'package:nawiapp/presentation/features/home/providers/general_loading_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
 import 'package:nawiapp/presentation/features/search/screens/modals/advanced_register_book_filter_modal.dart';
+import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:nawiapp/presentation/widgets/register_book_element.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
@@ -30,14 +37,14 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
 
     final searchNotifier = ref.read(registerBookSummarySearchProvider.notifier);
     final infiniteListController = searchNotifier.controller;
     final filterNotifier = ref.read(registerBookFilterProvider.notifier);
-    final filterWatcher = ref.watch(registerBookFilterProvider);
+    final RegisterBookFilter filterWatcher = ref.watch(registerBookFilterProvider);
+    final int elementCountWatcher = ref.watch(registerBookSummarySearchProvider);
 
     return Scaffold(
       appBar: SearchFilterField(
@@ -47,7 +54,7 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
             context: context,
             builder: (_) => AdvancedRegisterBookFilterModal(currentFilter: filterNotifier.state)
           );
-
+    
           if(newFilter != null) {
             filterNotifier.state = newFilter;
             searchNotifier.refresh();
@@ -64,14 +71,60 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
             }
           });
         },
-        extraWidget: IconButton(
-          style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
-          icon: const Icon(Icons.cleaning_services),
-          onPressed: filterWatcher.isEmpty ? null : () {
-            filterNotifier.state = RegisterBookFilter();
-            searchNotifier.refresh();
-          }
-        ),
+        extraWidget: [
+          IconButton(
+            style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
+            icon: const Icon(Icons.cleaning_services),
+            onPressed: filterWatcher.isEmpty ? null : () {
+              filterNotifier.state = RegisterBookFilter();
+              searchNotifier.refresh();
+            }
+          ),
+    
+          IconButton(
+            style: ElevatedButton.styleFrom(backgroundColor: NawiColorUtils.secondaryColor),
+            icon: const Icon(Icons.picture_as_pdf),
+            onPressed: elementCountWatcher == 0 ? null : () async {
+              final optionToExport = await showMenu<ExportReportManager>(
+                context: context,
+                position: RelativeRect.fromLTRB(100, 100, 0, 0),
+                items: [
+                  PopupMenuItem<ExportReportManager>(
+                    value: RegisterBookExportByDate(),
+                    child: const Text('Por fecha')
+                  ),
+                  PopupMenuItem<ExportReportManager>(
+                    value: RegisterBookExportByStudent(),
+                    child: const Text('Por estudiante')
+                  )
+                ]
+              );
+    
+              if(optionToExport != null) {
+                final documentResult = await optionToExport.generate(filterNotifier.state.withouPagination);
+    
+                documentResult.onValue(
+                  withPopup: false,
+                  onError: (error, message) => NotificationMessage.showErrorNotification(message),
+                  onSuccessfully: (data, message) async {
+                    //* Provider de cargado
+                    final loading = ref.read(generalLoadingProvider.notifier);
+                    loading.state = true;
+    
+                    //* Cargando PDF a exportar en memoria
+                    final pdfData = await optionToExport.getBytes(data);
+                    ref.read(initialPdfBytesDataProvider.notifier).state = pdfData;
+                    loading.state = false;
+    
+                    //* Diriengose al tab de exportar
+                    ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.export);
+                  },
+                );
+    
+              }
+            },
+          )
+        ]
       ),
       body: InfiniteGroupedList(
         controller: infiniteListController,
