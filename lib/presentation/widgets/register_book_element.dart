@@ -29,7 +29,7 @@ class RegisterBookElement extends StatelessWidget {
 
     return Card(
       child: ListTile(
-        title: Text(item.actionUnslug),
+        title: Text(item.action.isEmpty ? '[Acción sin establecer]' : item.actionUnslug),
         trailing: 
         Column(
           children: [

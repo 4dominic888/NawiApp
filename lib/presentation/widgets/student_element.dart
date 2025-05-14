@@ -151,7 +151,7 @@ class _StudentElementInfo extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(item.name, style: Theme.of(context).textTheme.titleMedium, overflow: TextOverflow.ellipsis),
+        Text(item.name.isEmpty ? '<Sin nombre>' : item.name, style: Theme.of(context).textTheme.titleMedium, overflow: TextOverflow.ellipsis),
         Text(item.age.name, style: Theme.of(context).textTheme.titleSmall)
       ],
     );
