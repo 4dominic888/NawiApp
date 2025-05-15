@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nawiapp/infrastructure/export_report_manager.dart';
+import 'package:nawiapp/infrastructure/export/export_report_manager.dart';
 import 'package:nawiapp/presentation/features/export/providers/initial_pdf_bytes_data_provider.dart';
 import 'package:nawiapp/presentation/features/export/widgets/empty_export_widget.dart';
 import 'package:nawiapp/presentation/widgets/notification_message.dart';

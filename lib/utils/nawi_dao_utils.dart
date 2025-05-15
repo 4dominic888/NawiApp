@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
+import 'package:nawiapp/domain/classes/filter/classroom_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 
@@ -48,6 +49,13 @@ class NawiDAOUtils {
     }
   }
 
+  /// Solo para la tabla `classroom` donde se filtra por nombre
+  static void nameClassroomFilter({required List<Expression<bool>> expressions, String? textLike, required dynamic table}) {
+    if(textLike != null && textLike.isNotEmpty) {
+      expressions.add((table.name as GeneratedColumn<String>).contains(textLike));
+    }
+  }
+
   /// Solo para la tabla `register_book`, donde se filtra por accion
   static void actionFilter({required List<Expression<bool>> expressions, String? textLike, required dynamic table}) {
     if(textLike != null && textLike.isNotEmpty) {
@@ -79,6 +87,17 @@ class NawiDAOUtils {
       RegisterBookViewOrderByType.timestampOldy => query..orderBy([(u) => OrderingTerm.asc(u.createdAt)]),
       RegisterBookViewOrderByType.actionAsc => query..orderBy([(u) => OrderingTerm.asc(u.action)]),
       RegisterBookViewOrderByType.actionDesc => query..orderBy([(u) => OrderingTerm.desc(u.action)]),
+    };
+    return query;
+  }
+
+  /// Solo para la tabla `classroom`, donde se ordena en base a ciertos criterios
+  static SimpleSelectStatement<T, R> orderByClassrrom<T extends HasResultSet, R>({required dynamic query, required ClassroomOrderBy orderBy}) {
+    query = switch (orderBy) {
+      ClassroomOrderBy.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.createdAt)]),
+      ClassroomOrderBy.timestampOldy => query..orderBy([(u) => OrderingTerm.asc(u.createdAt)]),
+      ClassroomOrderBy.nameAsc => query..orderBy([(u) => OrderingTerm.asc(u.name)]),
+      ClassroomOrderBy.nameDesc => query..orderBy([(u) => OrderingTerm.desc(u.name)]),
     };
     return query;
   }

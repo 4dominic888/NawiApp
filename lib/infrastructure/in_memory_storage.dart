@@ -1,0 +1,3 @@
+class InMemoryStorage {
+  String? currentClassroomId;
+}

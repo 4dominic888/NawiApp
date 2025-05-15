@@ -25,9 +25,12 @@ class RegisterBook with _$RegisterBook {
   @override
   final String action;
 
+  @override
+  final String classroomId;  
+
   RegisterBook({
     this.id = '*',
-    required this.action, this.mentions = const [],
+    required this.action, this.mentions = const [], this.classroomId = '*',
     this.type = RegisterBookType.register, this.notes,
     required this.createdAt
   });

@@ -4,7 +4,7 @@ import 'package:nawiapp/data/mappers/register_book_mapper.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
-import 'package:nawiapp/infrastructure/export_report_manager.dart';
+import 'package:nawiapp/infrastructure/export/export_report_manager.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
