@@ -119,6 +119,7 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
   Classroom classroomLowestName = listOfClassroom.reduce((a, b) => a.name.compareTo(b.name) > 0 ? a : b);
 
   Future<void> addingTestData(bool withRegisterBook) async {
+    GetIt.I<InMemoryStorage>().currentClassroomId = '6615024f-0153-4492-b06e-0cb108f90ac6';
 
     final classroomService = GetIt.I<ClassroomServiceBase>();
     await Future.wait(listOfClassroom.map((e) => classroomService.addOne(e)));
