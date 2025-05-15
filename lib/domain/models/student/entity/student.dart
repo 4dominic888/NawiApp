@@ -9,7 +9,7 @@ class Student with _$Student {
   Student({
     this.id = '*',
     required this.name, required this.age,
-    this.notes, DateTime? timestamp
+    this.notes, this.classroomId = '*', DateTime? timestamp
   }) : timestamp = timestamp ?? DateTime.now();
 
   Student.empty() : this(name: '', age: StudentAge.threeYears);
@@ -30,12 +30,15 @@ class Student with _$Student {
   final DateTime timestamp;
 
   @override
-  int get hashCode => name.hashCode ^ age.hashCode;
+  final String classroomId;
+
+  @override
+  int get hashCode => name.hashCode ^ age.hashCode ^ classroomId.hashCode;
 
   @override
   bool operator ==(Object other) {
     if(identical(this, other)) return true;
     return (other is Student) &&
-    other.name == name && other.age == age && other.id == id;
+    other.name == name && other.age == age && other.id == id && other.classroomId == classroomId;
   }  
 }

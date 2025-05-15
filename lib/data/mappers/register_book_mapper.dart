@@ -23,7 +23,7 @@ extension RegisterBookMapper on RegisterBook {
     type: type,
     createdAt: createdAt,
     notes: notes,
-    classroom: '*'
+    classroom: classroomId
   );
 
   RegisterBookTableCompanion toTableCompanion({bool withId = false}) => RegisterBookTableCompanion(
