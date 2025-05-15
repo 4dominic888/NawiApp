@@ -32,6 +32,33 @@ abstract class ModelDriftDAO<
   @override Future<Result<T>> unarchiveOne(String id);
 }
 
+/// Esta clase abstracta fusiona todas las funciones que tiene un CRUD, sin archivar.
+/// Se puede ver tambien como la abstracción general de un repositorio
+///
+/// ``[T]`` es la clase modelo de drift
+/// 
+/// ``[R]`` es similar a ``[T]`` pero con Companion al lado en su nombre
+/// 
+/// ``[S]`` Es la vista de la clase modelo ``[T]``
+/// 
+/// ``[F]`` es el filtro del modelo, externo a drift que extiende de ``[FilterData]``
+abstract class ModelDriftDAOWithouArchieve<
+  T extends DataClass,
+  R extends UpdateCompanion<T>,
+  S extends DataClass,
+  F extends FilterData
+> implements 
+    AddingModelDriftRepository<T,R>,
+    GettingModelDriftRepository<T,S,F>,
+    UpdatingModelDriftRepository<T>,
+    DeletingModelDriftRepository<T> {
+  @override Future<Result<T?>> addOne(R data);
+  @override Future<Result<Iterable<S>>> getAll(F params);
+  @override Future<Result<T>> getOne(String id);
+  @override Future<Result<bool>> updateOne(T data);
+  @override Future<Result<T>> deleteOne(String id);
+}
+
 /// ``[T]`` es la clase modelo de drift
 /// 
 /// ``[R]`` es similar a ``[T]`` pero con Companion al lado en su nombre
