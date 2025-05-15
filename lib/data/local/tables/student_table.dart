@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:nawiapp/data/local/tables/classroom_table.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/utils/nawi_general_utils.dart';
 
@@ -11,6 +12,7 @@ class StudentTable extends Table {
   late final age = intEnum<StudentAge>()();
   late final notes = text().nullable()();
   late final timestamp = dateTime()();
+  late final classroom = text().references(ClassroomTable, #id)();
 
   @override
   Set<Column<Object>>? get primaryKey => {id};

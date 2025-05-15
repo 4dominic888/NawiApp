@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:drift/drift.dart';
+import 'package:nawiapp/data/local/tables/classroom_table.dart';
 import 'package:nawiapp/data/local/tables/hidden_register_book_table.dart';
 import 'package:nawiapp/data/local/tables/hidden_student_table.dart';
 import 'package:nawiapp/data/local/tables/register_book_table.dart';
@@ -9,6 +10,7 @@ import 'package:nawiapp/data/local/tables/student_register_book_table.dart';
 import 'package:nawiapp/data/local/tables/student_table.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
+import 'package:nawiapp/domain/models/classroom/entity/classroom_status.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/daos/register_book_dao.dart';
@@ -39,7 +41,7 @@ LazyDatabase _openConnection() {
 }
 
 @DriftDatabase(
-  tables: [StudentTable, RegisterBookTable, StudentRegisterBookTable, HiddenStudentTable, HiddenRegisterBookTable],
+  tables: [StudentTable, RegisterBookTable, StudentRegisterBookTable, HiddenStudentTable, HiddenRegisterBookTable, ClassroomTable],
   daos: [StudentDAO, RegisterBookDAO, StudentRegisterBookDAO],
   views: [StudentViewSummaryVersion, HiddenStudentViewSummaryVersion, RegisterBookViewSummaryVersion, HiddenRegisterBookViewSummaryVersion]
 )

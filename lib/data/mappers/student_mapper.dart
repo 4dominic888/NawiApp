@@ -18,7 +18,8 @@ extension StudentMapper on Student {
     name: name,
     age: age,
     timestamp: timestamp,
-    notes: notes
+    notes: notes,
+    classroom: '*'
   );
 
   StudentTableCompanion toTableCompanion({bool withId = false}) => StudentTableCompanion(
