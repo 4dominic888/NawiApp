@@ -15,7 +15,8 @@ class NawiDAOUtils {
     id: data.id,
     name: data.name,
     age: data.age,
-    timestamp: data.timestamp
+    timestamp: data.timestamp,
+    classroom: data.classroom
   );
 
   /// Para convertir un [HiddenRegisterBookViewSummaryVersionData] a un [RegisterBookViewSummaryVersionData]
@@ -24,6 +25,7 @@ class NawiDAOUtils {
     action: data.action,
     createdAt: data.createdAt,
     type: data.type,
+    classroom: data.classroom
   );
 
   /// [NawiError] por defecto en bloques try catch

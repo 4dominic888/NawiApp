@@ -20,10 +20,14 @@ class RegisterBookSummary with _$RegisterBookSummary {
 
   @override
   final String action;
+
+  @override
+  final String classroomId;
   
   const RegisterBookSummary({
     required this.id, required this.action,
     required this.createdAt,
-    required this.type, required this.mentions
+    required this.type, required this.mentions,
+    this.classroomId = '*'
   });
 }

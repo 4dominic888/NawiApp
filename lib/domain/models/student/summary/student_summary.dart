@@ -15,10 +15,13 @@ class StudentSummary with _$StudentSummary{
   @override
   final StudentAge age;
 
-  const StudentSummary({required this.id, required this.name, required this.age});
+  const StudentSummary({required this.id, required this.name, required this.age, this.classroomId = '*'});
 
   @override
   int get hashCode => name.hashCode ^ age.hashCode;
+
+  @override
+  final String classroomId;  
 
   @override
   bool operator ==(Object other) {
