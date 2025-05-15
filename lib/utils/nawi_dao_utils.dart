@@ -69,6 +69,12 @@ class NawiDAOUtils {
     }
   }
 
+  static void classroomFilter({required List<Expression<bool>> expressions, String? classroomId, required dynamic table}) {
+    if(classroomId != null) {
+      expressions.add((table.classroom as GeneratedColumn<String>).equals(classroomId));
+    }
+  }
+
   /// Solo para la tabla `student`, donde se ordena en base a ciertos criterios
   static SimpleSelectStatement<T, R> orderByStudent<T extends HasResultSet, R>({required dynamic query, required StudentViewOrderByType orderBy}) {
     query = switch (orderBy) {

@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:get_it/get_it.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
@@ -6,6 +7,7 @@ import 'package:nawiapp/domain/interfaces/model_drift_dao.dart';
 import 'package:nawiapp/data/local/tables/register_book_table.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/daos/student_register_book_dao.dart';
+import 'package:nawiapp/infrastructure/in_memory_storage.dart';
 import 'package:nawiapp/utils/nawi_dao_utils.dart';
 
 part 'register_book_dao.g.dart';
@@ -33,6 +35,8 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
   @override
   Future<Result<Iterable<RegisterBookViewSummaryVersionData>>> getAll(RegisterBookFilter params) async {
     try {
+      final memoryStorage = GetIt.I<InMemoryStorage>();
+      
       final registersIdByStudentResult = await _getRegisterBookIdByStudents(params.searchByStudentsId);
       if(registersIdByStudentResult is NawiError) return registersIdByStudentResult.getError()!;
 
@@ -41,6 +45,12 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
       var query = (params.notShowHidden ? select(registerBookViewSummaryVersion) : select(hiddenRegisterBookViewSummaryVersion))
         ..where((tbl) {
           final List<Expression<bool>> filterExpressions = [];
+
+          NawiDAOUtils.classroomFilter(
+            expressions: filterExpressions,
+            table: tbl,
+            classroomId: memoryStorage.currentClassroomId
+          );          
 
           if(params.notShowHidden) {
             filterExpressions.add(
