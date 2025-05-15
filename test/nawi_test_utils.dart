@@ -7,6 +7,9 @@ import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
+import 'package:nawiapp/domain/daos/classroom_dao.dart';
+import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
+import 'package:nawiapp/domain/models/classroom/entity/classroom_status.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
@@ -14,9 +17,12 @@ import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/daos/register_book_dao.dart';
 import 'package:nawiapp/domain/daos/student_register_book_dao.dart';
 import 'package:nawiapp/domain/daos/student_dao.dart';
+import 'package:nawiapp/domain/services/classroom_service_base.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/infrastructure/fonts/open_sans_font.dart';
+import 'package:nawiapp/infrastructure/in_memory_storage.dart';
+import 'package:nawiapp/presentation/implementations/classroom_service_implement.dart';
 import 'package:nawiapp/presentation/implementations/register_book_service_implement.dart';
 import 'package:nawiapp/presentation/implementations/student_service_implement.dart';
 
@@ -35,13 +41,22 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
     _locator.registerLazySingleton<StudentDAO>(() => StudentDAO(_locator<NawiDatabase>()));
     _locator.registerLazySingleton<RegisterBookDAO>(() => RegisterBookDAO(_locator<NawiDatabase>()));
     _locator.registerLazySingleton<StudentRegisterBookDAO>(() => StudentRegisterBookDAO(_locator<NawiDatabase>()));
+    _locator.registerLazySingleton<ClassroomDAO>(() => ClassroomDAO(_locator<NawiDatabase>()));
 
     _locator.registerLazySingleton<StudentServiceBase>(() => 
       StudentServiceImplement(_locator<StudentDAO>(), _locator<StudentRegisterBookDAO>())
     );
+
     _locator.registerLazySingleton<RegisterBookServiceBase>(() => 
       RegisterBookServiceImplement(_locator<RegisterBookDAO>(), _locator<StudentRegisterBookDAO>())
     );
+
+    _locator.registerLazySingleton<ClassroomServiceBase>(() =>
+      ClassroomServiceImplement(_locator<ClassroomDAO>())
+    );
+
+    _locator.registerLazySingleton<InMemoryStorage>(() => InMemoryStorage());
+
     if(withRegisterBook) _locator.registerLazySingletonAsync<OpenSansFont>(() async => await OpenSansFont.load());
 
     await addingTestData(withRegisterBook);
@@ -53,29 +68,41 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
   }
 
   final listOfStudents = <Student>[
-    Student(id: '1d03982a-7a0a-40f2-adb4-1e90c2550485', name: "Jose Olaya", age: StudentAge.threeYears).copyWith(timestamp: DateTime(2025, 1, 8)),
-    Student(id: '9d95e4ee-8706-485d-b2a9-614583a05296', name: "Pablo Rojas", age: StudentAge.fourYears).copyWith(timestamp: DateTime(2025, 1, 9)),
-    Student(id: '580e4114-98c8-4b80-92ea-b44c140f26e3', name: "Mendo Cabrera", age: StudentAge.fiveYears).copyWith(timestamp: DateTime(2025, 2, 1)),
-    Student(id: '194c4084-0fdf-49f2-86d7-766b7607ce0b', name: "Bruno Sorias Alias El Cumbia Ninja", age: StudentAge.threeYears).copyWith(timestamp: DateTime(2025, 5, 1)),
-    Student(id: '8722e6e9-6178-4296-948a-7fb3db196d44', name: "Gerardo Días", age: StudentAge.fourYears).copyWith(timestamp: DateTime(2025, 3, 20)),
-    Student(id: '980bbf70-48de-4946-8d8f-de06a39d7611', name: "Leonardo Da Vinci", age: StudentAge.threeYears).copyWith(timestamp: DateTime(2025, 10, 4)),
+    Student(id: '1d03982a-7a0a-40f2-adb4-1e90c2550485', name: "Jose Olaya", age: StudentAge.threeYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6').copyWith(timestamp: DateTime(2025, 1, 8)),
+    Student(id: '9d95e4ee-8706-485d-b2a9-614583a05296', name: "Pablo Rojas", age: StudentAge.fourYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6').copyWith(timestamp: DateTime(2025, 1, 9)),
+    Student(id: '580e4114-98c8-4b80-92ea-b44c140f26e3', name: "Mendo Cabrera", age: StudentAge.fiveYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6').copyWith(timestamp: DateTime(2025, 2, 1)),
+    Student(id: '194c4084-0fdf-49f2-86d7-766b7607ce0b', name: "Bruno Sorias Alias El Cumbia Ninja", age: StudentAge.threeYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6').copyWith(timestamp: DateTime(2025, 5, 1)),
+    Student(id: '8722e6e9-6178-4296-948a-7fb3db196d44', name: "Gerardo Días", age: StudentAge.fourYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6').copyWith(timestamp: DateTime(2025, 3, 20)),
+    Student(id: '980bbf70-48de-4946-8d8f-de06a39d7611', name: "Leonardo Da Vinci", age: StudentAge.threeYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6').copyWith(timestamp: DateTime(2025, 10, 4)),
+
+    //* Otra aula
+    Student(id: 'd91d2fdb-ed8f-4577-aeb3-47a0d43d0501', name: 'Casandra Alcia', age: StudentAge.fourYears, classroomId: 'b393e6bb-9b59-4c74-95ca-e7969bf5262a').copyWith(timestamp: DateTime(2025, 2, 15)),
+    Student(id: '0587ca12-5430-4a7c-bbdb-f0bc8191bf1c', name: 'Decencio Elias', age: StudentAge.threeYears, classroomId: 'b393e6bb-9b59-4c74-95ca-e7969bf5262a').copyWith(timestamp: DateTime(2025, 2, 16)),
 
     //* A archivar
-    Student(id: '750c3a46-3e44-4800-bee1-ebccb4f4f55c', name: "Mario Bros Archived", age: StudentAge.threeYears).copyWith(timestamp: DateTime(2025, 1, 10)),
-    Student(id: '9ee64bbd-1011-4849-aec6-eae4a587a8d5', name: "Lopez Garcia Archived", age: StudentAge.threeYears).copyWith(timestamp: DateTime(2025, 1, 11))
+    Student(id: '750c3a46-3e44-4800-bee1-ebccb4f4f55c', name: "Mario Bros Archived", age: StudentAge.threeYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6').copyWith(timestamp: DateTime(2025, 1, 10)),
+    Student(id: '9ee64bbd-1011-4849-aec6-eae4a587a8d5', name: "Lopez Garcia Archived", age: StudentAge.threeYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6').copyWith(timestamp: DateTime(2025, 1, 11))
   ];
 
   final listOfRegisterBook = <RegisterBook>[
-    RegisterBook(id: 'e0449ae1-ec4d-4eec-a0c2-3b6be2ff46f6', action: "Jose le pego a Pablo", mentions: [listOfStudents[0].toStudentSummary, listOfStudents[1].toStudentSummary], createdAt: DateTime(2025, 1, 5, 11, 32), type: RegisterBookType.incident),
+    RegisterBook(id: 'e0449ae1-ec4d-4eec-a0c2-3b6be2ff46f6', action: "Jose le pego a Pablo", mentions: [listOfStudents[0].toStudentSummary, listOfStudents[1].toStudentSummary], createdAt: DateTime(2025, 1, 5, 11, 32), type: RegisterBookType.incident, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
     RegisterBook(id: 'dd1acb1c-86c2-4ba1-a69f-b1c8e24c01ee', action: "Accion indeterminada 1", createdAt: DateTime(2025, 1, 6, 9, 10)),
-    RegisterBook(id: '06b654e1-2852-4618-84a7-bb2c43a3eba1', action: "Leonardo, Mendo y Bruno han hecho su actividad, lactasdasdasdjasoijdosandosandioasndisandiosandiosandiosandiosandiosandioasndiosandiosandioasndoiasndoinasdionasiod", createdAt: DateTime(2025, 1, 6, 8, 5), type: RegisterBookType.anecdotal),
-    RegisterBook(id: '10277d6d-630c-4a6e-99ec-f807a64714f6', action: "Al bordo de un barco, Gerardo ha jugado con Jose", createdAt: DateTime(2025, 2, 15, 8, 5), mentions: [listOfStudents[4].toStudentSummary, listOfStudents[0].toStudentSummary], type: RegisterBookType.anecdotal),
-    RegisterBook(id: '3984adaf-70c2-45b1-aecc-e0b56bb43158', action: "Otra accioni indeterminada 2", createdAt: DateTime(2025, 1, 1, 7, 30)),
-    RegisterBook(id: 'cd334961-cc2f-4c2a-8477-482155e7ed0e', action: "Desde la vista de Bruno, ha visto como Pablo salía del salon adasd", createdAt: DateTime(2025, 3, 8, 9, 30), mentions: [listOfStudents[3].toStudentSummary, listOfStudents[1].toStudentSummary]),
+    RegisterBook(id: '06b654e1-2852-4618-84a7-bb2c43a3eba1', action: "Leonardo, Mendo y Bruno han hecho su actividad, lactasdasdasdjasoijdosandosandioasndisandiosandiosandiosandiosandiosandioasndiosandiosandioasndoiasndoinasdionasiod", createdAt: DateTime(2025, 1, 6, 8, 5), type: RegisterBookType.anecdotal, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
+    RegisterBook(id: '10277d6d-630c-4a6e-99ec-f807a64714f6', action: "Al bordo de un barco, Gerardo ha jugado con Jose", createdAt: DateTime(2025, 2, 15, 8, 5), mentions: [listOfStudents[4].toStudentSummary, listOfStudents[0].toStudentSummary], type: RegisterBookType.anecdotal, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
+    RegisterBook(id: '3984adaf-70c2-45b1-aecc-e0b56bb43158', action: "Otra accioni indeterminada 2", createdAt: DateTime(2025, 1, 1, 7, 30), classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
+    RegisterBook(id: 'cd334961-cc2f-4c2a-8477-482155e7ed0e', action: "Desde la vista de Bruno, ha visto como Pablo salía del salon adasd", createdAt: DateTime(2025, 3, 8, 9, 30), mentions: [listOfStudents[3].toStudentSummary, listOfStudents[1].toStudentSummary], classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
+
+    //* Otra aula
+    RegisterBook(id: 'a3c633a9-b3bf-4096-8c9e-aa0a8e06a327', action: 'C Una accion en otra aula', createdAt: DateTime(2025, 1, 7, 9, 30), classroomId: 'b393e6bb-9b59-4c74-95ca-e7969bf5262a'),
 
     //* A archivar
-    RegisterBook(id: '743f923b-3a0e-45a9-a681-85408e5fa521', action: "Accion mal escrota Archived", createdAt: DateTime(2025, 2, 7, 8, 50)),
-    RegisterBook(id: 'c1b271b1-f21f-4c10-9dae-975f627d0c00', action: "Otra accione mal escrota Archived", createdAt: DateTime(2025, 1, 2, 10, 10), mentions: [listOfStudents[5].toStudentSummary], type: RegisterBookType.incident),
+    RegisterBook(id: '743f923b-3a0e-45a9-a681-85408e5fa521', action: "Accion mal escrota Archived", createdAt: DateTime(2025, 2, 7, 8, 50), classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
+    RegisterBook(id: 'c1b271b1-f21f-4c10-9dae-975f627d0c00', action: "Otra accione mal escrota Archived", createdAt: DateTime(2025, 1, 2, 10, 10), mentions: [listOfStudents[5].toStudentSummary], type: RegisterBookType.incident, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
+  ];
+
+  final listOfClassroom = <Classroom>[
+    Classroom(id: '6615024f-0153-4492-b06e-0cb108f90ac6', name: 'Clase A', iconCode: 12345, status: ClassroomStatus.inProgress),
+    Classroom(id: 'b393e6bb-9b59-4c74-95ca-e7969bf5262a', name: 'Clase B', iconCode: 12344, status: ClassroomStatus.inProgress),
   ];
 
   Student studentRecently = listOfStudents.reduce((a, b) => a.timestamp.isAfter(b.timestamp) ? a : b);
@@ -88,7 +115,14 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
   RegisterBook registerBookHighestAction = listOfRegisterBook.reduce((a, b) => a.action.compareTo(b.action) < 0 ? a : b);
   RegisterBook registerBookLowestAction = listOfRegisterBook.reduce((a, b) => a.action.compareTo(b.action) > 0 ? a : b);
 
+  Classroom classroomHighestName = listOfClassroom.reduce((a, b) => a.name.compareTo(b.name) < 0 ? a : b);
+  Classroom classroomLowestName = listOfClassroom.reduce((a, b) => a.name.compareTo(b.name) > 0 ? a : b);
+
   Future<void> addingTestData(bool withRegisterBook) async {
+
+    final classroomService = GetIt.I<ClassroomServiceBase>();
+    await Future.wait(listOfClassroom.map((e) => classroomService.addOne(e)));
+
     final studentService = GetIt.I<StudentServiceBase>();
 
     //* Estudiantes agregados
