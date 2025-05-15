@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/infrastructure/export_report_manager.dart';
-import 'package:nawiapp/infrastructure/register_book_export.dart';
+import 'package:nawiapp/infrastructure/export/export_report_manager.dart';
+import 'package:nawiapp/infrastructure/export/register_book_export.dart';
 
 import '../nawi_test_utils.dart' as testil;
 
