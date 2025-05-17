@@ -101,22 +101,24 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
   ];
 
   final listOfClassroom = <Classroom>[
-    Classroom(id: '6615024f-0153-4492-b06e-0cb108f90ac6', name: 'Clase A', iconCode: 12345, status: ClassroomStatus.inProgress),
-    Classroom(id: 'b393e6bb-9b59-4c74-95ca-e7969bf5262a', name: 'Clase B', iconCode: 12344, status: ClassroomStatus.inProgress),
+    Classroom(id: '6615024f-0153-4492-b06e-0cb108f90ac6', name: 'Clase A', iconCode: 12345, status: ClassroomStatus.ended),
+    Classroom(id: 'b393e6bb-9b59-4c74-95ca-e7969bf5262a', name: 'Clase B', iconCode: 12344, status: ClassroomStatus.notStarted),
   ];
 
-  Student studentRecently = listOfStudents.reduce((a, b) => a.timestamp.isAfter(b.timestamp) ? a : b);
-  Student studentOldy = listOfStudents.reduce((a, b) => a.timestamp.isBefore(b.timestamp) ? a : b);
-  Student studentHighestName = listOfStudents.reduce((a, b) => a.name.compareTo(b.name) < 0 ? a : b);
-  Student studentLowestName = listOfStudents.reduce((a, b) => a.name.compareTo(b.name) > 0 ? a : b);
+  final Student studentRecently = listOfStudents.reduce((a, b) => a.timestamp.isAfter(b.timestamp) ? a : b);
+  final Student studentOldy = listOfStudents.reduce((a, b) => a.timestamp.isBefore(b.timestamp) ? a : b);
+  final Student studentHighestName = listOfStudents.reduce((a, b) => a.name.compareTo(b.name) < 0 ? a : b);
+  final Student studentLowestName = listOfStudents.reduce((a, b) => a.name.compareTo(b.name) > 0 ? a : b);
 
-  RegisterBook registerBookRecently = listOfRegisterBook.reduce((a, b) => a.createdAt.isAfter(b.createdAt) ? a : b);
-  RegisterBook registerBookOldy = listOfRegisterBook.reduce((a, b) => a.createdAt.isBefore(b.createdAt) ? a : b);
-  RegisterBook registerBookHighestAction = listOfRegisterBook.reduce((a, b) => a.action.compareTo(b.action) < 0 ? a : b);
-  RegisterBook registerBookLowestAction = listOfRegisterBook.reduce((a, b) => a.action.compareTo(b.action) > 0 ? a : b);
+  final RegisterBook registerBookRecently = listOfRegisterBook.reduce((a, b) => a.createdAt.isAfter(b.createdAt) ? a : b);
+  final RegisterBook registerBookOldy = listOfRegisterBook.reduce((a, b) => a.createdAt.isBefore(b.createdAt) ? a : b);
+  final RegisterBook registerBookHighestAction = listOfRegisterBook.reduce((a, b) => a.action.compareTo(b.action) < 0 ? a : b);
+  final RegisterBook registerBookLowestAction = listOfRegisterBook.reduce((a, b) => a.action.compareTo(b.action) > 0 ? a : b);
 
-  Classroom classroomHighestName = listOfClassroom.reduce((a, b) => a.name.compareTo(b.name) < 0 ? a : b);
-  Classroom classroomLowestName = listOfClassroom.reduce((a, b) => a.name.compareTo(b.name) > 0 ? a : b);
+  final Classroom classroomRecently = listOfClassroom.reduce((a, b) => a.createdAt.isAfter(b.createdAt) ? a : b);
+  final Classroom classroomOldy = listOfClassroom.reduce((a, b) => a.createdAt.isBefore(b.createdAt) ? a : b);
+  final Classroom classroomHighestName = listOfClassroom.reduce((a, b) => a.name.compareTo(b.name) < 0 ? a : b);
+  final Classroom classroomLowestName = listOfClassroom.reduce((a, b) => a.name.compareTo(b.name) > 0 ? a : b);
 
   Future<void> addingTestData(bool withRegisterBook) async {
     GetIt.I<InMemoryStorage>().currentClassroomId = '6615024f-0153-4492-b06e-0cb108f90ac6';
