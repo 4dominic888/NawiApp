@@ -38,6 +38,12 @@ class ClassroomDAO extends DatabaseAccessor<NawiDatabase> with _$ClassroomDAOMix
         if(params.searchByStatus != null) {
           filterExpressions.add(tbl.status.equals(params.searchByStatus!.index));
         }
+        
+        NawiDAOUtils.nameClassroomFilter(
+          expressions: filterExpressions,
+          table: tbl,
+          textLike: params.nameLike
+        );
 
         return Expression.and(filterExpressions);
       });
