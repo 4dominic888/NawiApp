@@ -35,12 +35,6 @@ class ClassroomDAO extends DatabaseAccessor<NawiDatabase> with _$ClassroomDAOMix
       var query = select(classroomTable)..where((tbl) {
         final List<Expression<bool>> filterExpressions = [];
 
-        NawiDAOUtils.nameClassroomFilter(
-          expressions: filterExpressions,
-          table: tbl,
-          textLike: params.nameLike
-        );
-
         if(params.searchByStatus != null) {
           filterExpressions.add(tbl.status.equals(params.searchByStatus!.index));
         }
@@ -48,7 +42,7 @@ class ClassroomDAO extends DatabaseAccessor<NawiDatabase> with _$ClassroomDAOMix
         return Expression.and(filterExpressions);
       });
 
-      query = NawiDAOUtils.orderByClassrrom(query: query, orderBy: params.orderBy);
+      query = NawiDAOUtils.orderByClassroom(query: query, orderBy: params.orderBy);
       query = NawiDAOUtils.infiniteScrollFilter(
         query: query,
         pageSize: params.pageSize,

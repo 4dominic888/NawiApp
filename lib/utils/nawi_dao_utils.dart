@@ -100,12 +100,12 @@ class NawiDAOUtils {
   }
 
   /// Solo para la tabla `classroom`, donde se ordena en base a ciertos criterios
-  static SimpleSelectStatement<T, R> orderByClassrrom<T extends HasResultSet, R>({required dynamic query, required ClassroomOrderBy orderBy}) {
+  static SimpleSelectStatement<T, R> orderByClassroom<T extends HasResultSet, R>({required dynamic query, required ClassroomOrderBy orderBy}) {
     query = switch (orderBy) {
-      ClassroomOrderBy.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.createdAt)]),
-      ClassroomOrderBy.timestampOldy => query..orderBy([(u) => OrderingTerm.asc(u.createdAt)]),
-      ClassroomOrderBy.nameAsc => query..orderBy([(u) => OrderingTerm.asc(u.name)]),
-      ClassroomOrderBy.nameDesc => query..orderBy([(u) => OrderingTerm.desc(u.name)]),
+      ClassroomOrderBy.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.timestamp)]),
+      ClassroomOrderBy.timestampOldy => query..orderBy([(u) => OrderingTerm.asc(u.timestamp)]),
+      ClassroomOrderBy.nameAsc => query..orderBy([(u) => OrderingTerm.asc(u.timestamp)]),
+      ClassroomOrderBy.nameDesc => query..orderBy([(u) => OrderingTerm.desc(u.timestamp)]),
     };
     return query;
   }
