@@ -86,7 +86,7 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
 
   final listOfRegisterBook = <RegisterBook>[
     RegisterBook(id: 'e0449ae1-ec4d-4eec-a0c2-3b6be2ff46f6', action: "Jose le pego a Pablo", mentions: [listOfStudents[0].toStudentSummary, listOfStudents[1].toStudentSummary], createdAt: DateTime(2025, 1, 5, 11, 32), type: RegisterBookType.incident, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
-    RegisterBook(id: 'dd1acb1c-86c2-4ba1-a69f-b1c8e24c01ee', action: "Accion indeterminada 1", createdAt: DateTime(2025, 1, 6, 9, 10)),
+    RegisterBook(id: 'dd1acb1c-86c2-4ba1-a69f-b1c8e24c01ee', action: "Accion indeterminada 1", createdAt: DateTime(2025, 1, 6, 9, 10), classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
     RegisterBook(id: '06b654e1-2852-4618-84a7-bb2c43a3eba1', action: "Leonardo, Mendo y Bruno han hecho su actividad, lactasdasdasdjasoijdosandosandioasndisandiosandiosandiosandiosandiosandioasndiosandiosandioasndoiasndoinasdionasiod", createdAt: DateTime(2025, 1, 6, 8, 5), type: RegisterBookType.anecdotal, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
     RegisterBook(id: '10277d6d-630c-4a6e-99ec-f807a64714f6', action: "Al bordo de un barco, Gerardo ha jugado con Jose", createdAt: DateTime(2025, 2, 15, 8, 5), mentions: [listOfStudents[4].toStudentSummary, listOfStudents[0].toStudentSummary], type: RegisterBookType.anecdotal, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
     RegisterBook(id: '3984adaf-70c2-45b1-aecc-e0b56bb43158', action: "Otra accioni indeterminada 2", createdAt: DateTime(2025, 1, 1, 7, 30), classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'),
