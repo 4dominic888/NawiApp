@@ -12,7 +12,8 @@ extension RegisterBookMapper on RegisterBook {
     mentions: mentions,
     notes: data.notes,
     createdAt: data.createdAt,
-    type: data.type
+    type: data.type,
+    classroomId: data.classroom
   );
 
   static RegisterBook empty() => RegisterBook(action: "", createdAt: DateTime.now());
@@ -31,7 +32,8 @@ extension RegisterBookMapper on RegisterBook {
     action: Value(action),
     createdAt: Value(createdAt),
     notes: Value(notes),
-    type: Value(type)
+    type: Value(type),
+    classroom: Value(classroomId)
   );
 
   String get actionUnslug => MapperUtils.toSlug(action);
@@ -48,6 +50,7 @@ extension RegisterBookSummaryMapper on RegisterBookSummary {
       action: data.action,
       createdAt: data.createdAt,
       type: data.type,
-      mentions: mentions
+      mentions: mentions,
+      classroomId: data.classroom
     );  
 }

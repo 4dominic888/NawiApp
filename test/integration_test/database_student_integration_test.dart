@@ -8,6 +8,7 @@ import 'package:nawiapp/data/local/views/student_view.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
+import 'package:nawiapp/infrastructure/in_memory_storage.dart';
 
 import '../nawi_test_utils.dart' as testil;
 
@@ -16,17 +17,19 @@ void main(){
   tearDown(testil.onTearDownSetupIntegrationTestLocator);
 
   test('Registro de un estudiante', () async {
+    GetIt.I<InMemoryStorage>().currentClassroomId = '6615024f-0153-4492-b06e-0cb108f90ac6';
     final service = GetIt.I<StudentServiceBase>();
 
-    final student = Student(name: "Pepe Gonzales", age: StudentAge.fourYears);
-    final errorStudent = Student(id: '980bbf70-48de-4946-8d8f-de06a39d7611', name: 'adasdasdasd', age: StudentAge.fiveYears); //* ID existente
-    final sameStudent = Student(name: " pepe    gonzales    ", age: StudentAge.fourYears);
+    final student = Student(name: "Pepe Gonzales", age: StudentAge.fourYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6');
+    final errorStudent = Student(id: '980bbf70-48de-4946-8d8f-de06a39d7611', name: 'adasdasdasd', age: StudentAge.fiveYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'); //* ID existente
+    final sameStudent = Student(name: " pepe    gonzales    ", age: StudentAge.fourYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6');
 
     final result = await Future.wait([
       service.addOne(student),
       service.addOne(errorStudent),
       service.addOne(sameStudent)
     ]);
+
     final studentFromDatabaseSummary = (await service.getAll(StudentFilter(nameLike: "pepe"))).getValue!.first;
 
     final goodResult = result[0];
@@ -57,7 +60,7 @@ void main(){
   test('Eliminacion de un estudiante', () async {
     final service = GetIt.I<StudentServiceBase>();
 
-    final addedResult = await service.addOne(Student(name: "Pepe Gonzales", age: StudentAge.fourYears));
+    final addedResult = await service.addOne(Student(name: "Pepe Gonzales", age: StudentAge.fourYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'));
     final result = await service.deleteOne(addedResult.getValue!.id);
 
     testil.customExpect(result, isA<Success>(),
@@ -76,8 +79,7 @@ void main(){
 
   test("Actualizacion de un estudiante", () async {
     final service = GetIt.I<StudentServiceBase>();
-
-    final addedResult = await service.addOne(Student(name: "Pepe Gonzales", age: StudentAge.fourYears));
+    final addedResult = await service.addOne(Student(name: "Pepe Gonzales", age: StudentAge.fourYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'));
     final result = await service.updateOne(addedResult.getValue!.copyWith(name: "Amaterasu Remake", age: StudentAge.fiveYears));
     final getResult = await service.getOne(addedResult.getValue!.id);
 
@@ -121,8 +123,8 @@ void main(){
   test('Archivado y Desarchivado de un estudiante', () async {
     final service = GetIt.I<StudentServiceBase>();
     
-    final studentArchived = Student(name: "Juan gonzales paredes", age: StudentAge.fourYears);
-    final student = Student(name: "Juan Archive", age: StudentAge.fourYears);
+    final studentArchived = Student(name: "Juan gonzales paredes", age: StudentAge.fourYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6');
+    final student = Student(name: "Juan Archive", age: StudentAge.fourYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6');
     
     final addedResults = await Future.wait([
       service.addOne(studentArchived),

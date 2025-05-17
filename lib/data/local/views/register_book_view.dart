@@ -9,6 +9,7 @@ abstract class RegisterBookViewSummaryVersion extends View {
   Query as() => select([
     registerBook.id, registerBook.action,
     registerBook.createdAt, registerBook.type,
+    registerBook.classroom
   ]).from(registerBook);
 }
 
@@ -20,6 +21,7 @@ abstract class HiddenRegisterBookViewSummaryVersion extends View {
   Query<HasResultSet, dynamic> as() => select([
     registerBook.id, registerBook.action,
     registerBook.createdAt, registerBook.type,
+    registerBook.classroom
   ]).from(hiddenRegisterBook).join([
     innerJoin(registerBook, registerBook.id.equalsExp(hiddenRegisterBook.hiddenRegisterBookId))
   ]);

@@ -15,7 +15,8 @@ class NawiDAOUtils {
     id: data.id,
     name: data.name,
     age: data.age,
-    timestamp: data.timestamp
+    timestamp: data.timestamp,
+    classroom: data.classroom
   );
 
   /// Para convertir un [HiddenRegisterBookViewSummaryVersionData] a un [RegisterBookViewSummaryVersionData]
@@ -24,6 +25,7 @@ class NawiDAOUtils {
     action: data.action,
     createdAt: data.createdAt,
     type: data.type,
+    classroom: data.classroom
   );
 
   /// [NawiError] por defecto en bloques try catch
@@ -69,6 +71,12 @@ class NawiDAOUtils {
     }
   }
 
+  static void classroomFilter({required List<Expression<bool>> expressions, String? classroomId, required dynamic table}) {
+    if(classroomId != null) {
+      expressions.add((table.classroom as GeneratedColumn<String>).equals(classroomId));
+    }
+  }
+
   /// Solo para la tabla `student`, donde se ordena en base a ciertos criterios
   static SimpleSelectStatement<T, R> orderByStudent<T extends HasResultSet, R>({required dynamic query, required StudentViewOrderByType orderBy}) {
     query = switch (orderBy) {
@@ -92,12 +100,12 @@ class NawiDAOUtils {
   }
 
   /// Solo para la tabla `classroom`, donde se ordena en base a ciertos criterios
-  static SimpleSelectStatement<T, R> orderByClassrrom<T extends HasResultSet, R>({required dynamic query, required ClassroomOrderBy orderBy}) {
+  static SimpleSelectStatement<T, R> orderByClassroom<T extends HasResultSet, R>({required dynamic query, required ClassroomOrderBy orderBy}) {
     query = switch (orderBy) {
-      ClassroomOrderBy.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.createdAt)]),
-      ClassroomOrderBy.timestampOldy => query..orderBy([(u) => OrderingTerm.asc(u.createdAt)]),
-      ClassroomOrderBy.nameAsc => query..orderBy([(u) => OrderingTerm.asc(u.name)]),
-      ClassroomOrderBy.nameDesc => query..orderBy([(u) => OrderingTerm.desc(u.name)]),
+      ClassroomOrderBy.timestampRecently => query..orderBy([(u) => OrderingTerm.desc(u.timestamp)]),
+      ClassroomOrderBy.timestampOldy => query..orderBy([(u) => OrderingTerm.asc(u.timestamp)]),
+      ClassroomOrderBy.nameAsc => query..orderBy([(u) => OrderingTerm.asc(u.timestamp)]),
+      ClassroomOrderBy.nameDesc => query..orderBy([(u) => OrderingTerm.desc(u.timestamp)]),
     };
     return query;
   }

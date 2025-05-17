@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom_status.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 
 class ClassroomFilter extends FilterData with EquatableMixin {
 
@@ -15,9 +16,9 @@ class ClassroomFilter extends FilterData with EquatableMixin {
 
   ClassroomFilter({
     super.pageSize, super.currentPage,
-    this.nameLike, this.searchByStatus,
+    String? nameLike, this.searchByStatus,
     this.orderBy = ClassroomOrderBy.timestampRecently
-  });
+  }) : nameLike = NawiGeneralUtils.clearSpaces(nameLike ?? '');
 
   @override
   Map<String, dynamic> toMap() => {

@@ -6,7 +6,7 @@ abstract class StudentViewSummaryVersion extends View {
   StudentTable get student; 
 
   @override Query as() => 
-    select([student.id, student.name, student.age, student.timestamp]).from(student);
+    select([student.id, student.name, student.age, student.timestamp, student.classroom]).from(student);
 }
 
 abstract class HiddenStudentViewSummaryVersion extends View {
@@ -15,7 +15,7 @@ abstract class HiddenStudentViewSummaryVersion extends View {
 
   @override
   Query as() => select([
-    student.id, student.name, student.age, student.timestamp
+    student.id, student.name, student.age, student.timestamp, student.classroom
   ]).from(hiddenStudent).join([
     innerJoin(student, student.id.equalsExp(hiddenStudent.hiddenId))
   ]);

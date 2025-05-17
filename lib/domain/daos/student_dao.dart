@@ -1,11 +1,13 @@
 import 'package:drift/drift.dart';
 import 'package:drift/remote.dart';
+import 'package:get_it/get_it.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_dao.dart';
 import 'package:nawiapp/data/local/tables/student_table.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
+import 'package:nawiapp/infrastructure/in_memory_storage.dart';
 import 'package:nawiapp/utils/nawi_dao_utils.dart';
 
 part 'student_dao.g.dart';
@@ -40,9 +42,17 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
   @override
   Future<Result<Iterable<StudentViewSummaryVersionData>>> getAll(StudentFilter params) async {
     try {
+      final memoryStorage = GetIt.I<InMemoryStorage>();
+
       var query = ( params.notShowHidden ? select(studentViewSummaryVersion) : select(hiddenStudentViewSummaryVersion) )
         ..where((tbl) {
           final List<Expression<bool>> filterExpressions = [];
+
+          NawiDAOUtils.classroomFilter(
+            expressions: filterExpressions,
+            table: tbl,
+            classroomId: memoryStorage.currentClassroomId
+          );
 
           //* Excluye estudiantes marcados como ocultos
           if(params.notShowHidden) {

@@ -6,7 +6,7 @@ import 'package:nawiapp/utils/nawi_mapper_utils.dart';
 
 extension StudentMapper on Student {
   static Student fromTableData(StudentTableData data) {
-    return Student(id: data.id, name: data.name,age: data.age, notes: data.notes, timestamp: data.timestamp);
+    return Student(id: data.id, name: data.name,age: data.age, notes: data.notes, timestamp: data.timestamp, classroomId: data.classroom);
   }
 
   StudentSummary get toStudentSummary => StudentSummary(id: id, name: name, age: age);  
@@ -27,7 +27,8 @@ extension StudentMapper on Student {
     age: Value(age),
     name: Value(name),
     notes: Value(notes),
-    timestamp: Value(timestamp)
+    timestamp: Value(timestamp),
+    classroom: Value(classroomId)
   );
 
   String get initalsName => MapperUtils.initialName(name);
@@ -37,7 +38,7 @@ extension StudentMapper on Student {
 
 extension StudentSummaryMapper on StudentSummary {
 
-  static StudentSummary fromSummaryView(StudentViewSummaryVersionData data) => StudentSummary(id: data.id, name: data.name, age: data.age);
+  static StudentSummary fromSummaryView(StudentViewSummaryVersionData data) => StudentSummary(id: data.id, name: data.name, age: data.age, classroomId: data.classroom);
 
   String get mentionLabel => MapperUtils.mentionLabel(name);
   
