@@ -6,7 +6,9 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 import 'package:nawiapp/presentation/features/select_classroom/providers/select_classroom_grid_provider.dart';
+import 'package:nawiapp/presentation/features/select_classroom/screens/add_classroom_modal.dart';
 import 'package:nawiapp/presentation/features/select_classroom/widgets/classroom_element.dart';
+import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class SelectClassroomScreen extends ConsumerStatefulWidget {
   const SelectClassroomScreen({ super.key });
@@ -28,6 +30,18 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
     // final filterWatcher = ref.watch(classroomFilterProvider);
 
     return Scaffold(
+      floatingActionButton: IconButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: NawiColorUtils.primaryColor,
+          foregroundColor: Colors.white
+        ),
+        icon: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).push(
+            DialogRoute(context: context, builder: (_) => AddClassroomModal())
+          );
+        },
+      ),
       appBar: SearchFilterField(
         hintTextField: 'Búsqueda por nombre...',
         filterAction: () async {

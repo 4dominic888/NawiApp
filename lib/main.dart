@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/locator.dart';
-import 'package:nawiapp/presentation/features/home/screens/home_screen.dart';
+import 'package:nawiapp/presentation/features/select_classroom/screens/select_classroom_screen.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:overlay_support/overlay_support.dart';
 
@@ -67,6 +67,7 @@ class _MenuAppState extends State<MenuApp> {
   
   @override
   Widget build(BuildContext context) {
-    return HomeScreen();
+    // return HomeScreen();
+    return SelectClassroomScreen();
   }
 }
