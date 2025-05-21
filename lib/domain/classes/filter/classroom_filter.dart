@@ -42,8 +42,7 @@ class ClassroomFilter extends FilterData with EquatableMixin {
     );
 
   @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [nameLike, orderBy];
 }
 
 enum ClassroomOrderBy { timestampRecently, timestampOldy, nameAsc, nameDesc }
