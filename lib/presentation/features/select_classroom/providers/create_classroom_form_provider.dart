@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/result.dart';
@@ -24,11 +25,13 @@ class ClassroomFormNotifier extends StateNotifier<Classroom> {
     return null;
   }
 
-  bool get isValid => NawiGeneralUtils.clearSpaces(state.name).isNotEmpty;
+  bool get isValid => nameErrorText == null && NawiGeneralUtils.clearSpaces(state.name).isNotEmpty;
 
-  Future<void> submit({required RoundedLoadingButtonController buttonController, String? idToEdit}) async {
-    // buttonController.start();
-
+  Future<void> submit({
+    required RoundedLoadingButtonController buttonController,
+    VoidCallback? onFinish,
+    String? idToEdit
+  }) async {
     bool isUpdatable = idToEdit != null;
     final Result<Object> result;
 
@@ -43,10 +46,10 @@ class ClassroomFormNotifier extends StateNotifier<Classroom> {
       onError: (_, __) => buttonController.error(),
       onSuccessfully: (_, __) => buttonController.success(),
     );
+    onFinish?.call();
   }
 }
 
 final classroomFormProvider = StateNotifierProvider
-  .autoDispose
   .family<ClassroomFormNotifier, Classroom, Classroom?>
   ((ref, classroom) => ClassroomFormNotifier(classroom, service: GetIt.I<ClassroomServiceBase>()));

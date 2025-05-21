@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
 import 'package:nawiapp/presentation/features/select_classroom/providers/create_classroom_form_provider.dart';
+import 'package:nawiapp/presentation/features/select_classroom/providers/select_classroom_grid_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/widgets/classroom_icon_selector_field.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
@@ -84,9 +85,15 @@ class _AddClassroomModalState extends ConsumerState<AddClassroomModal> {
             autoResetable: true,
             controller: _createBtnController,
             proccess: classroomFormNotifier.isValid ?
-              () async => await classroomFormNotifier.submit(
-                buttonController: _createBtnController, idToEdit: widget.data?.id
-              ) : null,
+              () async {
+                await classroomFormNotifier.submit(
+                  buttonController: _createBtnController, idToEdit: widget.data?.id,
+                  onFinish: () async {
+                    await ref.read(classroomSearchProvider.notifier).refresh();
+                    if(context.mounted) Navigator.of(context).pop();
+                  },
+                );
+              } : null,
             label: const Text('Crear')
           ),
         )
