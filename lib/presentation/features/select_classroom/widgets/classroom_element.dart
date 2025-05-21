@@ -52,7 +52,7 @@ class ClassroomElement extends StatelessWidget {
                     child: const Text('Visitar aula')
                   ),
                 ),
-                PopupClassroomOptions(item: item),
+                _PopupClassroomOptions(item: item),
               ],
             )
           ],
@@ -62,9 +62,8 @@ class ClassroomElement extends StatelessWidget {
   }
 }
 
-class PopupClassroomOptions extends ConsumerWidget {
-  const PopupClassroomOptions({
-    super.key,
+class _PopupClassroomOptions extends ConsumerWidget {
+  const _PopupClassroomOptions({
     required this.item,
   });
 
