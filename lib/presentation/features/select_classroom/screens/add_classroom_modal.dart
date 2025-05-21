@@ -61,8 +61,9 @@ class _AddClassroomModalState extends ConsumerState<AddClassroomModal> {
 
               const SizedBox(height: 10),
 
-              ClassroomIconSelectorField(onIconSelected: (value) =>
-                classroomFormNotifier.setIcon(value)
+              ClassroomIconSelectorField(
+                onIconSelected: (value) => classroomFormNotifier.setIcon(value),
+                initialIconCodePoint: widget.data?.iconCode,
               ),
 
               Padding(
@@ -94,7 +95,7 @@ class _AddClassroomModalState extends ConsumerState<AddClassroomModal> {
                   },
                 );
               } : null,
-            label: const Text('Crear')
+            label: Text(widget.data == null ? 'Crear' : 'Editar')
           ),
         )
       ],
