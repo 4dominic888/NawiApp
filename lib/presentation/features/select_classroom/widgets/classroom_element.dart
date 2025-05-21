@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
 import 'package:nawiapp/domain/services/classroom_service_base.dart';
+import 'package:nawiapp/infrastructure/in_memory_storage.dart';
+import 'package:nawiapp/presentation/features/home/screens/home_screen.dart';
 import 'package:nawiapp/presentation/features/select_classroom/providers/select_classroom_grid_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/screens/add_classroom_modal.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
@@ -48,7 +50,12 @@ class ClassroomElement extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      GetIt.I<InMemoryStorage>().currentClassroom = item;
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => HomeScreen())
+                      );
+                    },
                     child: const Text('Visitar aula')
                   ),
                 ),

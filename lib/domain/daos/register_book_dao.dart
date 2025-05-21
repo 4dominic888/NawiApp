@@ -49,7 +49,7 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
           NawiDAOUtils.classroomFilter(
             expressions: filterExpressions,
             table: tbl,
-            classroomId: memoryStorage.currentClassroomId
+            classroomId: memoryStorage.currentClassroom?.id
           );          
 
           if(params.notShowHidden) {

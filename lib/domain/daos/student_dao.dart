@@ -51,7 +51,7 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
           NawiDAOUtils.classroomFilter(
             expressions: filterExpressions,
             table: tbl,
-            classroomId: memoryStorage.currentClassroomId
+            classroomId: memoryStorage.currentClassroom?.id
           );
 
           //* Excluye estudiantes marcados como ocultos

@@ -17,7 +17,7 @@ void main(){
   tearDown(testil.onTearDownSetupIntegrationTestLocator);
 
   test('Registro de un estudiante', () async {
-    GetIt.I<InMemoryStorage>().currentClassroomId = '6615024f-0153-4492-b06e-0cb108f90ac6';
+    GetIt.I<InMemoryStorage>().currentClassroom = testil.listOfClassroom.first;
     final service = GetIt.I<StudentServiceBase>();
 
     final student = Student(name: "Pepe Gonzales", age: StudentAge.fourYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6');
