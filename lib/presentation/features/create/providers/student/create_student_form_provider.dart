@@ -4,6 +4,7 @@ import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
+import 'package:nawiapp/infrastructure/in_memory_storage.dart';
 import 'package:nawiapp/presentation/shared/submit_status.dart';
 import 'package:nawiapp/utils/nawi_general_utils.dart';
 
@@ -14,11 +15,12 @@ class _StudentFormState {
   _StudentFormState({required this.data, this.status = SubmitStatus.idle});
 
   _StudentFormState copyWith(
-    {String? name, StudentAge? age, String? notes, SubmitStatus? status}
+    {String? name, StudentAge? age, String? notes, SubmitStatus? status, String? classroomId}
   ) => _StudentFormState(data: data.copyWith(
       name: name ?? data.name,
       age: age ?? data.age,
-      notes: notes ?? data.notes
+      notes: notes ?? data.notes,
+      classroomId: classroomId ?? data.classroomId
     ),
     status: status ?? this.status
   );
@@ -52,6 +54,7 @@ class StudentFormNotifier extends StateNotifier<_StudentFormState> {
   bool get isValid => validatorsOk && noEmptyFields;
 
   Future<void> submit({String? idToEdit}) async {
+    state = state.copyWith(classroomId: GetIt.I<InMemoryStorage>().currentClassroom?.id);
     setStatus(SubmitStatus.loading);
 
     bool isUpdatable = idToEdit != null;

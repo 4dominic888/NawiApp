@@ -21,7 +21,8 @@ class _RegisterBookFormState {
     Iterable<StudentSummary>? mentions,
     DateTime? createdAt,
     String? notes,
-    SubmitStatus? status
+    SubmitStatus? status,
+    String? classroomId
   }
   ) => _RegisterBookFormState(
     data: data.copyWith(
@@ -29,7 +30,8 @@ class _RegisterBookFormState {
       type: type ?? data.type,
       mentions: mentions ?? data.mentions,
       createdAt: createdAt ?? data.createdAt,
-      notes: notes ?? data.notes
+      notes: notes ?? data.notes,
+      classroomId: classroomId ?? data.classroomId
     ),
     status: status ?? this.status
   );
