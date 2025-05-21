@@ -9,12 +9,14 @@ class LoadingProcessButton extends StatelessWidget {
   final Widget label;
   final Color? color;
   final double? width;
+  final bool autoResetable;
   final VoidCallback? onReset;
 
   const LoadingProcessButton({
     super.key, required this.controller,
     required this.proccess, required this.label,
-    this.color, this.width, this.onReset
+    this.color, this.width, this.onReset,
+    this.autoResetable = false
   });
 
   @override
@@ -24,12 +26,14 @@ class LoadingProcessButton extends StatelessWidget {
         RoundedLoadingButton(
           controller: controller,
           color: color ?? NawiColorUtils.primaryColor,
-          
+          resetAfterDuration: autoResetable,
+          resetDuration: const Duration(seconds: 3),
           onPressed: proccess != null ? () async => await proccess?.call() : null,
           width: width ?? 300,
           child: label
         ),
 
+        if(!autoResetable)
         StreamBuilder<ButtonState>(
           stream: controller.stateStream,
           builder: (context, snapshot) {
