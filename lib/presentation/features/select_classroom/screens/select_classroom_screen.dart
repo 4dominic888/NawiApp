@@ -61,14 +61,8 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: searchNotifier.refresh,
-        child: PagedGridView(
+        child: PagedListView(
           pagingController: controller,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: 100 / 150,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            crossAxisCount: 3
-          ),
           builderDelegate: PagedChildBuilderDelegate<Classroom>(
             itemBuilder: (_, item, __) => Padding(
               padding: const EdgeInsets.all(8.0),
@@ -77,7 +71,6 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
             firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
             newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
             noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay aulas registradas, registre una ahora")),
-            noMoreItemsIndicatorBuilder: (_) => const Center(child: Text("No más aulas a cargar")),
             firstPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información")),
             newPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información"))
           ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
-import 'package:nawiapp/domain/models/classroom/entity/classroom_status.dart';
+import 'package:nawiapp/presentation/features/select_classroom/screens/add_classroom_modal.dart';
 
 class ClassroomElement extends StatelessWidget {
 
@@ -11,58 +10,51 @@ class ClassroomElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        title: Text(item.name.isEmpty ? '[Sin nombre]' : item.name),
-        trailing: Column(
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black38),
+        borderRadius: BorderRadius.circular(10)
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            switch (item.status) {
-              ClassroomStatus.notStarted => const Icon(Icons.watch_later_outlined),
-              ClassroomStatus.inProgress => const Icon(Icons.timeline),
-              ClassroomStatus.ended => const Icon(Icons.done),
-            },
-            Text(item.status.name)
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _ClassroomElementOptions(item: item),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 10,
+              children: [
+                Icon(IconData(item.iconCode, fontFamily: 'MaterialIcons')),
+                Text(item.name, overflow: TextOverflow.ellipsis),
+                IconButton(
+                  onPressed: () {
+                    
+                  },
+                  icon: const Icon(Icons.play_circle_fill_outlined)
+                )
+              ],
+            ),
 
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Text(item.description ?? ''),
+            PopupMenuButton(
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  child: const Text('Editar'),
+                  onTap: () => Navigator.of(context).push(
+                    DialogRoute(context: context, builder: (_) => AddClassroomModal(data: item))
+                  ),
+                ),
+
+                PopupMenuItem(
+                  child: const Text('Eliminar'),
+                  onTap: () {
+                    
+                  },
+                )
+              ],
             )
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ClassroomElementOptions extends ConsumerWidget {
-  final Classroom item;
-
-  const _ClassroomElementOptions({ required this.item });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Wrap(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.edit), style: Theme.of(context).elevatedButtonTheme.style,
-          onPressed: () async {
-
-          },
-        ),
-
-        IconButton(
-          icon: const Icon(Icons.delete), style: Theme.of(context).elevatedButtonTheme.style,
-          onPressed: () async {
-
-          }
-        )
-      ],
     );
   }
 }
