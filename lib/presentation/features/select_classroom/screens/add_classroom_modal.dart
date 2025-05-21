@@ -1,23 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
+import 'package:nawiapp/presentation/features/select_classroom/providers/create_classroom_form_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/widgets/classroom_icon_selector_field.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
-class AddClassroomModal extends StatefulWidget {
-  const AddClassroomModal({ super.key });
+class AddClassroomModal extends ConsumerStatefulWidget {
+
+  final Classroom? data;
+
+  const AddClassroomModal({ super.key, this.data });
 
   @override
-  State<AddClassroomModal> createState() => _AddClassroomModalState();
+  ConsumerState<AddClassroomModal> createState() => _AddClassroomModalState();
 }
 
-class _AddClassroomModalState extends State<AddClassroomModal> {
+class _AddClassroomModalState extends ConsumerState<AddClassroomModal> {
 
   final _createBtnController = RoundedLoadingButtonController();
+  late final TextEditingController _nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.data?.name ?? '');
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final classroomFormNotifier = ref.read(classroomFormProvider(widget.data).notifier);
+
     return AlertDialog(
-      title: Text("Crear aula", style: Theme.of(context).textTheme.headlineMedium),
+      title: Text("${widget.data == null ? "Crear" : "Editar"} aula", style: Theme.of(context).textTheme.headlineMedium),
       content: SizedBox(
         height: MediaQuery.of(context).size.height * 0.45,
         width: 500,
@@ -26,17 +47,22 @@ class _AddClassroomModalState extends State<AddClassroomModal> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Nombre del aula"
+                controller: _nameController,
+                onChanged: classroomFormNotifier.setName,
+                onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: "Nombre del aula",
+                  errorText: classroomFormNotifier.nameErrorText,
+                  prefixIcon: const Icon(Icons.abc)
                 ),
               ),
 
               const SizedBox(height: 10),
 
-              ClassroomIconSelectorField(onIconSelected: (value) {
-                
-              }),
+              ClassroomIconSelectorField(onIconSelected: (value) =>
+                classroomFormNotifier.setIcon(value)
+              ),
 
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -57,10 +83,10 @@ class _AddClassroomModalState extends State<AddClassroomModal> {
           child: LoadingProcessButton(
             autoResetable: true,
             controller: _createBtnController,
-            proccess: () async {
-              await Future.delayed(const Duration(seconds: 1));
-              _createBtnController.error();
-            },
+            proccess: classroomFormNotifier.isValid ?
+              () async => await classroomFormNotifier.submit(
+                buttonController: _createBtnController, idToEdit: widget.data?.id
+              ) : null,
             label: const Text('Crear')
           ),
         )
