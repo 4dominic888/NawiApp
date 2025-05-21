@@ -9,6 +9,8 @@ import 'package:nawiapp/presentation/features/export/providers/initial_pdf_bytes
 import 'package:nawiapp/presentation/features/export/screens/export_screen.dart';
 import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
+import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
+import 'package:nawiapp/presentation/features/search/providers/student/search_student_list_provider.dart';
 import 'package:nawiapp/presentation/features/search/screens/search_element_screen.dart';
 import 'package:nawiapp/presentation/features/home/providers/general_loading_provider.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
@@ -55,6 +57,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    ref.read(studentSummarySearchProvider.notifier).refresh();
+    ref.read(registerBookSummarySearchProvider.notifier).refresh();
+
     final classroom = GetIt.I<InMemoryStorage>().currentClassroom!;
 
     ref.listen(tabMenuProvider, (prev, next) {

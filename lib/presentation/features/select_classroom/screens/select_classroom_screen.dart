@@ -23,11 +23,9 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final searchNotifier = ref.read(classroomSearchProvider.notifier);
     final controller = searchNotifier.pagingController;
     final filterNotifier = ref.read(classroomFilterProvider.notifier);
-    // final filterWatcher = ref.watch(classroomFilterProvider);
 
     return Scaffold(
       floatingActionButton: IconButton(

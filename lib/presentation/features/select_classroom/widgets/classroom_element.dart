@@ -4,7 +4,10 @@ import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
 import 'package:nawiapp/domain/services/classroom_service_base.dart';
 import 'package:nawiapp/infrastructure/in_memory_storage.dart';
+import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
 import 'package:nawiapp/presentation/features/home/screens/home_screen.dart';
+import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
+import 'package:nawiapp/presentation/features/search/providers/student/search_student_list_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/providers/select_classroom_grid_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/screens/add_classroom_modal.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
@@ -49,14 +52,23 @@ class ClassroomElement extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      GetIt.I<InMemoryStorage>().currentClassroom = item;
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => HomeScreen())
+                  child: Consumer(
+                    builder: (_, ref, __) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          GetIt.I<InMemoryStorage>().currentClassroom = item;
+                          ref.invalidate(tabMenuProvider);
+                          ref.invalidate(studentFilterProvider);
+                          ref.invalidate(registerBookFilterProvider);
+                          ref.invalidate(studentSummarySearchProvider);
+                          ref.invalidate(registerBookSummarySearchProvider);
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => HomeScreen())
+                          );
+                        },
+                        child: const Text('Visitar aula')
                       );
-                    },
-                    child: const Text('Visitar aula')
+                    }
                   ),
                 ),
                 _PopupClassroomOptions(item: item),
