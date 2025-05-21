@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:nawiapp/infrastructure/in_memory_storage.dart';
 import 'package:nawiapp/presentation/features/backups/screens/backups_screen.dart';
 import 'package:nawiapp/presentation/features/create/screens/create_element_screen.dart';
 import 'package:nawiapp/presentation/features/export/providers/initial_pdf_bytes_data_provider.dart';
@@ -53,6 +55,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final classroom = GetIt.I<InMemoryStorage>().currentClassroom!;
+
     ref.listen(tabMenuProvider, (prev, next) {
       _tabController.animateTo(next.index);
 
@@ -71,7 +75,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
         length: NawiMenuTabs.values.length,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text("Ñawi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+            title: Text("Ñawi, ${classroom.name}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
             centerTitle: true,
           ),
           resizeToAvoidBottomInset: false,
