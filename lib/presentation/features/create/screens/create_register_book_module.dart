@@ -107,6 +107,7 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
         
                 Expanded(
                   child: LoadingProcessButton(
+                    autoResetable: true,
                     color: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade400,
                     controller: _submitBtnController,
                     proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
