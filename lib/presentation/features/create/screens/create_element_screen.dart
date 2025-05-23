@@ -65,7 +65,7 @@ class _CreateElementScreenState extends ConsumerState<CreateElementScreen> {
   Widget build(BuildContext context) {
     return SelectableModelBased(
       padding: const EdgeInsets.all(20.0),
-      studentModule: SingleChildScrollView(child: CreateStudentModule(data: _studentInitialData)),
+      studentModule: CreateStudentModule(data: _studentInitialData),
       registerBookModule: CreateRegisterBookModule(data: _registerBookInitialData),
       controller: selectableElementForCreateProvider
     );
