@@ -64,6 +64,7 @@ class _CreateElementScreenState extends ConsumerState<CreateElementScreen> {
   @override
   Widget build(BuildContext context) {
     return SelectableModelBased(
+      label: '¿Que desea agregar?: ',
       padding: const EdgeInsets.all(20.0),
       studentModule: CreateStudentModule(data: _studentInitialData),
       registerBookModule: CreateRegisterBookModule(data: _registerBookInitialData),

@@ -9,6 +9,7 @@ class SelectableModelBased extends ConsumerWidget {
     required this.studentModule,
     required this.registerBookModule,
     required this.controller,
+    required this.label,
     this.padding
   });
 
@@ -16,6 +17,7 @@ class SelectableModelBased extends ConsumerWidget {
   final Widget registerBookModule;
   final StateProvider<Type> controller;
   final EdgeInsetsGeometry? padding;
+  final String label;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,37 +26,37 @@ class SelectableModelBased extends ConsumerWidget {
     final notifier = ref.read(controller.notifier);
 
     return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Wrap(
-                spacing: 10,
-                children: [
-                  Text('¿Que vas a agregar?: ', style: TextTheme.of(context).titleLarge),
-                  FilterChip(
-                    label: Text("Estudiantes"),
-                    onSelected: (_) => notifier.state = Student,
-                    selected: selectedType == Student
-                  ),
-                  FilterChip(
-                    label: Text("Registros"),
-                    onSelected: (_) => notifier.state = RegisterBook,
-                    selected: selectedType == RegisterBook
-                  )
-                ],
-              ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+      
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Wrap(
+              spacing: 10,
+              children: [
+                Text(label, style: TextTheme.of(context).titleLarge),
+                FilterChip(
+                  label: Text("Estudiantes"),
+                  onSelected: (_) => notifier.state = Student,
+                  selected: selectedType == Student
+                ),
+                FilterChip(
+                  label: Text("Registros"),
+                  onSelected: (_) => notifier.state = RegisterBook,
+                  selected: selectedType == RegisterBook
+                )
+              ],
             ),
-            Padding(
+          ),
+          Flexible(
+            child: Padding(
               padding: padding ?? const EdgeInsets.all(8.0),
               child: selectedType == Student ? studentModule : registerBookModule,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }  

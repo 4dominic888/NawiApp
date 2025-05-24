@@ -27,6 +27,7 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
           borderRadius: BorderRadius.circular(5)
         ),
         child: Row(
+          spacing: 10,
           children: [
             Expanded(
               child: TextField(

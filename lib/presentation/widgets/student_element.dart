@@ -89,6 +89,7 @@ class _StudentElementOptions extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Row(
+      spacing: 10,
       children: [
         //* Editar
         IconButton(

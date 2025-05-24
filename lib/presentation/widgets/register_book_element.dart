@@ -77,6 +77,7 @@ class _RegisterBookElementOptions extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Wrap(
+      spacing: 10,
       children: [
         //* Editar
         IconButton(

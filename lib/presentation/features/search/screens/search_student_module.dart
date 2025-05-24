@@ -76,20 +76,23 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
       ),
       body: RefreshIndicator(
         onRefresh: seachNotifier.refresh,
-        child: PagedListView(
-          pagingController: controller,
-          builderDelegate: PagedChildBuilderDelegate<StudentSummary>(
-            itemBuilder: (_, item, __) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: StudentElement(item: item),
-            ),
-            firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
-            newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
-            noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay estudiantes registrados")),
-            noMoreItemsIndicatorBuilder: (_) => const Center(child: Text("No más estudiantes a cargar")),
-            firstPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información")),
-            newPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información"))            
-          )
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 90),
+          child: PagedListView(
+            pagingController: controller,
+            builderDelegate: PagedChildBuilderDelegate<StudentSummary>(
+              itemBuilder: (_, item, __) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: StudentElement(item: item),
+              ),
+              firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+              newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+              noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay estudiantes registrados")),
+              noMoreItemsIndicatorBuilder: (_) => const Center(child: Text("No más estudiantes a cargar")),
+              firstPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información")),
+              newPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información"))            
+            )
+          ),
         ),
       ),
     );

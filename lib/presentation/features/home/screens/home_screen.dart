@@ -79,6 +79,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
       child: DefaultTabController(
         length: NawiMenuTabs.values.length,
         child: Scaffold(
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: IconButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.purple,
+              foregroundColor: Colors.white
+            ),
+            iconSize: 40,
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              
+            },
+          ),
           appBar: AppBar(
             title: Text("Ñawi, ${classroom.name}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
             centerTitle: true,

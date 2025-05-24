@@ -20,9 +20,12 @@ class _SearchElementScreenState extends State<SearchElementScreen> {
   Widget build(BuildContext context) {
 
     return SelectableModelBased(
+      label: '¿Qué desea buscar?',
       studentModule: SearchStudentModule(),
       registerBookModule: SearchRegisterBookModule(),
       controller: selectableElementForSearchProvider,
     );
+
+    // return SearchStudentModule();
   }
 }
