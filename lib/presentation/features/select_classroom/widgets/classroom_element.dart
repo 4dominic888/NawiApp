@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
+import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
 import 'package:nawiapp/domain/services/classroom_service_base.dart';
 import 'package:nawiapp/infrastructure/in_memory_storage.dart';
+import 'package:nawiapp/presentation/features/create/providers/register_book/initial_register_book_form_data_provider.dart';
+import 'package:nawiapp/presentation/features/create/providers/student/initial_student_form_data_provider.dart';
+import 'package:nawiapp/presentation/features/export/providers/initial_pdf_bytes_data_provider.dart';
+import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
 import 'package:nawiapp/presentation/features/home/screens/home_screen.dart';
 import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
@@ -57,11 +63,12 @@ class ClassroomElement extends StatelessWidget {
                       return ElevatedButton(
                         onPressed: () {
                           GetIt.I<InMemoryStorage>().currentClassroom = item;
-                          ref.invalidate(tabMenuProvider);
-                          ref.invalidate(studentFilterProvider);
-                          ref.invalidate(registerBookFilterProvider);
-                          ref.invalidate(studentSummarySearchProvider);
-                          ref.invalidate(registerBookSummarySearchProvider);
+                          ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.search);
+                          ref.read(studentFilterProvider.notifier).state = StudentFilter();
+                          ref.read(registerBookFilterProvider.notifier).state = RegisterBookFilter();
+                          ref.read(initialPdfBytesDataProvider.notifier).state = null;
+                          ref.read(initialStudentFormDataProvider.notifier).state = null;
+                          ref.read(initialRegisterBookFormDataProvider.notifier).state = null;
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => HomeScreen())
                           );

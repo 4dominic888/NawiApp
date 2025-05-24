@@ -5,7 +5,7 @@ import 'package:nawiapp/presentation/features/select_classroom/screens/select_cl
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:overlay_support/overlay_support.dart';
 
-Future<void> main() async {
+void main(){
 
   WidgetsFlutterBinding.ensureInitialized();
 

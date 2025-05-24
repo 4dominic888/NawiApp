@@ -97,8 +97,8 @@ class _RegisterBookElementOptions extends ConsumerWidget {
               onSuccessfully: (data, _) {
                 loading.state = false;
                 ref.read(initialRegisterBookFormDataProvider.notifier).state = data;
-                ref.read(selectableElementForCreateProvider.notifier).state = RegisterBook;
                 ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.create);
+                ref.read(selectableElementForCreateProvider.notifier).state = RegisterBook;
               }
             );
           },

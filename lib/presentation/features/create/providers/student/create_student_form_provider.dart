@@ -89,7 +89,6 @@ class StudentFormNotifier extends StateNotifier<_StudentFormState> {
 }
 
 final studentFormProvider = StateNotifierProvider
-  .autoDispose
   .family<StudentFormNotifier, _StudentFormState, Student?>(
     (ref, student) => StudentFormNotifier(ref, student)
 );

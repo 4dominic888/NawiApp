@@ -114,7 +114,6 @@ class RegisterBookFormNotifier extends StateNotifier<_RegisterBookFormState> {
 }
 
 final registerBookFormProvider = StateNotifierProvider
-  .autoDispose
   .family<RegisterBookFormNotifier, _RegisterBookFormState, RegisterBook?>(
     (ref, registerBook) => RegisterBookFormNotifier(ref, registerBook),
   );

@@ -111,8 +111,8 @@ class _StudentElementOptions extends ConsumerWidget {
         
                 //* Ir al formulario de estudiante con el dato a editar
                 ref.read(initialStudentFormDataProvider.notifier).state = data;
-                ref.read(selectableElementForCreateProvider.notifier).state = Student;
                 ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.create);
+                ref.read(selectableElementForCreateProvider.notifier).state = Student;
               },
             );
           },
