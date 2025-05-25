@@ -18,7 +18,10 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
     RegisterBookTableData,
     RegisterBookTableCompanion,
     RegisterBookViewSummaryVersionData,
-    RegisterBookFilter>
+    RegisterBookFilter
+  >,
+  
+  CountableModelDriftDAO<RegisterBookFilter>
   {
 
   RegisterBookDAO(super.db);
@@ -32,58 +35,57 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
     } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
+  Expression<bool> _filterExpressions({required dynamic table, required RegisterBookFilter params, required Iterable<String> searchedRegistersIdByStudents}) {
+    final List<Expression<bool>> expressions = [];
+
+    NawiDAOUtils.classroomFilter(
+      expressions: expressions,
+      table: table,
+      classroomId: GetIt.I<InMemoryStorage>().currentClassroom?.id
+    );
+
+    if(params.notShowHidden) {
+      expressions.add(
+        (table as $RegisterBookViewSummaryVersionView).id.isNotInQuery(
+          selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
+        )
+      );
+    }
+
+    if(params.searchByStudentsId.isNotEmpty) {
+      expressions.add((table as $RegisterBookViewSummaryVersionView).id.isIn(
+        searchedRegistersIdByStudents
+      ));
+    }
+
+    if(params.searchByType != null) {
+      expressions.add((table as $RegisterBookViewSummaryVersionView).type.equals(params.searchByType!.index));
+    }
+
+    NawiDAOUtils.actionFilter(
+      expressions: expressions, table: table,
+      textLike: params.actionLike
+    );
+
+    NawiDAOUtils.timestampRangeFilter(expressions: expressions, table: table, range: params.timestampRange);
+
+    NawiDAOUtils.nameStudentFilter(
+      expressions: expressions, table: table,
+      textLike: params.studentNameLike
+    );
+
+    return Expression.and(expressions);
+  }
+
   @override
   Future<Result<Iterable<RegisterBookViewSummaryVersionData>>> getAll(RegisterBookFilter params) async {
     try {
-      final memoryStorage = GetIt.I<InMemoryStorage>();
-      
       final registersIdByStudentResult = await _getRegisterBookIdByStudents(params.searchByStudentsId);
       if(registersIdByStudentResult is NawiError) return registersIdByStudentResult.getError()!;
-
       final Iterable<String> searchedRegistersIdByStudents = registersIdByStudentResult.getValue!;
 
       var query = (params.notShowHidden ? select(registerBookViewSummaryVersion) : select(hiddenRegisterBookViewSummaryVersion))
-        ..where((tbl) {
-          final List<Expression<bool>> filterExpressions = [];
-
-          NawiDAOUtils.classroomFilter(
-            expressions: filterExpressions,
-            table: tbl,
-            classroomId: memoryStorage.currentClassroom?.id
-          );          
-
-          if(params.notShowHidden) {
-            filterExpressions.add(
-              (tbl as $RegisterBookViewSummaryVersionView).id.isNotInQuery(
-                selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
-              )
-            );
-          }
-
-          if(params.searchByStudentsId.isNotEmpty) {
-            filterExpressions.add((tbl as $RegisterBookViewSummaryVersionView).id.isIn(
-              searchedRegistersIdByStudents
-            ));
-          }
-
-          if(params.searchByType != null) {
-            filterExpressions.add((tbl as $RegisterBookViewSummaryVersionView).type.equals(params.searchByType!.index));
-          }
-
-          NawiDAOUtils.actionFilter(
-            expressions: filterExpressions, table: tbl,
-            textLike: params.actionLike
-          );
-
-          NawiDAOUtils.timestampRangeFilter(expressions: filterExpressions, table: tbl, range: params.timestampRange);
-
-          NawiDAOUtils.nameStudentFilter(
-            expressions: filterExpressions, table: tbl,
-            textLike: params.studentNameLike
-          );
-
-          return Expression.and(filterExpressions);
-        });
+        ..where((tbl) => _filterExpressions(table: tbl, params: params, searchedRegistersIdByStudents: searchedRegistersIdByStudents));
 
       query = NawiDAOUtils.orderByAction(query: query, orderBy: params.orderBy);
       query = NawiDAOUtils.infiniteScrollFilter(
@@ -92,17 +94,37 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
         currentPage: params.currentPage
       );
 
-      final result = await query.get();
+      final data = await query.get();
 
       if(params.notShowHidden) {
-        return Success(data: result as Iterable<RegisterBookViewSummaryVersionData>);
+        return Success(data: data as Iterable<RegisterBookViewSummaryVersionData>);
       }
 
       return Success(data:
-        (result as List<HiddenRegisterBookViewSummaryVersionData>).map(
+        (data as List<HiddenRegisterBookViewSummaryVersionData>).map(
           (e) => NawiDAOUtils.registerBookHiddenToPublic(e),
         )
       );
+
+    } catch (e) { return NawiDAOUtils.onCatch(e); }
+  }
+
+  @override
+  Future<Result<int>> getAllCount(RegisterBookFilter params) async {
+    try {
+      final registersIdByStudentResult = await _getRegisterBookIdByStudents(params.searchByStudentsId);
+      if(registersIdByStudentResult is NawiError) return registersIdByStudentResult.getError()!;
+      final Iterable<String> searchedRegistersIdByStudents = registersIdByStudentResult.getValue!;
+
+      final view = params.notShowHidden ? registerBookViewSummaryVersion : hiddenRegisterBookViewSummaryVersion;
+      final queryOnly = (params.notShowHidden ? selectOnly(registerBookViewSummaryVersion) : selectOnly(hiddenRegisterBookViewSummaryVersion))
+        ..addColumns(
+          [ params.notShowHidden ? registerBookViewSummaryVersion.id.count() : hiddenRegisterBookViewSummaryVersion.id.count() ]
+        )
+        ..where(_filterExpressions(table: view, params: params, searchedRegistersIdByStudents: searchedRegistersIdByStudents));
+
+      final count = await queryOnly.map((row) => row.read(params.notShowHidden ? registerBookViewSummaryVersion.id.count() : hiddenRegisterBookViewSummaryVersion.id.count())).getSingleOrNull();
+      return Success(data: count ?? 0);
 
     } catch (e) { return NawiDAOUtils.onCatch(e); }
   }

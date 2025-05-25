@@ -91,6 +91,8 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
     final result = await getAll(params.copyWith(pageSize: pageSize, currentPage: currentPage));
     return result.convertTo((value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
   }
+  @override
+  Future<Result<int>> getAllCount(RegisterBookFilter params) => registerBookRepo.getAllCount(params);
 
   @override
   Future<Result<RegisterBook>> getOne(String id) {

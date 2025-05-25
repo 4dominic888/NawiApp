@@ -2,6 +2,10 @@ import 'package:drift/drift.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/interfaces/filter_data.dart';
 
+abstract class CountableModelDriftDAO<F extends FilterData> {
+  Future<Result<int>> getAllCount(F params);
+}
+
 /// Esta clase abstracta fusiona todas las funciones que tiene un CRUD y más.
 /// Se puede ver tambien como la abstracción general de un repositorio
 ///
