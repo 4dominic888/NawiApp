@@ -122,6 +122,19 @@ void main() {
   });
 
   group('Filtro de aulas', () {
+
+    test('Contador de aulas', () async {
+      final service = GetIt.I<ClassroomServiceBase>();
+      var result = await service.getAllCount(ClassroomFilter());
+      testil.customExpect(result, isA<Success>(),
+        about: 'Buen resultado', n: 1
+      );
+
+      testil.customExpect(result.getValue, 2,
+        about: 'Obtener cantidad de aulas', n: 2
+      );
+    });
+
     test('Ordenamiento de aulas', () async {
       final service = GetIt.I<ClassroomServiceBase>();
 
