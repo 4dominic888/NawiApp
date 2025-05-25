@@ -48,7 +48,7 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
     NawiDAOUtils.classroomFilter(
       expressions: expressions,
       table: table,
-      classroomId: GetIt.I<InMemoryStorage>().currentClassroom?.id
+      classroomId: filter.classroomId ?? GetIt.I<InMemoryStorage>().currentClassroom?.id
     );
 
     //* Excluye estudiantes marcados como ocultos
@@ -107,7 +107,7 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
   }
 
   @override
-  Future<Result<int>> getAllCount(StudentFilter params) async {
+  Stream<int> getAllCount(StudentFilter params) {
     try {
       final view = params.notShowHidden ? studentViewSummaryVersion : hiddenStudentViewSummaryVersion;
       final queryOnly = (params.notShowHidden ? selectOnly(studentViewSummaryVersion) : selectOnly(hiddenStudentViewSummaryVersion))
@@ -118,9 +118,8 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
         )
         ..where(_filterExpressions(table: view, filter: params));
 
-      final count = await queryOnly.map((row) => row.read(params.notShowHidden ? studentViewSummaryVersion.id.count() : hiddenStudentViewSummaryVersion.id.count())).getSingleOrNull();
-      return Success(data: count ?? 0);
-    } catch (e) { return NawiDAOUtils.onCatch(e); }
+      return queryOnly.watchSingleOrNull().map((row) => row?.read(params.notShowHidden ? studentViewSummaryVersion.id.count() : hiddenStudentViewSummaryVersion.id.count()) ?? 0);
+    } catch (e) { return Stream.value(0); }
   }
 
   @override

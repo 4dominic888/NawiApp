@@ -27,13 +27,16 @@ class RegisterBookFilter extends FilterData with EquatableMixin {
   /// Valor por defecto, dia de hoy hasta la semana pasada
   final DateTimeRange? timestampRange;
 
+  final String? classroomId;
+
   RegisterBookFilter({
     super.pageSize, super.currentPage,
     this.actionLike, this.studentNameLike,
     this.orderBy = RegisterBookViewOrderByType.timestampRecently,
     this.searchByType,
     this.searchByStudentsId = const [], super.showHidden,
-    this.timestampRange
+    this.timestampRange,
+    this.classroomId
   });
 
   @override

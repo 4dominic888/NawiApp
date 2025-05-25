@@ -36,7 +36,7 @@ interface class StudentServiceImplement extends StudentServiceBase {
   }
 
   @override
-  Future<Result<int>> getAllCount(StudentFilter params) => studentRepo.getAllCount(params);
+  Stream<int> getAllCount(StudentFilter params) => studentRepo.getAllCount(params);
 
   @override
   Future<Result<Student>> getOne(String id) async {

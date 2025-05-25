@@ -65,13 +65,14 @@ class ClassroomDAO extends DatabaseAccessor<NawiDatabase> with _$ClassroomDAOMix
   }
 
   @override
-  Future<Result<int>> getAllCount(ClassroomFilter params) async {
+  Stream<int> getAllCount(ClassroomFilter params) {
     final queryOnly = selectOnly(classroomTable)
       ..addColumns([classroomTable.id.count()])
       ..where(_filterExpressions(table: classroomTable, filter: params));
 
-    final count = await queryOnly.map((row) => row.read(classroomTable.id.count())).getSingleOrNull();
-    return Success(data: count ?? 0);
+    return queryOnly.watchSingleOrNull().map((row) => row?.read(classroomTable.id.count()) ?? 0);
+    // final count = queryOnly.map((row) => row.read(classroomTable.id.count())).watchSingleOrNull();
+    // return Success(data: count);
   }
 
   @override

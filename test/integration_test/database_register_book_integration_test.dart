@@ -222,22 +222,18 @@ void main() {
       final service = GetIt.I<RegisterBookServiceBase>();
       var result = await service.getAllCount(RegisterBookFilter());
 
-      testil.customExpect(result, isA<Success>(),
-        about: 'Buen resultado', n: 1
-      );
-
-      testil.customExpect(result.getValue!, 6,
-        about: 'Obtener cantidad para toda un aula', n: 2
+      testil.customExpect(await result.first, 6,
+        about: 'Obtener cantidad para toda un aula', n: 1
       );
 
       result = await service.getAllCount(RegisterBookFilter(actionLike: 'p'));
-      testil.customExpect(result.getValue!, 2,
-        about: 'Obtener cantidad para toda un aula por un filtro', n: 3
+      testil.customExpect(await result.first, 2,
+        about: 'Obtener cantidad para toda un aula por un filtro', n: 2
       );
 
       result = await service.getAllCount(RegisterBookFilter(showHidden: true));
-      testil.customExpect(result.getValue!, 2,
-        about: 'Obtener cantidad para registros ocultos', n: 4
+      testil.customExpect(await result.first, 2,
+        about: 'Obtener cantidad para registros ocultos', n: 3
       );
     });
     

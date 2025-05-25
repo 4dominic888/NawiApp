@@ -16,6 +16,7 @@ import 'package:nawiapp/presentation/features/search/providers/register_book/sea
 import 'package:nawiapp/presentation/features/search/providers/student/search_student_list_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/providers/select_classroom_grid_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/screens/add_classroom_modal.dart';
+import 'package:nawiapp/presentation/features/select_classroom/widgets/stat_element.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:nawiapp/presentation/widgets/warning_awesome_dialog.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
@@ -50,8 +51,7 @@ class ClassroomElement extends StatelessWidget {
               ]
             ),
 
-            //TODO Estadisticas info
-            Placeholder(),
+            StatElement(item: item),
 
             Divider(),
 

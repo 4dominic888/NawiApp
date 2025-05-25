@@ -3,8 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 
-final countStudentProvider = FutureProvider.family<int, StudentFilter>((ref, filter) async {
+final countStudentProvider = StreamProvider.family.autoDispose<int, String>((ref, classroomId) {
   final service = GetIt.I<StudentServiceBase>();
-  final result = await service.getAllCount(filter);
-  return result.getValue ?? 0;
+  return service.getAllCount(StudentFilter(
+    classroomId: classroomId
+  ));
 });

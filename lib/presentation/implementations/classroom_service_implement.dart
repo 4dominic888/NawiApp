@@ -31,7 +31,7 @@ interface class ClassroomServiceImplement extends ClassroomServiceBase {
   }
 
   @override
-  Future<Result<int>> getAllCount(ClassroomFilter params) => classroomDAO.getAllCount(params);
+  Stream<int> getAllCount(ClassroomFilter params) => classroomDAO.getAllCount(params);
 
   @override
   Future<Result<Classroom>> getOne(String id) async {

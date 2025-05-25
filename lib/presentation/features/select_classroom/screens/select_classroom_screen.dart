@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
+import 'package:nawiapp/presentation/features/select_classroom/providers/count_classroom_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/providers/select_classroom_grid_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/screens/add_classroom_modal.dart';
 import 'package:nawiapp/presentation/features/select_classroom/widgets/classroom_element.dart';
@@ -26,6 +27,7 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
     final searchNotifier = ref.read(classroomSearchProvider.notifier);
     final controller = searchNotifier.pagingController;
     final filterNotifier = ref.read(classroomFilterProvider.notifier);
+    final classroomCountNotifier = ref.watch(countClassroomProvider(filterNotifier.state));
 
     return Scaffold(
       floatingActionButton: IconButton(
@@ -56,7 +58,15 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
             }
           });
         },
+        extraWidget: [
+          Text('${classroomCountNotifier.when(
+            data: (data) => data,
+            error: (_, __) => '0',
+            loading: () => '-'
+          )} elementos')
+        ],
       ),
+
       body: RefreshIndicator(
         onRefresh: searchNotifier.refresh,
         child: PagedListView(

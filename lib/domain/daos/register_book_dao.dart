@@ -21,7 +21,7 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
     RegisterBookFilter
   >,
   
-  CountableModelDriftDAO<RegisterBookFilter>
+  AsyncCountableModelDriftDAO<RegisterBookFilter>
   {
 
   RegisterBookDAO(super.db);
@@ -41,7 +41,7 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
     NawiDAOUtils.classroomFilter(
       expressions: expressions,
       table: table,
-      classroomId: GetIt.I<InMemoryStorage>().currentClassroom?.id
+      classroomId: params.classroomId ?? GetIt.I<InMemoryStorage>().currentClassroom?.id
     );
 
     if(params.notShowHidden) {
@@ -110,10 +110,10 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
   }
 
   @override
-  Future<Result<int>> getAllCount(RegisterBookFilter params) async {
+  Future<Stream<int>> getAllCount(RegisterBookFilter params) async {
     try {
       final registersIdByStudentResult = await _getRegisterBookIdByStudents(params.searchByStudentsId);
-      if(registersIdByStudentResult is NawiError) return registersIdByStudentResult.getError()!;
+      if(registersIdByStudentResult is NawiError) return Stream.value(0);
       final Iterable<String> searchedRegistersIdByStudents = registersIdByStudentResult.getValue!;
 
       final view = params.notShowHidden ? registerBookViewSummaryVersion : hiddenRegisterBookViewSummaryVersion;
@@ -123,10 +123,11 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
         )
         ..where(_filterExpressions(table: view, params: params, searchedRegistersIdByStudents: searchedRegistersIdByStudents));
 
-      final count = await queryOnly.map((row) => row.read(params.notShowHidden ? registerBookViewSummaryVersion.id.count() : hiddenRegisterBookViewSummaryVersion.id.count())).getSingleOrNull();
-      return Success(data: count ?? 0);
+      return queryOnly.watchSingleOrNull().map((row) => row?.read(params.notShowHidden ? registerBookViewSummaryVersion.id.count() : hiddenRegisterBookViewSummaryVersion.id.count()) ?? 0);
 
-    } catch (e) { return NawiDAOUtils.onCatch(e); }
+    } catch (e) {
+      return Stream.value(0);
+    }
   }
 
   @override

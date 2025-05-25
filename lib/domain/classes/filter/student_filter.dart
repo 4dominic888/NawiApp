@@ -18,11 +18,14 @@ class StudentFilter extends FilterData with EquatableMixin {
   /// Filtro por nombre
   final String? nameLike;
 
+  final String? classroomId;
+
   StudentFilter({
     super.pageSize, super.currentPage,
     this.orderBy = StudentViewOrderByType.timestampRecently,
     this.ageEnumIndex1, this.ageEnumIndex2,
-    String? nameLike, super.showHidden
+    String? nameLike, super.showHidden,
+    this.classroomId
   }) : nameLike = NawiGeneralUtils.clearSpaces(nameLike ?? '');
 
   Set<StudentAge> get selectedAges {

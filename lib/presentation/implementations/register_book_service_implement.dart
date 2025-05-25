@@ -92,7 +92,7 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
     return result.convertTo((value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
   }
   @override
-  Future<Result<int>> getAllCount(RegisterBookFilter params) => registerBookRepo.getAllCount(params);
+  Future<Stream<int>> getAllCount(RegisterBookFilter params) => registerBookRepo.getAllCount(params);
 
   @override
   Future<Result<RegisterBook>> getOne(String id) {
