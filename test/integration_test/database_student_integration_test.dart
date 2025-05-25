@@ -184,6 +184,31 @@ void main(){
   });
 
   group('Filtro de estudiantes', () {
+
+    test('Contador d e estudiantes', () async {
+      final service = GetIt.I<StudentServiceBase>();
+      var result = await service.getAllCount(StudentFilter());
+
+      testil.customExpect(result, isA<Success>(),
+        about: 'Buen resultado', n: 1
+      );
+
+      testil.customExpect(result.getValue!, 6,
+        about: 'Obtener cantidad de un aula', n: 2
+      );
+
+      result = await service.getAllCount(StudentFilter(nameLike: 'e'));
+      testil.customExpect(result.getValue!, 5,
+        about: 'Cantidad con filtro random', n: 3
+      );
+
+      result = await service.getAllCount(StudentFilter(showHidden: true));
+      testil.customExpect(result.getValue!, 2,
+        about: 'Cantidad con registros ocultos', n: 4
+      );
+
+    });
+
     test('Ordenamiento de estudiantes', () async {
       final service = GetIt.I<StudentServiceBase>();
 

@@ -19,7 +19,10 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
     StudentTableCompanion,
     StudentViewSummaryVersionData,
     StudentFilter
-  >{
+  >,
+  
+  CountableModelDriftDAO<StudentFilter>
+  {
 
   StudentDAO(super.db);
 
@@ -39,46 +42,46 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
     
   }
 
+  Expression<bool> _filterExpressions({required dynamic table, required StudentFilter filter}) {
+    final List<Expression<bool>> expressions = [];
+
+    NawiDAOUtils.classroomFilter(
+      expressions: expressions,
+      table: table,
+      classroomId: GetIt.I<InMemoryStorage>().currentClassroom?.id
+    );
+
+    //* Excluye estudiantes marcados como ocultos
+    if(filter.notShowHidden) {
+      table = table as $StudentViewSummaryVersionView;
+      expressions.add(
+        table.id.isNotInQuery(
+          selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])
+        )
+      );
+    }
+
+    NawiDAOUtils.ageFilter(
+      table: table,
+      expressions: expressions,
+      ageEnumIndex1: filter.ageEnumIndex1?.index,
+      ageEnumIndex2: filter.ageEnumIndex2?.index
+    );
+
+    NawiDAOUtils.nameStudentFilter(
+      table: table,
+      expressions: expressions,
+      textLike: filter.nameLike
+    );
+
+    return Expression.and(expressions);
+  }
+
   @override
   Future<Result<Iterable<StudentViewSummaryVersionData>>> getAll(StudentFilter params) async {
     try {
-      final memoryStorage = GetIt.I<InMemoryStorage>();
-
       var query = ( params.notShowHidden ? select(studentViewSummaryVersion) : select(hiddenStudentViewSummaryVersion) )
-        ..where((tbl) {
-          final List<Expression<bool>> filterExpressions = [];
-
-          NawiDAOUtils.classroomFilter(
-            expressions: filterExpressions,
-            table: tbl,
-            classroomId: memoryStorage.currentClassroom?.id
-          );
-
-          //* Excluye estudiantes marcados como ocultos
-          if(params.notShowHidden) {
-            tbl = tbl as $StudentViewSummaryVersionView;
-            filterExpressions.add(
-              tbl.id.isNotInQuery(
-                selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])
-              )
-            );
-          }
-
-          NawiDAOUtils.ageFilter(
-            table: tbl,
-            expressions: filterExpressions,
-            ageEnumIndex1: params.ageEnumIndex1?.index,
-            ageEnumIndex2: params.ageEnumIndex2?.index
-          );
-
-          NawiDAOUtils.nameStudentFilter(
-            table: tbl,
-            expressions: filterExpressions,
-            textLike: params.nameLike
-          );
-          
-          return Expression.and(filterExpressions);
-      });
+        ..where((tbl) => _filterExpressions(table: tbl, filter: params));
 
       query = NawiDAOUtils.orderByStudent(query: query, orderBy: params.orderBy);
 
@@ -100,6 +103,23 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
         )
       );
       
+    } catch (e) { return NawiDAOUtils.onCatch(e); }
+  }
+
+  @override
+  Future<Result<int>> getAllCount(StudentFilter params) async {
+    try {
+      final view = params.notShowHidden ? studentViewSummaryVersion : hiddenStudentViewSummaryVersion;
+      final queryOnly = (params.notShowHidden ? selectOnly(studentViewSummaryVersion) : selectOnly(hiddenStudentViewSummaryVersion))
+        ..addColumns(
+          [
+            params.notShowHidden ? studentViewSummaryVersion.id.count() : hiddenStudentViewSummaryVersion.id.count()
+          ]
+        )
+        ..where(_filterExpressions(table: view, filter: params));
+
+      final count = await queryOnly.map((row) => row.read(params.notShowHidden ? studentViewSummaryVersion.id.count() : hiddenStudentViewSummaryVersion.id.count())).getSingleOrNull();
+      return Success(data: count ?? 0);
     } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
