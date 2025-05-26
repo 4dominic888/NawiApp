@@ -110,15 +110,14 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
   Stream<int> getAllCount(StudentFilter params) {
     try {
       final view = params.notShowHidden ? studentViewSummaryVersion : hiddenStudentViewSummaryVersion;
-      final queryOnly = (params.notShowHidden ? selectOnly(studentViewSummaryVersion) : selectOnly(hiddenStudentViewSummaryVersion))
-        ..addColumns(
-          [
-            params.notShowHidden ? studentViewSummaryVersion.id.count() : hiddenStudentViewSummaryVersion.id.count()
-          ]
-        )
+      final selectedOnly = (params.notShowHidden ? selectOnly(studentViewSummaryVersion) : selectOnly(hiddenStudentViewSummaryVersion));
+      final idExpressions = params.notShowHidden ? studentViewSummaryVersion.id.count() : hiddenStudentViewSummaryVersion.id.count();
+      
+      final queryOnly = selectedOnly
+        ..addColumns([idExpressions])
         ..where(_filterExpressions(table: view, filter: params));
 
-      return queryOnly.watchSingleOrNull().map((row) => row?.read(params.notShowHidden ? studentViewSummaryVersion.id.count() : hiddenStudentViewSummaryVersion.id.count()) ?? 0);
+      return queryOnly.watchSingleOrNull().map((row) => row?.read(idExpressions) ?? 0);
     } catch (e) { return Stream.value(0); }
   }
 

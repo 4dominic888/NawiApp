@@ -77,6 +77,8 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
     return Expression.and(expressions);
   }
 
+  
+
   @override
   Future<Result<Iterable<RegisterBookViewSummaryVersionData>>> getAll(RegisterBookFilter params) async {
     try {
@@ -117,17 +119,20 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
       final Iterable<String> searchedRegistersIdByStudents = registersIdByStudentResult.getValue!;
 
       final view = params.notShowHidden ? registerBookViewSummaryVersion : hiddenRegisterBookViewSummaryVersion;
-      final queryOnly = (params.notShowHidden ? selectOnly(registerBookViewSummaryVersion) : selectOnly(hiddenRegisterBookViewSummaryVersion))
-        ..addColumns(
-          [ params.notShowHidden ? registerBookViewSummaryVersion.id.count() : hiddenRegisterBookViewSummaryVersion.id.count() ]
+      final selectedOnly = params.notShowHidden ? selectOnly(registerBookViewSummaryVersion) : selectOnly(hiddenRegisterBookViewSummaryVersion);
+      final idExpressions = params.notShowHidden ? registerBookViewSummaryVersion.id.count() : hiddenRegisterBookViewSummaryVersion.id.count();
+      final queryOnly = selectedOnly
+        ..addColumns([idExpressions])
+        ..where(_filterExpressions(
+          table: view,
+          params: params,
+          searchedRegistersIdByStudents: searchedRegistersIdByStudents
         )
-        ..where(_filterExpressions(table: view, params: params, searchedRegistersIdByStudents: searchedRegistersIdByStudents));
+      );
 
-      return queryOnly.watchSingleOrNull().map((row) => row?.read(params.notShowHidden ? registerBookViewSummaryVersion.id.count() : hiddenRegisterBookViewSummaryVersion.id.count()) ?? 0);
+      return queryOnly.watchSingleOrNull().map((row) => row?.read(idExpressions) ?? 0);
 
-    } catch (e) {
-      return Stream.value(0);
-    }
+    } catch (e) { return Stream.value(0); }
   }
 
   @override
@@ -206,7 +211,6 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
       } catch (e) { return NawiDAOUtils.onCatch(e); }
     });
   }
-
 
   /// Obtiene los registros en base en base a los estudiantes involucrados en ella
   Future<Result<Iterable<String>>> _getRegisterBookIdByStudents(Iterable<String> studentsId) async {

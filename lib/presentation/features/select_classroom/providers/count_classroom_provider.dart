@@ -6,6 +6,4 @@ import 'package:nawiapp/domain/services/classroom_service_base.dart';
 final countClassroomProvider = StreamProvider.family.autoDispose<int, ClassroomFilter>((ref, filter) {
   final service = GetIt.I<ClassroomServiceBase>();
   return service.getAllCount(filter);
-  // final result = await service.getAllCount(filter);
-  // return result.getValue ?? 0;
 });
