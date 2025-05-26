@@ -1,12 +1,15 @@
+import 'package:nawiapp/domain/classes/count_ratio.dart';
 import 'package:nawiapp/domain/classes/paginated_data.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
+import 'package:nawiapp/domain/classes/stat_summary/student_stat.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/daos/student_register_book_dao.dart';
 import 'package:nawiapp/domain/daos/student_dao.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 import 'package:recase/recase.dart';
 import 'package:uuid/uuid.dart';
 
@@ -75,4 +78,19 @@ interface class StudentServiceImplement extends StudentServiceBase {
     final result = await studentRepo.unarchiveOne(id);
     return result.convertTo((value) => StudentMapper.fromTableData(value));
   }
+
+  @override
+  Stream<StudentStat> getStudentStat(String classroomId) => studentRepo.getGeneralStudentStat(classroomId).map((event) {
+    final columns = event.rawData.data.values;
+    final threeCount = columns.elementAt(0) as int;
+    final fourCount = columns.elementAt(1) as int;
+    final fiveCount = columns.elementAt(2) as int;
+    final total = columns.elementAt(3) as int;
+    return StudentStat(
+      threeAgeCount: CountRatio(count: threeCount, percent: NawiGeneralUtils.getPercent(threeCount, total)),
+      fourAgeCount: CountRatio(count: fourCount, percent: NawiGeneralUtils.getPercent(fourCount, total)),
+      fiveAgeCount: CountRatio(count: fiveCount, percent: NawiGeneralUtils.getPercent(fiveCount, total)),
+      total: total
+    );
+  });
 }

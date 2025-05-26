@@ -14,5 +14,10 @@ class NawiGeneralUtils {
   static bool isKeyboardVisible(BuildContext context) {
     return MediaQuery.of(context).viewInsets.bottom > 0;
   }
+
+  static double getPercent(int partialValue, int total) {
+    if (total == 0) return 0;
+    return (partialValue / total) * 100;
+  }
 }
 

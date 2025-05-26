@@ -45,6 +45,7 @@ dependencies:
   pdf: ^3.11.3
   pdfrx: ^1.1.28
   file_picker: ^10.1.8
+  fl_chart: ^1.0.0
 
 dev_dependencies:
   build_runner: ^2.4.15

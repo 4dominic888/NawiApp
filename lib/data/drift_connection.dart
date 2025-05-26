@@ -44,7 +44,9 @@ LazyDatabase _openConnection() {
 @DriftDatabase(
   tables: [StudentTable, RegisterBookTable, StudentRegisterBookTable, HiddenStudentTable, HiddenRegisterBookTable, ClassroomTable],
   daos: [StudentDAO, RegisterBookDAO, StudentRegisterBookDAO, ClassroomDAO],
-  views: [StudentViewSummaryVersion, HiddenStudentViewSummaryVersion, RegisterBookViewSummaryVersion, HiddenRegisterBookViewSummaryVersion]
+  views: [
+    StudentViewSummaryVersion, HiddenStudentViewSummaryVersion, RegisterBookViewSummaryVersion, HiddenRegisterBookViewSummaryVersion,
+  ]
 )
 class NawiDatabase extends _$NawiDatabase {
   NawiDatabase([QueryExecutor? e]) : super(e ?? _openConnection());

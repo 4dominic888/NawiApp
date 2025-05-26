@@ -7,12 +7,15 @@ import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_dao.dart';
 import 'package:nawiapp/data/local/tables/student_table.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/infrastructure/in_memory_storage.dart';
 import 'package:nawiapp/utils/nawi_dao_utils.dart';
 
 part 'student_dao.g.dart';
 
-@DriftAccessor(tables: [StudentTable], views: [StudentViewSummaryVersion, HiddenStudentViewSummaryVersion])
+@DriftAccessor(tables: [StudentTable], views: [
+  StudentViewSummaryVersion, HiddenStudentViewSummaryVersion
+])
 class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
   implements ModelDriftDAO<
     StudentTableData,
@@ -119,6 +122,21 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
 
       return queryOnly.watchSingleOrNull().map((row) => row?.read(idExpressions) ?? 0);
     } catch (e) { return Stream.value(0); }
+  }
+
+  Stream<TypedResult> getGeneralStudentStat(String classroomId) {
+    final studentSummarized = studentViewSummaryVersion;
+    ageFilter(StudentAge age) => studentSummarized.age.equals(age.index);
+    final columns = [
+      studentSummarized.age.count(filter: ageFilter(StudentAge.threeYears)),
+      studentSummarized.age.count(filter: ageFilter(StudentAge.fourYears)),
+      studentSummarized.age.count(filter: ageFilter(StudentAge.fiveYears)),
+      studentSummarized.id.count(filter: studentSummarized.classroom.equals(classroomId))
+    ];
+
+    final query = selectOnly(studentSummarized)..addColumns(columns)..where(studentSummarized.classroom.equals(classroomId));
+
+    return query.watchSingle();
   }
 
   @override
