@@ -37,18 +37,21 @@ class ClassroomElement extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Wrap(
-              spacing: 10,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Icon(IconData(item.iconCode, fontFamily: 'MaterialIcons')),
-                SizedBox(
-                  width: 200,
-                  child: Text(item.name, overflow: TextOverflow.ellipsis)
-                )
-              ]
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Wrap(
+                spacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Icon(IconData(item.iconCode, fontFamily: 'MaterialIcons')),
+                  SizedBox(
+                    width: 200,
+                    child: Text(item.name, overflow: TextOverflow.ellipsis)
+                  )
+                ]
+              ),
             ),
 
             ClassroomSubStatElement(item: item),

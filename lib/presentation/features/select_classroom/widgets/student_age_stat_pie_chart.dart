@@ -23,13 +23,14 @@ class StudentAgeStatPieChart extends StatelessWidget {
 
     return hasValue ? Row(
       spacing: 10,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Column(
           children: [
             const Text('Estudiantes'),
             SizedBox(
-              width: screenWidth,
-              height: screenWidth,
+              width: 100,
+              height: 100,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -88,9 +89,20 @@ class StudentAgeStatPieChart extends StatelessWidget {
               text: '5 años',
               isSquare: false
             ),
+
+            Indicator(
+              color: Colors.transparent,
+              text: 'Total ${data.total}',
+              isSquare: false,
+              bold: false,
+            )
           ],
         )
       ],
-    ) : const SizedBox.shrink();
+    ) :
+    Align(
+      alignment: Alignment.centerLeft,
+      child: const Text('Sin estudiantes registrados...')
+    );
   }
 }

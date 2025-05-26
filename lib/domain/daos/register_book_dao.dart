@@ -7,6 +7,7 @@ import 'package:nawiapp/domain/interfaces/model_drift_dao.dart';
 import 'package:nawiapp/data/local/tables/register_book_table.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/daos/student_register_book_dao.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/infrastructure/in_memory_storage.dart';
 import 'package:nawiapp/utils/nawi_dao_utils.dart';
 
@@ -133,6 +134,22 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
       return queryOnly.watchSingleOrNull().map((row) => row?.read(idExpressions) ?? 0);
 
     } catch (e) { return Stream.value(0); }
+  }
+
+  Stream<TypedResult> getGeneralRegisterBookStat(String classroomId) {
+    registerBookType(RegisterBookType type) => registerBookViewSummaryVersion.type.equals(type.index);
+    final columns = [
+      registerBookViewSummaryVersion.type.count(filter: registerBookType(RegisterBookType.incident)),
+      registerBookViewSummaryVersion.type.count(filter: registerBookType(RegisterBookType.anecdotal)),
+      registerBookViewSummaryVersion.type.count(filter: registerBookType(RegisterBookType.register)),
+      registerBookViewSummaryVersion.id.count(),
+    ];
+    final query = selectOnly(registerBookViewSummaryVersion)
+      ..addColumns(columns)
+      ..where(registerBookViewSummaryVersion.classroom.equals(classroomId)
+    );
+
+    return query.watchSingle();
   }
 
   @override
