@@ -46,7 +46,7 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
 
     return Scaffold(
       appBar: SearchFilterField(
-        hintTextField: 'Búsqueda por nombre...',
+        hintTextField: 'Nombre...',
         filterAction: () async {
           final newFilter = await showDialog<StudentFilter?>(
             context: context,
@@ -77,34 +77,40 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
               filterNotifier.state = StudentFilter();
               seachNotifier.refresh();
             },
-          ),
-          Text('${studentCountNotifier.when(
-            data: (data) => data,
-            error: (_, __) => '0',
-            loading: () => '-'
-          )} elementos')
+          )
         ]
       ),
-      body: RefreshIndicator(
-        onRefresh: seachNotifier.refresh,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 90),
-          child: PagedListView(
-            pagingController: controller,
-            builderDelegate: PagedChildBuilderDelegate<StudentSummary>(
-              itemBuilder: (_, item, __) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: StudentElement(item: item),
+      body: Column(
+        children: [
+          Text('Cantidad de estudiantes: ${studentCountNotifier.when(
+            data: (count) => count.toString(),
+            error: (error, stack) => 'Error al cargar',
+            loading: () => 'Cargando...'
+          )}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: seachNotifier.refresh,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 90),
+                child: PagedListView(
+                  pagingController: controller,
+                  builderDelegate: PagedChildBuilderDelegate<StudentSummary>(
+                    itemBuilder: (_, item, __) => Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: StudentElement(item: item),
+                    ),
+                    firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+                    newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+                    noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay estudiantes registrados")),
+                    noMoreItemsIndicatorBuilder: (_) => const Center(child: Text("No más estudiantes a cargar")),
+                    firstPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información")),
+                    newPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información"))            
+                  )
+                ),
               ),
-              firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
-              newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
-              noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay estudiantes registrados")),
-              noMoreItemsIndicatorBuilder: (_) => const Center(child: Text("No más estudiantes a cargar")),
-              firstPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información")),
-              newPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información"))            
-            )
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

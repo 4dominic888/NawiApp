@@ -30,6 +30,24 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
     final classroomCountNotifier = ref.watch(countClassroomProvider(filterNotifier.state));
 
     return Scaffold(
+      persistentFooterAlignment: AlignmentDirectional.bottomCenter,
+      persistentFooterButtons: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10)
+            )
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: classroomCountNotifier.when(
+            data: (count) => Text('Total de aulas registradas: $count', style: const TextStyle(fontSize: 16)),
+            error: (error, stack) => const Text('Error al cargar los datos', style: TextStyle(fontSize: 16)),
+            loading: () => const Center(child: CircularProgressIndicator())
+          ),
+        )
+      ],
+      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: IconButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: NawiColorUtils.primaryColor,
@@ -58,13 +76,6 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
             }
           });
         },
-        extraWidget: [
-          Text('${classroomCountNotifier.when(
-            data: (data) => data,
-            error: (_, __) => '0',
-            loading: () => '-'
-          )} elementos')
-        ],
       ),
 
       body: RefreshIndicator(

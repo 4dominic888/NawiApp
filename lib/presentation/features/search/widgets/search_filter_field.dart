@@ -32,7 +32,7 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
             Expanded(
               child: TextField(
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.search),
+                  prefixIcon: Icon(Icons.search),
                   hintText: hintTextField,
                   border: InputBorder.none,
                   filled: true,
@@ -49,11 +49,7 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
               onPressed: filterAction
             ),
 
-            Wrap(
-              spacing: 10,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: extraWidget,
-            )
+            Row(children: extraWidget)
           ],
         ),
       ),

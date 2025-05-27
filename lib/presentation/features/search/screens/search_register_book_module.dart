@@ -53,7 +53,7 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
 
     return Scaffold(
       appBar: SearchFilterField(
-        hintTextField: 'Búsqueda por acción',
+        hintTextField: 'Acción',
         filterAction: () async {
           final newFilter = await showDialog<RegisterBookFilter?>(
             context: context,
@@ -133,35 +133,42 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
               }
             },
           ),
-
-          Text('${registerBookCountNotifier.when(
-            data: (data) => data,
-            error: (_, __) => '0',
-            loading: () => '-'
-          )} elementos')
-          
         ]
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(bottom: 60),
-        child: InfiniteGroupedList(
-          controller: infiniteListController,
-          onLoadMore: searchNotifier.fetchPage,
-          groupBy: (item) => item.createdAt,
-          sortGroupBy: (item) => item.createdAt,
-          groupCreator: (date) => '${date.year}-${date.month}-${date.day}',
-          initialItemsErrorWidget: (error) => Text(error.toString()),
-          loadingWidget: const Center(child: CircularProgressIndicator()),
-          showRefreshIndicator: true,
-          stickyGroups: false,
-          noItemsFoundWidget: const Center(child: Text('No hay registros agregados')),
-          groupTitleBuilder: (title, groupBy, isPinned, _) => Container(
-            color: Colors.grey.shade200,
+      body: Column(
+        children: [
+          Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(DateFormat('EEEE, d MMM y').format(groupBy), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+            child: Text('Cantidad de registros: ${registerBookCountNotifier.when(
+              data: (count) => count.toString(),
+              error: (error, stack) => 'Error al cargar',
+              loading: () => 'Cargando...'
+            )}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
-          itemBuilder: (item) => RegisterBookElement(item: item, isPreview: false),
-        ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 60),
+              child: InfiniteGroupedList(
+                controller: infiniteListController,
+                onLoadMore: searchNotifier.fetchPage,
+                groupBy: (item) => item.createdAt,
+                sortGroupBy: (item) => item.createdAt,
+                groupCreator: (date) => '${date.year}-${date.month}-${date.day}',
+                initialItemsErrorWidget: (error) => Text(error.toString()),
+                loadingWidget: const Center(child: CircularProgressIndicator()),
+                showRefreshIndicator: true,
+                stickyGroups: false,
+                noItemsFoundWidget: const Center(child: Text('No hay registros agregados')),
+                groupTitleBuilder: (title, groupBy, isPinned, _) => Container(
+                  color: Colors.grey.shade200,
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(DateFormat('EEEE, d MMM y').format(groupBy), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+                ),
+                itemBuilder: (item) => RegisterBookElement(item: item, isPreview: false),
+              ),
+            ),
+          ),
+        ],
       )
     );
   }
