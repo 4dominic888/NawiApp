@@ -3,19 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
-import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
-import 'package:nawiapp/presentation/features/create/providers/student/initial_student_form_data_provider.dart';
-import 'package:nawiapp/presentation/features/create/providers/selectable_element_for_create_provider.dart';
-import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
-import 'package:nawiapp/presentation/features/home/providers/general_loading_provider.dart';
-import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
+import 'package:nawiapp/presentation/features/create/providers/student/edit_student_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/register_book/search_register_book_list_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/selectable_element_for_search_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/student/search_student_list_provider.dart';
 import 'package:nawiapp/presentation/widgets/delete_element_dialog.dart';
-import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
 class StudentElement extends StatelessWidget {
@@ -94,28 +88,7 @@ class _StudentElementOptions extends ConsumerWidget {
         //* Editar
         IconButton(
           icon: const Icon(Icons.edit), style: Theme.of(context).elevatedButtonTheme.style,
-          onPressed: () async {
-            final loading = ref.read(generalLoadingProvider.notifier);
-            loading.state = true;
-        
-            final studentToEdit = await GetIt.I<StudentServiceBase>().getOne(item.id);
-        
-            studentToEdit.onValue(
-              withPopup: false,
-              onError: (_, message) {
-                loading.state = false;
-                NotificationMessage.showErrorNotification(message);
-              },
-              onSuccessfully: (data, _) {
-                loading.state = false;
-        
-                //* Ir al formulario de estudiante con el dato a editar
-                ref.read(initialStudentFormDataProvider.notifier).state = data;
-                ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.create);
-                ref.read(selectableElementForCreateProvider.notifier).state = Student;
-              },
-            );
-          },
+          onPressed: () => ref.read(editStudentProvider)(item.id),
         ),
 
         //* Eliminar / Archivar
