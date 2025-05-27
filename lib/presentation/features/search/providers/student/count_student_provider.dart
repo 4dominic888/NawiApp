@@ -4,11 +4,9 @@ import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/classes/stat_summary/student_stat.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 
-final countStudentProvider = StreamProvider.family.autoDispose<int, String>((ref, classroomId) {
+final countStudentProvider = StreamProvider.family.autoDispose<int, (StudentFilter, String?)>((ref, args) {
   final service = GetIt.I<StudentServiceBase>();
-  return service.getAllCount(StudentFilter(
-    classroomId: classroomId
-  ));
+  return service.getAllCount(args.$1.copyWith(classroomId: args.$2));
 });
 
 final studentStatProvider = StreamProvider.family.autoDispose<StudentStat, String>((ref, classroomId) {

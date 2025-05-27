@@ -49,7 +49,11 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
               onPressed: filterAction
             ),
 
-            Row(children: extraWidget)
+            Wrap(
+              spacing: 10,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: extraWidget,
+            )
           ],
         ),
       ),

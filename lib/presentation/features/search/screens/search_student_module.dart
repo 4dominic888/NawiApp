@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
+import 'package:nawiapp/infrastructure/in_memory_storage.dart';
+import 'package:nawiapp/presentation/features/search/providers/student/count_student_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/student/search_student_list_provider.dart';
 import 'package:nawiapp/presentation/widgets/student_element.dart';
 import 'package:nawiapp/presentation/features/search/screens/modals/advanced_student_filter_modal.dart';
@@ -37,6 +40,9 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
     final controller = seachNotifier.pagingController;
     final filterNotifier = ref.read(studentFilterProvider.notifier);
     final filterWatcher = ref.watch(studentFilterProvider);
+    final studentCountNotifier = ref.watch(
+      countStudentProvider((filterWatcher, GetIt.I<InMemoryStorage>().currentClassroom?.id))
+    );
 
     return Scaffold(
       appBar: SearchFilterField(
@@ -71,7 +77,12 @@ class _SearchStudentModuleState extends ConsumerState<SearchStudentModule> {
               filterNotifier.state = StudentFilter();
               seachNotifier.refresh();
             },
-          )
+          ),
+          Text('${studentCountNotifier.when(
+            data: (data) => data,
+            error: (_, __) => '0',
+            loading: () => '-'
+          )} elementos')
         ]
       ),
       body: RefreshIndicator(
