@@ -126,6 +126,7 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
 
   Stream<TypedResult> getGeneralStudentStat(String classroomId) {
     final studentSummarized = studentViewSummaryVersion;
+    // final registerBookSummarized = re;
     ageFilter(StudentAge age) => studentSummarized.age.equals(age.index);
     final columns = [
       studentSummarized.age.count(filter: ageFilter(StudentAge.threeYears)),

@@ -5,14 +5,17 @@ class StudentStat {
   final CountRatio fourAgeCount;
   final CountRatio fiveAgeCount;
   final int total;
-  //* CountRatio studentIncidents
-  //* CountRatio ratedstudent
-  //* CountRatio mentionedStudents
+  // final CountRatio studentIncidents;
+  // final CountRatio ratedstudent;
+  // final CountRatio mentionedStudents;
 
   StudentStat({
     required this.threeAgeCount,
     required this.fourAgeCount,
     required this.fiveAgeCount,
-    required this.total
+    required this.total,
+    // required this.studentIncidents,
+    // required this.ratedstudent,
+    // required this.mentionedStudents,    
   });
 }
