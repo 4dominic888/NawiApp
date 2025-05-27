@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
-import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/presentation/features/create/providers/student/create_student_form_provider.dart';
-import 'package:nawiapp/presentation/shared/submit_status.dart';
-import 'package:nawiapp/presentation/widgets/student_element.dart';
-import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
+import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
+import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
+import 'package:nawiapp/presentation/features/search/providers/selectable_element_for_search_provider.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:nawiapp/utils/nawi_form_utils.dart';
 import 'package:nawiapp/utils/nawi_general_utils.dart';
-import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 class CreateStudentModule extends ConsumerStatefulWidget {
 
@@ -23,10 +21,8 @@ class CreateStudentModule extends ConsumerStatefulWidget {
 
 class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
 
-  final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _notesController;
-  final _submitBtnController = RoundedLoadingButtonController();
 
   @override
   void initState() {
@@ -47,28 +43,22 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
   Widget build(BuildContext context) {
     final studentFormState = ref.watch(studentFormProvider(widget.data).select((e) => e.data));
     final formNotifier = ref.read(studentFormProvider(widget.data).notifier);
-    ref.listen(studentFormProvider(widget.data), (_, next) => 
-      NawiFormUtils.handleSubmitStatus(status: next.status, controller: _submitBtnController) 
-    );
+    ref.listen(studentFormProvider(widget.data).select((e) => e.status), (_, next) {
+      NawiFormUtils.handleSubmitStatus(
+        status: next,
+        onSuccess: () {
+          ref.read(studentFormProvider(widget.data).notifier).clearAll();
+          _nameController.clear();
+          _notesController.clear();
+          ref.read(selectableElementForSearchProvider.notifier).state = Student;
+          ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.search);
+        },
+      );
+    });
 
-    return Form(
-      key: _formKey,
+    return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Vista previa", style: Theme.of(context).textTheme.headlineSmall),
-          
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: StudentElement(
-              isPreview: true,
-              item: StudentSummary(
-                id: studentFormState.id, name: studentFormState.name, age: studentFormState.age
-              )
-            ),
-          ),
-      
-          const Divider(),
       
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -79,16 +69,21 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
                   style: Theme.of(context).textTheme.headlineSmall
                 ),
               ),
-    
+          
               const SizedBox(width: 10),
-    
+          
               Expanded(
-                child: LoadingProcessButton(
-                  color: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade400,
-                  controller: _submitBtnController,
-                  proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
-                  label: Text(widget.data == null ? "Agregar" : "Editar"),
-                  onReset: () => formNotifier.setStatus(SubmitStatus.idle),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade400,
+                  ),
+                  onPressed: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
+                  child: Text(widget.data == null ? "Agregar" : "Editar")
+                  // color: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade400,
+                  // controller: _submitBtnController,
+                  // proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
+                  // label: Text(widget.data == null ? "Agregar" : "Editar"),
+                  // onReset: () => formNotifier.setStatus(SubmitStatus.idle),
                 ),
               )
             ],
@@ -142,21 +137,21 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
       
           const SizedBox(height: 25),
       
-          Center(
-            child: SegmentedButton<StudentAge>(
-              segments: NawiGeneralUtils.studentAges.map(
-                (e) => ButtonSegment(value: e, label: Text(e.name))
-              ).toList(),
-              selected: { studentFormState.age },
-              onSelectionChanged: formNotifier.setAge,
-              multiSelectionEnabled: false,
-            ),
+          SegmentedButton<StudentAge>(
+            segments: NawiGeneralUtils.studentAges.map(
+              (e) => ButtonSegment(value: e, label: Text(e.name))
+            ).toList(),
+            selected: { studentFormState.age },
+            onSelectionChanged: formNotifier.setAge,
+            multiSelectionEnabled: false,
           ),
       
+          const SizedBox(height: 70),
       
-          if(NawiGeneralUtils.isKeyboardVisible(context)) Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
-          )
+      
+          // if(NawiGeneralUtils.isKeyboardVisible(context)) Padding(
+          //   padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
+          // )
         ],
       ),
     );

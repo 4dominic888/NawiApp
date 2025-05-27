@@ -4,6 +4,8 @@ import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
+import 'package:nawiapp/infrastructure/in_memory_storage.dart';
+import 'package:nawiapp/presentation/features/home/providers/general_loading_provider.dart';
 import 'package:nawiapp/presentation/shared/submit_status.dart';
 import 'package:nawiapp/utils/nawi_general_utils.dart';
 
@@ -14,11 +16,12 @@ class _StudentFormState {
   _StudentFormState({required this.data, this.status = SubmitStatus.idle});
 
   _StudentFormState copyWith(
-    {String? name, StudentAge? age, String? notes, SubmitStatus? status}
+    {String? name, StudentAge? age, String? notes, SubmitStatus? status, String? classroomId}
   ) => _StudentFormState(data: data.copyWith(
       name: name ?? data.name,
       age: age ?? data.age,
-      notes: notes ?? data.notes
+      notes: notes ?? data.notes,
+      classroomId: classroomId ?? data.classroomId
     ),
     status: status ?? this.status
   );
@@ -26,10 +29,9 @@ class _StudentFormState {
 }
 
 class StudentFormNotifier extends StateNotifier<_StudentFormState> {
+  final Ref ref;
 
-  final StudentServiceBase service;
-
-  StudentFormNotifier(Student? student, {required this.service}) : super(_StudentFormState(data: student ?? Student.empty()));
+  StudentFormNotifier(this.ref, Student? student) : super(_StudentFormState(data: student ?? Student.empty()));
   
   void setName(String name) => state = state.copyWith(name: name);
   void setAge(Set<StudentAge> age) => state = state.copyWith(age: age.first);
@@ -46,13 +48,23 @@ class StudentFormNotifier extends StateNotifier<_StudentFormState> {
   void clearName() => setName('');
   void clearNotes() => setNotes('');
 
+  void clearAll() => state = state.copyWith(
+    name: '',
+    age: StudentAge.threeYears,
+    notes: ''
+  );
+
   bool get validatorsOk => [nameErrorText].every((v) => v == null);
   bool get noEmptyFields => NawiGeneralUtils.clearSpaces(state.data.name).isNotEmpty;
 
   bool get isValid => validatorsOk && noEmptyFields;
 
   Future<void> submit({String? idToEdit}) async {
+    state = state.copyWith(classroomId: GetIt.I<InMemoryStorage>().currentClassroom?.id);
+    final service = GetIt.I<StudentServiceBase>();
+
     setStatus(SubmitStatus.loading);
+    ref.read(generalLoadingProvider.notifier).state = true;
 
     bool isUpdatable = idToEdit != null;
     final Result<Object> result;
@@ -63,16 +75,20 @@ class StudentFormNotifier extends StateNotifier<_StudentFormState> {
     else {
       result = await service.addOne(state.data);
     }
+    
+    ref.read(generalLoadingProvider.notifier).state = false;
 
     result.onValue(
       onError: (_, __) => setStatus(SubmitStatus.error),
       onSuccessfully: (_, __) => setStatus(SubmitStatus.success),
     );
+
+    await Future.delayed(const Duration(milliseconds: 200));
+    setStatus(SubmitStatus.idle);
   }
 }
 
 final studentFormProvider = StateNotifierProvider
-  .autoDispose
   .family<StudentFormNotifier, _StudentFormState, Student?>(
-    (ref, student) => StudentFormNotifier(student, service: GetIt.I<StudentServiceBase>())
+    (ref, student) => StudentFormNotifier(ref, student)
 );

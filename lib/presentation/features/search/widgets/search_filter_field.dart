@@ -17,6 +17,7 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       elevation: 0,
       scrolledUnderElevation: 0,
       title: Container(
@@ -26,11 +27,12 @@ class SearchFilterField extends StatelessWidget implements PreferredSizeWidget {
           borderRadius: BorderRadius.circular(5)
         ),
         child: Row(
+          spacing: 10,
           children: [
             Expanded(
               child: TextField(
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.search),
+                  prefixIcon: Icon(Icons.search),
                   hintText: hintTextField,
                   border: InputBorder.none,
                   filled: true,

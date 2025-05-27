@@ -17,7 +17,7 @@ void main(){
   tearDown(testil.onTearDownSetupIntegrationTestLocator);
 
   test('Registro de un estudiante', () async {
-    GetIt.I<InMemoryStorage>().currentClassroomId = '6615024f-0153-4492-b06e-0cb108f90ac6';
+    GetIt.I<InMemoryStorage>().currentClassroom = testil.listOfClassroom.first;
     final service = GetIt.I<StudentServiceBase>();
 
     final student = Student(name: "Pepe Gonzales", age: StudentAge.fourYears, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6');
@@ -184,6 +184,27 @@ void main(){
   });
 
   group('Filtro de estudiantes', () {
+
+    test('Contador de estudiantes', () async {
+      final service = GetIt.I<StudentServiceBase>();
+      var result = service.getAllCount(StudentFilter());
+
+      testil.customExpect(await result.first, 6,
+        about: 'Obtener cantidad de un aula', n: 1
+      );
+
+      result = service.getAllCount(StudentFilter(nameLike: 'e'));
+      testil.customExpect(await result.first, 5,
+        about: 'Cantidad con filtro random', n: 2
+      );
+
+      result = service.getAllCount(StudentFilter(showHidden: true));
+      testil.customExpect(await result.first, 2,
+        about: 'Cantidad con registros ocultos', n: 3
+      );
+
+    });
+
     test('Ordenamiento de estudiantes', () async {
       final service = GetIt.I<StudentServiceBase>();
 

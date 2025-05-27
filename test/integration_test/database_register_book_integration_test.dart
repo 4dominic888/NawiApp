@@ -217,6 +217,26 @@ void main() {
   });
 
   group('Filtro de cuadernos de registro', () {
+
+    test('Contador de registros', () async {
+      final service = GetIt.I<RegisterBookServiceBase>();
+      var result = await service.getAllCount(RegisterBookFilter());
+
+      testil.customExpect(await result.first, 6,
+        about: 'Obtener cantidad para toda un aula', n: 1
+      );
+
+      result = await service.getAllCount(RegisterBookFilter(actionLike: 'p'));
+      testil.customExpect(await result.first, 2,
+        about: 'Obtener cantidad para toda un aula por un filtro', n: 2
+      );
+
+      result = await service.getAllCount(RegisterBookFilter(showHidden: true));
+      testil.customExpect(await result.first, 2,
+        about: 'Obtener cantidad para registros ocultos', n: 3
+      );
+    });
+    
     test('Ordenamiento de estudiantes', () async {
       final service = GetIt.I<RegisterBookServiceBase>();
 

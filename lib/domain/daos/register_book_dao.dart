@@ -7,6 +7,7 @@ import 'package:nawiapp/domain/interfaces/model_drift_dao.dart';
 import 'package:nawiapp/data/local/tables/register_book_table.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/domain/daos/student_register_book_dao.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/infrastructure/in_memory_storage.dart';
 import 'package:nawiapp/utils/nawi_dao_utils.dart';
 
@@ -18,7 +19,10 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
     RegisterBookTableData,
     RegisterBookTableCompanion,
     RegisterBookViewSummaryVersionData,
-    RegisterBookFilter>
+    RegisterBookFilter
+  >,
+  
+  AsyncCountableModelDriftDAO<RegisterBookFilter>
   {
 
   RegisterBookDAO(super.db);
@@ -32,58 +36,59 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
     } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
+  Expression<bool> _filterExpressions({required dynamic table, required RegisterBookFilter params, required Iterable<String> searchedRegistersIdByStudents}) {
+    final List<Expression<bool>> expressions = [];
+
+    NawiDAOUtils.classroomFilter(
+      expressions: expressions,
+      table: table,
+      classroomId: params.classroomId ?? GetIt.I<InMemoryStorage>().currentClassroom?.id
+    );
+
+    if(params.notShowHidden) {
+      expressions.add(
+        (table as $RegisterBookViewSummaryVersionView).id.isNotInQuery(
+          selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
+        )
+      );
+    }
+
+    if(params.searchByStudentsId.isNotEmpty) {
+      expressions.add((table as $RegisterBookViewSummaryVersionView).id.isIn(
+        searchedRegistersIdByStudents
+      ));
+    }
+
+    if(params.searchByType != null) {
+      expressions.add((table as $RegisterBookViewSummaryVersionView).type.equals(params.searchByType!.index));
+    }
+
+    NawiDAOUtils.actionFilter(
+      expressions: expressions, table: table,
+      textLike: params.actionLike
+    );
+
+    NawiDAOUtils.timestampRangeFilter(expressions: expressions, table: table, range: params.timestampRange);
+
+    NawiDAOUtils.nameStudentFilter(
+      expressions: expressions, table: table,
+      textLike: params.studentNameLike
+    );
+
+    return Expression.and(expressions);
+  }
+
+  
+
   @override
   Future<Result<Iterable<RegisterBookViewSummaryVersionData>>> getAll(RegisterBookFilter params) async {
     try {
-      final memoryStorage = GetIt.I<InMemoryStorage>();
-      
       final registersIdByStudentResult = await _getRegisterBookIdByStudents(params.searchByStudentsId);
       if(registersIdByStudentResult is NawiError) return registersIdByStudentResult.getError()!;
-
       final Iterable<String> searchedRegistersIdByStudents = registersIdByStudentResult.getValue!;
 
       var query = (params.notShowHidden ? select(registerBookViewSummaryVersion) : select(hiddenRegisterBookViewSummaryVersion))
-        ..where((tbl) {
-          final List<Expression<bool>> filterExpressions = [];
-
-          NawiDAOUtils.classroomFilter(
-            expressions: filterExpressions,
-            table: tbl,
-            classroomId: memoryStorage.currentClassroomId
-          );          
-
-          if(params.notShowHidden) {
-            filterExpressions.add(
-              (tbl as $RegisterBookViewSummaryVersionView).id.isNotInQuery(
-                selectOnly(hiddenRegisterBookTable)..addColumns([hiddenRegisterBookTable.hiddenRegisterBookId])
-              )
-            );
-          }
-
-          if(params.searchByStudentsId.isNotEmpty) {
-            filterExpressions.add((tbl as $RegisterBookViewSummaryVersionView).id.isIn(
-              searchedRegistersIdByStudents
-            ));
-          }
-
-          if(params.searchByType != null) {
-            filterExpressions.add((tbl as $RegisterBookViewSummaryVersionView).type.equals(params.searchByType!.index));
-          }
-
-          NawiDAOUtils.actionFilter(
-            expressions: filterExpressions, table: tbl,
-            textLike: params.actionLike
-          );
-
-          NawiDAOUtils.timestampRangeFilter(expressions: filterExpressions, table: tbl, range: params.timestampRange);
-
-          NawiDAOUtils.nameStudentFilter(
-            expressions: filterExpressions, table: tbl,
-            textLike: params.studentNameLike
-          );
-
-          return Expression.and(filterExpressions);
-        });
+        ..where((tbl) => _filterExpressions(table: tbl, params: params, searchedRegistersIdByStudents: searchedRegistersIdByStudents));
 
       query = NawiDAOUtils.orderByAction(query: query, orderBy: params.orderBy);
       query = NawiDAOUtils.infiniteScrollFilter(
@@ -92,19 +97,59 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
         currentPage: params.currentPage
       );
 
-      final result = await query.get();
+      final data = await query.get();
 
       if(params.notShowHidden) {
-        return Success(data: result as Iterable<RegisterBookViewSummaryVersionData>);
+        return Success(data: data as Iterable<RegisterBookViewSummaryVersionData>);
       }
 
       return Success(data:
-        (result as List<HiddenRegisterBookViewSummaryVersionData>).map(
+        (data as List<HiddenRegisterBookViewSummaryVersionData>).map(
           (e) => NawiDAOUtils.registerBookHiddenToPublic(e),
         )
       );
 
     } catch (e) { return NawiDAOUtils.onCatch(e); }
+  }
+
+  @override
+  Future<Stream<int>> getAllCount(RegisterBookFilter params) async {
+    try {
+      final registersIdByStudentResult = await _getRegisterBookIdByStudents(params.searchByStudentsId);
+      if(registersIdByStudentResult is NawiError) return Stream.value(0);
+      final Iterable<String> searchedRegistersIdByStudents = registersIdByStudentResult.getValue!;
+
+      final view = params.notShowHidden ? registerBookViewSummaryVersion : hiddenRegisterBookViewSummaryVersion;
+      final selectedOnly = params.notShowHidden ? selectOnly(registerBookViewSummaryVersion) : selectOnly(hiddenRegisterBookViewSummaryVersion);
+      final idExpressions = params.notShowHidden ? registerBookViewSummaryVersion.id.count() : hiddenRegisterBookViewSummaryVersion.id.count();
+      final queryOnly = selectedOnly
+        ..addColumns([idExpressions])
+        ..where(_filterExpressions(
+          table: view,
+          params: params,
+          searchedRegistersIdByStudents: searchedRegistersIdByStudents
+        )
+      );
+
+      return queryOnly.watchSingleOrNull().map((row) => row?.read(idExpressions) ?? 0);
+
+    } catch (e) { return Stream.value(0); }
+  }
+
+  Stream<TypedResult> getGeneralRegisterBookStat(String classroomId) {
+    registerBookType(RegisterBookType type) => registerBookViewSummaryVersion.type.equals(type.index);
+    final columns = [
+      registerBookViewSummaryVersion.type.count(filter: registerBookType(RegisterBookType.incident)),
+      registerBookViewSummaryVersion.type.count(filter: registerBookType(RegisterBookType.anecdotal)),
+      registerBookViewSummaryVersion.type.count(filter: registerBookType(RegisterBookType.register)),
+      registerBookViewSummaryVersion.id.count(),
+    ];
+    final query = selectOnly(registerBookViewSummaryVersion)
+      ..addColumns(columns)
+      ..where(registerBookViewSummaryVersion.classroom.equals(classroomId)
+    );
+
+    return query.watchSingle();
   }
 
   @override
@@ -183,7 +228,6 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
       } catch (e) { return NawiDAOUtils.onCatch(e); }
     });
   }
-
 
   /// Obtiene los registros en base en base a los estudiantes involucrados en ella
   Future<Result<Iterable<String>>> _getRegisterBookIdByStudents(Iterable<String> studentsId) async {

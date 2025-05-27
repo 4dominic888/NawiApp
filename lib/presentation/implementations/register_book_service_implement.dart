@@ -1,14 +1,17 @@
 import 'package:nawiapp/data/mappers/register_book_mapper.dart';
 import 'package:nawiapp/data/mappers/student_mapper.dart';
+import 'package:nawiapp/domain/classes/count_ratio.dart';
 import 'package:nawiapp/domain/classes/paginated_data.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
+import 'package:nawiapp/domain/classes/stat_summary/register_book_stat.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/daos/register_book_dao.dart';
 import 'package:nawiapp/domain/daos/student_register_book_dao.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 import 'package:uuid/uuid.dart';
 
 interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
@@ -91,6 +94,23 @@ interface class RegisterBookServiceImplement extends RegisterBookServiceBase {
     final result = await getAll(params.copyWith(pageSize: pageSize, currentPage: currentPage));
     return result.convertTo((value) => PaginatedData.build(currentPage: currentPage, pageSize: pageSize, data: result.getValue!));
   }
+  @override
+  Future<Stream<int>> getAllCount(RegisterBookFilter params) => registerBookRepo.getAllCount(params);
+
+  @override
+  Stream<RegisterBookStat> getRegisterBookStat(String classroomId) => registerBookRepo.getGeneralRegisterBookStat(classroomId).map((event) {
+    final columns = event.rawData.data.values;
+    final incidentCount = columns.elementAt(0) as int;
+    final anecdotalCount = columns.elementAt(1) as int;
+    final registerCount = columns.elementAt(2) as int;
+    final total = columns.elementAt(3) as int;
+    return RegisterBookStat(
+      incidentCount: CountRatio(count: incidentCount, percent: NawiGeneralUtils.getPercent(incidentCount, total)),
+      anecdoteCount: CountRatio(count: anecdotalCount, percent: NawiGeneralUtils.getPercent(anecdotalCount, total)),
+      registerCount: CountRatio(count: registerCount, percent: NawiGeneralUtils.getPercent(registerCount, total)),
+      total: total
+    );
+  });
 
   @override
   Future<Result<RegisterBook>> getOne(String id) {

@@ -7,19 +7,25 @@ import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/interfaces/model_drift_dao.dart';
 import 'package:nawiapp/data/local/tables/student_table.dart';
 import 'package:nawiapp/data/local/views/student_view.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/infrastructure/in_memory_storage.dart';
 import 'package:nawiapp/utils/nawi_dao_utils.dart';
 
 part 'student_dao.g.dart';
 
-@DriftAccessor(tables: [StudentTable], views: [StudentViewSummaryVersion, HiddenStudentViewSummaryVersion])
+@DriftAccessor(tables: [StudentTable], views: [
+  StudentViewSummaryVersion, HiddenStudentViewSummaryVersion
+])
 class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
   implements ModelDriftDAO<
     StudentTableData,
     StudentTableCompanion,
     StudentViewSummaryVersionData,
     StudentFilter
-  >{
+  >,
+  
+  CountableModelDriftDAO<StudentFilter>
+  {
 
   StudentDAO(super.db);
 
@@ -39,46 +45,46 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
     
   }
 
+  Expression<bool> _filterExpressions({required dynamic table, required StudentFilter filter}) {
+    final List<Expression<bool>> expressions = [];
+
+    NawiDAOUtils.classroomFilter(
+      expressions: expressions,
+      table: table,
+      classroomId: filter.classroomId ?? GetIt.I<InMemoryStorage>().currentClassroom?.id
+    );
+
+    //* Excluye estudiantes marcados como ocultos
+    if(filter.notShowHidden) {
+      table = table as $StudentViewSummaryVersionView;
+      expressions.add(
+        table.id.isNotInQuery(
+          selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])
+        )
+      );
+    }
+
+    NawiDAOUtils.ageFilter(
+      table: table,
+      expressions: expressions,
+      ageEnumIndex1: filter.ageEnumIndex1?.index,
+      ageEnumIndex2: filter.ageEnumIndex2?.index
+    );
+
+    NawiDAOUtils.nameStudentFilter(
+      table: table,
+      expressions: expressions,
+      textLike: filter.nameLike
+    );
+
+    return Expression.and(expressions);
+  }
+
   @override
   Future<Result<Iterable<StudentViewSummaryVersionData>>> getAll(StudentFilter params) async {
     try {
-      final memoryStorage = GetIt.I<InMemoryStorage>();
-
       var query = ( params.notShowHidden ? select(studentViewSummaryVersion) : select(hiddenStudentViewSummaryVersion) )
-        ..where((tbl) {
-          final List<Expression<bool>> filterExpressions = [];
-
-          NawiDAOUtils.classroomFilter(
-            expressions: filterExpressions,
-            table: tbl,
-            classroomId: memoryStorage.currentClassroomId
-          );
-
-          //* Excluye estudiantes marcados como ocultos
-          if(params.notShowHidden) {
-            tbl = tbl as $StudentViewSummaryVersionView;
-            filterExpressions.add(
-              tbl.id.isNotInQuery(
-                selectOnly(hiddenStudentTable)..addColumns([hiddenStudentTable.hiddenId])
-              )
-            );
-          }
-
-          NawiDAOUtils.ageFilter(
-            table: tbl,
-            expressions: filterExpressions,
-            ageEnumIndex1: params.ageEnumIndex1?.index,
-            ageEnumIndex2: params.ageEnumIndex2?.index
-          );
-
-          NawiDAOUtils.nameStudentFilter(
-            table: tbl,
-            expressions: filterExpressions,
-            textLike: params.nameLike
-          );
-          
-          return Expression.and(filterExpressions);
-      });
+        ..where((tbl) => _filterExpressions(table: tbl, filter: params));
 
       query = NawiDAOUtils.orderByStudent(query: query, orderBy: params.orderBy);
 
@@ -101,6 +107,37 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
       );
       
     } catch (e) { return NawiDAOUtils.onCatch(e); }
+  }
+
+  @override
+  Stream<int> getAllCount(StudentFilter params) {
+    try {
+      final view = params.notShowHidden ? studentViewSummaryVersion : hiddenStudentViewSummaryVersion;
+      final selectedOnly = (params.notShowHidden ? selectOnly(studentViewSummaryVersion) : selectOnly(hiddenStudentViewSummaryVersion));
+      final idExpressions = params.notShowHidden ? studentViewSummaryVersion.id.count() : hiddenStudentViewSummaryVersion.id.count();
+      
+      final queryOnly = selectedOnly
+        ..addColumns([idExpressions])
+        ..where(_filterExpressions(table: view, filter: params));
+
+      return queryOnly.watchSingleOrNull().map((row) => row?.read(idExpressions) ?? 0);
+    } catch (e) { return Stream.value(0); }
+  }
+
+  Stream<TypedResult> getGeneralStudentStat(String classroomId) {
+    final studentSummarized = studentViewSummaryVersion;
+    // final registerBookSummarized = re;
+    ageFilter(StudentAge age) => studentSummarized.age.equals(age.index);
+    final columns = [
+      studentSummarized.age.count(filter: ageFilter(StudentAge.threeYears)),
+      studentSummarized.age.count(filter: ageFilter(StudentAge.fourYears)),
+      studentSummarized.age.count(filter: ageFilter(StudentAge.fiveYears)),
+      studentSummarized.id.count(filter: studentSummarized.classroom.equals(classroomId))
+    ];
+
+    final query = selectOnly(studentSummarized)..addColumns(columns)..where(studentSummarized.classroom.equals(classroomId));
+
+    return query.watchSingle();
   }
 
   @override

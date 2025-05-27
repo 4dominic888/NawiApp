@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/domain/classes/filter/classroom_filter.dart';
+import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
+import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom_status.dart';
@@ -11,7 +13,7 @@ import 'package:nawiapp/domain/services/student_service_base.dart';
 import '../nawi_test_utils.dart' as testil;
 
 void main() {
-  setUp(testil.setupIntegrationTestLocator);
+  setUp(() async => await testil.setupIntegrationTestLocator(withRegisterBook: true));
   tearDown(testil.onTearDownSetupIntegrationTestLocator);
 
   test('Registro de un aula', () async {
@@ -122,6 +124,49 @@ void main() {
   });
 
   group('Filtro de aulas', () {
+
+    test('Contador de aulas', () async {
+      final service = GetIt.I<ClassroomServiceBase>();
+      var stream = service.getAllCount(ClassroomFilter());
+
+      testil.customExpect(await stream.first, 2,
+        about: 'Obtener cantidad de aulas', n: 1
+      );
+    });
+
+    test('Contador de elementos dentro de aulas', () async {
+      final studentService = GetIt.I<StudentServiceBase>();
+
+      var streamStudent = studentService.getAllCount(StudentFilter(
+        classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'
+      ));
+      testil.customExpect(await streamStudent.first, 6,
+        about: 'Obtener cantidad de estudiantes de Aula A', n: 1
+      );
+
+      streamStudent = studentService.getAllCount(StudentFilter(
+        classroomId: 'b393e6bb-9b59-4c74-95ca-e7969bf5262a'
+      ));
+      testil.customExpect(await streamStudent.first, 2,
+        about: 'Obtener cantidad de estudiantes de Aula B', n: 2
+      );
+
+      final registerBookService = GetIt.I<RegisterBookServiceBase>();
+      var registerBookStream = await registerBookService.getAllCount(RegisterBookFilter(
+        classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6'
+      ));
+      testil.customExpect(await registerBookStream.first, 6,
+        about: 'Obtener cantidad de registros de Aula A', n: 3
+      );
+
+      registerBookStream = await registerBookService.getAllCount(RegisterBookFilter(
+        classroomId: 'b393e6bb-9b59-4c74-95ca-e7969bf5262a'
+      ));
+      testil.customExpect(await registerBookStream.first, 1,
+        about: 'Obtener cantidad de registros de Aula B', n: 4
+      );
+    });
+
     test('Ordenamiento de aulas', () async {
       final service = GetIt.I<ClassroomServiceBase>();
 

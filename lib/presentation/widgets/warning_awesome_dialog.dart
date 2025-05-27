@@ -23,6 +23,6 @@ class WarningAwesomeDialog extends AwesomeDialog {
     required super.title,
     required super.desc,
     required super.btnOk,
-    required super.btnCancel
+    super.btnCancel
   });
 }

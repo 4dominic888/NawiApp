@@ -9,28 +9,18 @@ import 'package:nawiapp/domain/services/register_book_service_base.dart';
 
 final registerBookFilterProvider = StateProvider<RegisterBookFilter>((ref) => RegisterBookFilter());
 
-final registerBookSummarySearchProvider = NotifierProvider<RegisterBookSummarySearchNotifier, int>(() {
+final registerBookSummarySearchProvider = NotifierProvider<RegisterBookSummarySearchNotifier, void>(() {
   return RegisterBookSummarySearchNotifier();
 });
 
-class RegisterBookSummarySearchNotifier extends Notifier<int> {
+class RegisterBookSummarySearchNotifier extends Notifier<void> {
 
   final service = GetIt.I<RegisterBookServiceBase>();
   final controller = InfiniteGroupedListController<RegisterBookSummary, DateTime, String>(limit: 5);
 
-  Timer? _timer;
 
   @override
-  int build() {
-    _timer = Timer.periodic(Duration(milliseconds: 200), (_) {
-      final currentCount = controller.getItems().length;
-      if (state != currentCount) {
-        state = currentCount;
-      }
-    });
-    ref.onDispose(() => _timer?.cancel());
-    return 0;
-  }
+  void build() {}
 
   Future<List<RegisterBookSummary>> fetchPage(PaginationInfo paginationInfo) async {
     final paginatedResult = await service.getAllPaginated(
@@ -39,7 +29,6 @@ class RegisterBookSummarySearchNotifier extends Notifier<int> {
       params: ref.read(registerBookFilterProvider)
     );
 
-    state = controller.getItems().length;
     return paginatedResult.getValue?.data.toList() ?? [];
   }
 

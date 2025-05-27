@@ -16,7 +16,9 @@ class ClassroomDAO extends DatabaseAccessor<NawiDatabase> with _$ClassroomDAOMix
     ClassroomTableCompanion,
     ClassroomTableData,
     ClassroomFilter
-  >{
+  >,
+  CountableModelDriftDAO<ClassroomFilter>
+  {
 
   ClassroomDAO(super.db);
 
@@ -29,24 +31,26 @@ class ClassroomDAO extends DatabaseAccessor<NawiDatabase> with _$ClassroomDAOMix
     } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
+  Expression<bool> _filterExpressions({required dynamic table, required ClassroomFilter filter}) {
+    final List<Expression<bool>> expressions = [];
+
+    if(filter.searchByStatus != null) {
+      expressions.add(table.status.equals(filter.searchByStatus!.index));
+    }
+    
+    NawiDAOUtils.nameClassroomFilter(
+      expressions: expressions,
+      table: table,
+      textLike: filter.nameLike
+    );
+
+    return Expression.and(expressions);
+  }
+
   @override
   Future<Result<Iterable<ClassroomTableData>>> getAll(ClassroomFilter params) async {
     try {
-      var query = select(classroomTable)..where((tbl) {
-        final List<Expression<bool>> filterExpressions = [];
-
-        if(params.searchByStatus != null) {
-          filterExpressions.add(tbl.status.equals(params.searchByStatus!.index));
-        }
-        
-        NawiDAOUtils.nameClassroomFilter(
-          expressions: filterExpressions,
-          table: tbl,
-          textLike: params.nameLike
-        );
-
-        return Expression.and(filterExpressions);
-      });
+      var query = select(classroomTable)..where((tbl) => _filterExpressions(table: tbl, filter: params));
 
       query = NawiDAOUtils.orderByClassroom(query: query, orderBy: params.orderBy);
       query = NawiDAOUtils.infiniteScrollFilter(
@@ -58,6 +62,16 @@ class ClassroomDAO extends DatabaseAccessor<NawiDatabase> with _$ClassroomDAOMix
       return Success(data: await query.get());
 
     } catch (e) { return NawiDAOUtils.onCatch(e); }
+  }
+
+  @override
+  Stream<int> getAllCount(ClassroomFilter params) {
+    final queryOnly = selectOnly(classroomTable)
+      ..addColumns([classroomTable.id.count()])
+      ..where(_filterExpressions(table: classroomTable, filter: params)
+    );
+
+    return queryOnly.watchSingleOrNull().map((row) => row?.read(classroomTable.id.count()) ?? 0);
   }
 
   @override
@@ -91,5 +105,4 @@ class ClassroomDAO extends DatabaseAccessor<NawiDatabase> with _$ClassroomDAOMix
       } catch (e) { return NawiDAOUtils.onCatch(e); }
     });
   }
-  
 }

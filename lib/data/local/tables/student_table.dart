@@ -18,7 +18,7 @@ class StudentTable extends Table {
   Set<Column<Object>>? get primaryKey => {id};
 
   @override
-  List<Set<Column<Object>>>? get uniqueKeys => [{name, age}];
+  List<Set<Column<Object>>>? get uniqueKeys => [{name, age, classroom}];
 
   @override
   String? get tableName => 'student';

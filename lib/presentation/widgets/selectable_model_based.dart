@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
-import 'package:nawiapp/utils/nawi_general_utils.dart';
 
 class SelectableModelBased extends ConsumerWidget {
   const SelectableModelBased({ 
@@ -10,6 +9,7 @@ class SelectableModelBased extends ConsumerWidget {
     required this.studentModule,
     required this.registerBookModule,
     required this.controller,
+    required this.label,
     this.padding
   });
 
@@ -17,6 +17,7 @@ class SelectableModelBased extends ConsumerWidget {
   final Widget registerBookModule;
   final StateProvider<Type> controller;
   final EdgeInsetsGeometry? padding;
+  final String label;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,24 +25,18 @@ class SelectableModelBased extends ConsumerWidget {
     final selectedType = ref.watch(controller);
     final notifier = ref.read(controller.notifier);
 
-    return Column(
-      children: [
-        Expanded(
-          flex: 14,
-          child: Padding(
-            padding: padding ?? const EdgeInsets.all(8.0),
-            child: selectedType == Student ? studentModule : registerBookModule,
-          )
-        ),
-
-        if(!NawiGeneralUtils.isKeyboardVisible(context)) ...[
-          const SizedBox(height: 20),
-
-          Expanded(
-            flex: 3,
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+      
+          Padding(
+            padding: const EdgeInsets.all(8.0),
             child: Wrap(
-              spacing: 8,
+              spacing: 10,
               children: [
+                Text(label, style: TextTheme.of(context).titleLarge),
                 FilterChip(
                   label: Text("Estudiantes"),
                   onSelected: (_) => notifier.state = Student,
@@ -54,9 +49,15 @@ class SelectableModelBased extends ConsumerWidget {
                 )
               ],
             ),
-          )
-        ]        
-      ],
+          ),
+          Flexible(
+            child: Padding(
+              padding: padding ?? const EdgeInsets.all(8.0),
+              child: selectedType == Student ? studentModule : registerBookModule,
+            ),
+          ),
+        ],
+      ),
     );
   }  
 }

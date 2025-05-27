@@ -28,10 +28,12 @@ class Classroom with _$Classroom {
     this.id = '*',
     required this.name,
     this.status = ClassroomStatus.notStarted,
-    required this.iconCode,
+    this.iconCode = 0xe559,
     DateTime? createdAt,
     this.description
   }) : createdAt = createdAt ?? DateTime.now();
+
+  Classroom.empty() : this(name: '');
 
   @override
   int get hashCode => name.hashCode;
