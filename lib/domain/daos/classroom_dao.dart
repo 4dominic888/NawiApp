@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:drift/remote.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/data/local/tables/classroom_table.dart';
 import 'package:nawiapp/data/local/tables/student_table.dart';
@@ -28,7 +29,14 @@ class ClassroomDAO extends DatabaseAccessor<NawiDatabase> with _$ClassroomDAOMix
       final addedRegister = await into(classroomTable).insertReturningOrNull(data);
       if(addedRegister != null) return Success(data: addedRegister);
       throw NawiError.onDAO(message: "Aula no creada");
-    } catch (e) { return NawiDAOUtils.onCatch(e); }
+    }
+    on DriftRemoteException catch (e) {
+      if(e.remoteCause.toString().contains('UNIQUE constraint failed')) {
+        return NawiDAOUtils.onCatch("Parece que esta intentando ingresar un aula ya existente, intentelo nuevamente");
+      }
+      return NawiDAOUtils.onCatch(e);
+    }
+    catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
   Expression<bool> _filterExpressions({required dynamic table, required ClassroomFilter filter}) {
