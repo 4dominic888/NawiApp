@@ -22,20 +22,17 @@ class CreateStudentModule extends ConsumerStatefulWidget {
 class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
 
   late final TextEditingController _nameController;
-  late final TextEditingController _notesController;
 
   @override
   void initState() {
     super.initState();
     final Student? initialValue = widget.data;
     _nameController = TextEditingController(text: initialValue?.name ?? '');
-    _notesController = TextEditingController(text: initialValue?.notes ?? '');    
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _notesController.dispose();
     super.dispose();
   }
 
@@ -49,7 +46,6 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
         onSuccess: () {
           ref.read(studentFormProvider(widget.data).notifier).clearAll();
           _nameController.clear();
-          _notesController.clear();
           ref.read(selectableElementForSearchProvider.notifier).state = Student;
           ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.search);
         },
@@ -105,29 +101,6 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
                   formNotifier.clearName();
                   _nameController.clear();
                 },
-              ),
-              filled: true,
-              fillColor: NawiColorUtils.secondaryColor.withAlpha(110),
-              floatingLabelBehavior: FloatingLabelBehavior.always
-            ),
-          ),
-      
-          const SizedBox(height: 20),
-      
-          TextFormField(
-            controller: _notesController,
-            onChanged: formNotifier.setNotes,
-            onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            maxLines: 2,
-            decoration: InputDecoration(
-              labelText: 'Notas',
-              hintText: 'Ingrese detalles adicionales (Opcional)',
-              suffix: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  formNotifier.clearNotes();
-                  _notesController.clear();
-                }
               ),
               filled: true,
               fillColor: NawiColorUtils.secondaryColor.withAlpha(110),

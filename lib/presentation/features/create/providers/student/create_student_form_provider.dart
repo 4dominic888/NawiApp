@@ -20,7 +20,6 @@ class _StudentFormState {
   ) => _StudentFormState(data: data.copyWith(
       name: name ?? data.name,
       age: age ?? data.age,
-      notes: notes ?? data.notes,
       classroomId: classroomId ?? data.classroomId
     ),
     status: status ?? this.status

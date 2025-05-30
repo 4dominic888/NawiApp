@@ -25,31 +25,28 @@ class CreateRegisterBookModule extends ConsumerStatefulWidget {
 class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookModule> {
 
   late final TextEditingController _actionController;
-  late final TextEditingController _notesController;
   final _scrollController = ScrollController();
 
-  void _scrollToBotton() {
-    Future.delayed(const Duration(milliseconds: 700), () {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    });
-  }
+  // void _scrollToBotton() {
+  //   Future.delayed(const Duration(milliseconds: 700), () {
+  //     _scrollController.animateTo(
+  //       _scrollController.position.maxScrollExtent,
+  //       duration: Duration(milliseconds: 300),
+  //       curve: Curves.easeOut,
+  //     );
+  //   });
+  // }
 
   @override
   void initState() {
     super.initState();
     final RegisterBook? initialValue = widget.data;
     _actionController = TextEditingController(text: initialValue?.action ?? '');
-    _notesController = TextEditingController(text: initialValue?.notes ?? '');
   }
 
   @override
   void dispose() {
     _actionController.dispose();
-    _notesController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -65,7 +62,6 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
         onSuccess: () {
           ref.read(registerBookFormProvider(widget.data).notifier).clearAll();
           _actionController.clear();
-          _notesController.clear();
           ref.read(selectableElementForSearchProvider.notifier).state = RegisterBook;
           ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.search);
         },
@@ -176,31 +172,7 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
             ),
           ),
       
-          const SizedBox(height: 20),
-      
-          TextFormField(
-            controller: _notesController,
-            onTap: _scrollToBotton,
-            onChanged: formNotifier.setNotes,
-            onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            maxLines: 2,
-            decoration: InputDecoration(
-              labelText: 'Notas',
-              hintText: 'Ingrese detalles adicionales (Opcional)',
-              suffix: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  _notesController.clear();
-                  formNotifier.clearNotes();
-                }
-              ),
-              filled: true,
-              fillColor: NawiColorUtils.secondaryColor.withAlpha(110),
-              floatingLabelBehavior: FloatingLabelBehavior.always
-            ),
-          ),
-      
-          const SizedBox(height: 80),
+          const SizedBox(height: 60),
         
           // if(NawiGeneralUtils.isKeyboardVisible(context)) Padding(
           //   padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom * 1.1)

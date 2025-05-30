@@ -6,7 +6,7 @@ import 'package:nawiapp/utils/nawi_mapper_utils.dart';
 
 extension StudentMapper on Student {
   static Student fromTableData(StudentTableData data) {
-    return Student(id: data.id, name: data.name,age: data.age, notes: data.notes, timestamp: data.timestamp, classroomId: data.classroom);
+    return Student(id: data.id, name: data.name,age: data.age, timestamp: data.timestamp, classroomId: data.classroom);
   }
 
   StudentSummary get toStudentSummary => StudentSummary(id: id, name: name, age: age);  
@@ -18,7 +18,6 @@ extension StudentMapper on Student {
     name: name,
     age: age,
     timestamp: timestamp,
-    notes: notes,
     classroom: classroomId
   );
 
@@ -26,7 +25,6 @@ extension StudentMapper on Student {
     id: withId ? Value(id) : Value.absent(),
     age: Value(age),
     name: Value(name),
-    notes: Value(notes),
     timestamp: Value(timestamp),
     classroom: Value(classroomId)
   );

@@ -10,7 +10,6 @@ extension RegisterBookMapper on RegisterBook {
     id: data.id,
     action: data.action,
     mentions: mentions,
-    notes: data.notes,
     createdAt: data.createdAt,
     type: data.type,
     classroomId: data.classroom
@@ -23,7 +22,6 @@ extension RegisterBookMapper on RegisterBook {
     action: action,
     type: type,
     createdAt: createdAt,
-    notes: notes,
     classroom: classroomId
   );
 
@@ -31,7 +29,6 @@ extension RegisterBookMapper on RegisterBook {
     id: withId ? Value(id) : Value.absent(),
     action: Value(action),
     createdAt: Value(createdAt),
-    notes: Value(notes),
     type: Value(type),
     classroom: Value(classroomId)
   );
