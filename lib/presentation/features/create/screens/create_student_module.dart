@@ -75,11 +75,6 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
                   ),
                   onPressed: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
                   child: Text(widget.data == null ? "Agregar" : "Editar")
-                  // color: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade400,
-                  // controller: _submitBtnController,
-                  // proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
-                  // label: Text(widget.data == null ? "Agregar" : "Editar"),
-                  // onReset: () => formNotifier.setStatus(SubmitStatus.idle),
                 ),
               )
             ],
@@ -112,9 +107,16 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
       
           SegmentedButton<StudentAge>(
             segments: NawiGeneralUtils.studentAges.map(
-              (e) => ButtonSegment(value: e, label: Text(e.name))
+              (e) => ButtonSegment(
+                value: e,
+                label: Text(e.name),
+              )
             ).toList(),
             selected: { studentFormState.age },
+            style: SegmentedButton.styleFrom(
+              selectedBackgroundColor: NawiColorUtils.buttonColor,
+              backgroundColor: Colors.white
+            ),
             onSelectionChanged: formNotifier.setAge,
             multiSelectionEnabled: false,
           ),

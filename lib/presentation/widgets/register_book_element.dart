@@ -22,6 +22,7 @@ class RegisterBookElement extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Card(
+      color: Colors.white.withAlpha(180),
       child: ListTile(
         title: Text(item.action.isEmpty ? '[Acción sin establecer]' : item.actionUnslug),
         trailing: 

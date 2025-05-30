@@ -26,7 +26,7 @@ class StudentElement extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: backgroundColor.withAlpha(20),
+        color: backgroundColor.withAlpha(40),
         borderRadius: const BorderRadius.all(Radius.circular(16)),
         border: Border.all(
           color: backgroundColor.withAlpha(30),
