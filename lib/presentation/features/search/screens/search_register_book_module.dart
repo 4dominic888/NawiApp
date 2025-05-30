@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:infinite_grouped_list/infinite_grouped_list.dart';
-import 'package:intl/intl.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
 import 'package:nawiapp/infrastructure/export/export_report_manager.dart';
 import 'package:nawiapp/infrastructure/export/register_book_export.dart';
@@ -20,6 +19,7 @@ import 'package:nawiapp/presentation/widgets/notification_message.dart';
 import 'package:nawiapp/presentation/widgets/register_book_element.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 
 class SearchRegisterBookModule extends ConsumerStatefulWidget {
   const SearchRegisterBookModule({
@@ -162,7 +162,7 @@ class _SearchRegisterBookModuleState extends ConsumerState<SearchRegisterBookMod
                 groupTitleBuilder: (title, groupBy, isPinned, _) => Container(
                   color: Colors.grey.shade200,
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(DateFormat('EEEE, d MMM y').format(groupBy), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+                  child: Text(NawiGeneralUtils.getFormattedDate(groupBy), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
                 ),
                 itemBuilder: (item) => RegisterBookElement(item: item, isPreview: false),
               ),
