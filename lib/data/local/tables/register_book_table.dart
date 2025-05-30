@@ -11,7 +11,7 @@ class RegisterBookTable extends Table{
   late final type = intEnum<RegisterBookType>()();
   late final notes = text().nullable()();
   late final createdAt = dateTime().named("created_at")();
-  late final classroom = text().references(ClassroomTable, #id)();
+  late final classroom = text().references(ClassroomTable, #id, onDelete: KeyAction.cascade)();
 
   @override Set<Column<Object>>? get primaryKey => {id};
 

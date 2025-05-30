@@ -94,15 +94,12 @@ class ClassroomDAO extends DatabaseAccessor<NawiDatabase> with _$ClassroomDAOMix
 
   @override
   Future<Result<ClassroomTableData>> deleteOne(String id) async {
-    return transaction<Result<ClassroomTableData>>(() async {
-      try {
-        final studentDeleteStatement = delete(studentTable)..where((tbl) => tbl.classroom.equals(id));
-        await studentDeleteStatement.go();
+    try {
+      final deleteClassroomQuery = delete(classroomTable)..where((tbl) => tbl.id.equals(id));
+      final classroomTableData = (await deleteClassroomQuery.goAndReturn()).firstOrNull;
+      if(classroomTableData == null) throw NawiError.onDAO(message: "Aula no encontrada");
 
-        final classroomTableDataResult = (await (delete(classroomTable)..where((tbl) => tbl.id.equals(id))).goAndReturn()).first;
-
-        return Success(data: classroomTableDataResult);
-      } catch (e) { return NawiDAOUtils.onCatch(e); }
-    });
+      return Success(data: classroomTableData);
+    } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 }

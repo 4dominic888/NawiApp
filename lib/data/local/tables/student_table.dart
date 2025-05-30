@@ -12,7 +12,7 @@ class StudentTable extends Table {
   late final age = intEnum<StudentAge>()();
   late final notes = text().nullable()();
   late final timestamp = dateTime()();
-  late final classroom = text().references(ClassroomTable, #id)();
+  late final classroom = text().references(ClassroomTable, #id, onDelete: KeyAction.cascade)();
 
   @override
   Set<Column<Object>>? get primaryKey => {id};

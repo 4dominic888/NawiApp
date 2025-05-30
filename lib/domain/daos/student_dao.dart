@@ -126,7 +126,6 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
 
   Stream<TypedResult> getGeneralStudentStat(String classroomId) {
     final studentSummarized = studentViewSummaryVersion;
-    // final registerBookSummarized = re;
     ageFilter(StudentAge age) => studentSummarized.age.equals(age.index);
     final columns = [
       studentSummarized.age.count(filter: ageFilter(StudentAge.threeYears)),
@@ -165,22 +164,14 @@ class StudentDAO extends DatabaseAccessor<NawiDatabase> with _$StudentDAOMixin
   }
 
   @override
-  Future<Result<StudentTableData>> deleteOne(String id) {
-    return transaction<Result<StudentTableData>>(() async {
-      try {
-        //* Elimina primero el registro en la tabla de estudiantes ocultos, si es que existe
-        final deleteStatement = delete(hiddenStudentTable)..where((tbl) => tbl.hiddenId.equals(id));
-        await deleteStatement.go();
-
-        return Success(data: ( await (
-            delete(studentTable)
-              ..where((tbl) => tbl.id.equals(id))
-            ).goAndReturn()
-          ).first
-        );
-
-      } catch (e) { return NawiDAOUtils.onCatch(e); }
-    });
+  Future<Result<StudentTableData>> deleteOne(String id) async {
+    try {
+      final deleteStudentQuery = delete(studentTable)..where((tbl) => tbl.id.equals(id));
+      final studentTableData = (await deleteStudentQuery.goAndReturn()).firstOrNull;
+      if(studentTableData == null) throw NawiError.onDAO(message: "Estudiante no encontrado");
+      
+      return Success(data: studentTableData);
+    } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
   /// Agrega un estudiantes ocultos del registro
