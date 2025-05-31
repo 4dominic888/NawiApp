@@ -12,7 +12,8 @@ class NotificationMessage{
       foreground: Colors.white,
       background: Colors.green,
       trailing: const Icon(Icons.check),
-      duration: const Duration(seconds: 1)
+      duration: const Duration(seconds: 1),
+      slideDismissDirection: DismissDirection.horizontal
     );
   }
 
@@ -25,7 +26,8 @@ class NotificationMessage{
       foreground: Colors.white,
       background: Colors.red,
       trailing: const Icon(Icons.error),
-      duration: const Duration(seconds: 5)
+      duration: const Duration(seconds: 5),
+      slideDismissDirection: DismissDirection.horizontal
     );
   }
 }
