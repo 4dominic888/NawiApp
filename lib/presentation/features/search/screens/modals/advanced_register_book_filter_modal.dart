@@ -1,15 +1,13 @@
-import 'package:drop_down_search_field/drop_down_search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:nawiapp/data/local/views/register_book_view.dart';
 import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
-import 'package:nawiapp/domain/classes/filter/student_filter.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
-import 'package:nawiapp/utils/nawi_color_utils.dart';
+import 'package:nawiapp/presentation/features/search/widgets/multi_select_student_field.dart';
 
 class AdvancedRegisterBookFilterModal extends StatefulWidget {
   final RegisterBookFilter currentFilter;
@@ -101,42 +99,10 @@ class _AdvancedRegisterBookFilterModalState extends State<AdvancedRegisterBookFi
                   const SizedBox(height: 30),
           
                   Text('Por estudiantes', style: Theme.of(context).textTheme.bodyMedium),
-                  MultiSelectDropdownSearchFormField<StudentSummary>(
-                    initiallySelectedItems: _selectedStudents,
-                    textFieldConfiguration: const TextFieldConfiguration(decoration: InputDecoration()),
-                    paginatedSuggestionsCallback: (pattern) => service.getAll(StudentFilter(nameLike: pattern, pageSize: 5)).then((value) => value.getValue!),
-                    itemBuilder: (_, itemData) => ListTile(title: Text(itemData.name)),
-                    transitionBuilder: (_, suggestionsBox, __) => suggestionsBox,
-                    loadingBuilder: (_) => const ListTile(leading: CircularProgressIndicator(color: Colors.red)),
-                    displayAllSuggestionWhenTap: true,
-                    errorBuilder: (context, error) => ExpansionTile(
-                      title: const Text(
-                        "Se ha producido un error",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)
-                      ),
-                      subtitle: Text('Ha ocurrido un error de conexion: $error', style: const TextStyle(color: Colors.red)),
-                    ),
-                    chipBuilder: (_, itemData) => Chip(
-                      label: Text(itemData.name),
-                      onDeleted: () => setState(() {
-                        _selectedStudents.remove(itemData);
-                        _filter = _filter.copyWith(searchByStudentsId: _selectedStudents.map((e) => e.id));
-                      }),
-                      backgroundColor: NawiColorUtils.studentColorByAge(itemData.age.value, withOpacity: true),
-                    ),
-                    noItemsFoundBuilder: (_) => const ListTile(
-                      title: Text('Estudiantes no encontrados...', style: TextStyle(fontWeight: FontWeight.bold)),
-                      contentPadding: EdgeInsets.only(left: 20)
-                    ),
-                    onMultiSuggestionSelected: (suggestion, selected) {
-                      if(selected) {
-                        _selectedStudents.add(suggestion);
-                      } else {
-                        _selectedStudents.remove(suggestion);
-                      }
-                      _filter = _filter.copyWith(searchByStudentsId: _selectedStudents.map((e) => e.id));
-                      setState(() { });
-                    },
+                  MultiSelectStudentField(
+                    initialSelectedStudents: _selectedStudents,
+                    onDeleted: (data) => _filter = _filter.copyWith(searchByStudentsId: data.map((e) => e.id)),
+                    onSelected: (data) => _filter = _filter.copyWith(searchByStudentsId: data.map((e) => e.id)),
                   ),
 
                   const SizedBox(height: 10),

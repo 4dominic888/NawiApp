@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/presentation/features/create/providers/register_book/create_register_book_form_provider.dart';
-import 'package:nawiapp/presentation/features/create/widgets/mention_student_field.dart';
+import 'package:nawiapp/presentation/features/create/providers/register_book/initial_register_book_form_data_provider.dart';
+import 'package:nawiapp/presentation/features/create/screens/another_create_action.dart';
 import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/selectable_element_for_search_provider.dart';
@@ -27,16 +28,6 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
   late final TextEditingController _actionController;
   final _scrollController = ScrollController();
 
-  // void _scrollToBotton() {
-  //   Future.delayed(const Duration(milliseconds: 700), () {
-  //     _scrollController.animateTo(
-  //       _scrollController.position.maxScrollExtent,
-  //       duration: Duration(milliseconds: 300),
-  //       curve: Curves.easeOut,
-  //     );
-  //   });
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -56,6 +47,7 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
 
     final registerBookFormState = ref.watch(registerBookFormProvider(widget.data).select((e) => e.data));
     final formNotifier = ref.read(registerBookFormProvider(widget.data).notifier);
+    
     ref.listen(registerBookFormProvider(widget.data).select((e) => e.status), (_, next) =>
       NawiFormUtils.handleSubmitStatus(
         status: next,
@@ -67,6 +59,10 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
         },
       )
     );
+
+    ref.listen(initialRegisterBookFormDataProvider.select((e) => e?.action), (_, next) {
+      _actionController.text = next ?? '';
+    });
 
     return SingleChildScrollView(
       child: Column(
@@ -117,6 +113,20 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
           ),
       
           const SizedBox(height: 20),
+
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+                children: (registerBookFormState.mentions.toSet()).map((student) => 
+                  Chip(
+                    label: Text(student.name, style: const TextStyle(fontSize: 10)),
+                    backgroundColor: NawiColorUtils.studentColorByAge(student.age.value).withAlpha(80),
+                    labelStyle: const TextStyle(fontWeight: FontWeight.bold)
+                  )
+                ).toList(),
+          ),
+
+          const SizedBox(height: 20),
       
           TextFormField(
             controller: _actionController,
@@ -124,10 +134,14 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
             readOnly: true,
             onTap: () async {
               final actionMentionsRecord = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => MentionStudentField(
+                MaterialPageRoute(builder: (context) => AnotherCreateAction(
                   action: registerBookFormState.action,
                   mentions: registerBookFormState.mentions,
                 ))
+                // MaterialPageRoute(builder: (context) => MentionStudentField(
+                //   action: registerBookFormState.action,
+                //   mentions: registerBookFormState.mentions,
+                // ))
               );
       
               if(actionMentionsRecord != null) {
@@ -172,11 +186,7 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
             ),
           ),
       
-          const SizedBox(height: 60),
-        
-          // if(NawiGeneralUtils.isKeyboardVisible(context)) Padding(
-          //   padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom * 1.1)
-          // )
+          const SizedBox(height: 60)
         ],
       ),
     );

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:nawiapp/data/mappers/register_book_mapper.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
@@ -24,7 +23,7 @@ class RegisterBookElement extends StatelessWidget {
     return Card(
       color: Colors.white.withAlpha(180),
       child: ListTile(
-        title: Text(item.action.isEmpty ? '[Acción sin establecer]' : item.actionUnslug),
+        title: Text(item.action.isEmpty ? '[Acción sin establecer]' : item.action),
         trailing: 
         Column(
           children: [
@@ -47,6 +46,7 @@ class RegisterBookElement extends StatelessWidget {
               padding: const EdgeInsets.all(18.0),
               child: Wrap(
                 spacing: 10,
+                runSpacing: 10,
                 children: (item.mentions.toSet()).map((student) => 
                   Chip(
                     label: Text(student.name, style: const TextStyle(fontSize: 10)),
