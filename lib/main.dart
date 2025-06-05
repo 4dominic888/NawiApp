@@ -3,7 +3,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:nawiapp/locator.dart';
-import 'package:nawiapp/presentation/features/select_classroom/screens/select_classroom_screen.dart';
+import 'package:nawiapp/presentation/features/tutorial/screens/tutorial_screen.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -37,7 +37,7 @@ class NawiApp extends StatelessWidget {
         ],
         title: 'Menu principal',
         debugShowCheckedModeBanner: false,
-        home: const MenuApp(),
+        home: const TutorialScreen(),
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: NawiColorUtils.primaryColor, brightness: Brightness.light,
@@ -64,21 +64,5 @@ class NawiApp extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class MenuApp extends StatefulWidget {
-  const MenuApp({super.key});
-
-  @override
-  State<MenuApp> createState() => _MenuAppState();
-}
-
-class _MenuAppState extends State<MenuApp> {
-  
-  @override
-  Widget build(BuildContext context) {
-    // return HomeScreen();
-    return SelectClassroomScreen();
   }
 }
