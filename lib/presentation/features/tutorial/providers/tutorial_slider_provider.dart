@@ -27,7 +27,7 @@ class TutorialSliderState {
     int? currentPage,
     int? totalPages,
     PageController? pageController,
-    String? codeAuth,
+    String? authCode,
     bool? isUsingDni,
     String? pinErrorText,
     bool? isCodeAuthValid,
@@ -37,7 +37,7 @@ class TutorialSliderState {
       currentPage: currentPage ?? this.currentPage,
       totalPages: totalPages ?? this.totalPages,
       pageController: pageController ?? this.pageController,
-      authCode: codeAuth ?? this.authCode,
+      authCode: authCode ?? this.authCode,
       isUsingDni: isUsingDni ?? this.isUsingDni,
       isCodeAuthValid: isCodeAuthValid ?? this.isCodeAuthValid,
       loading: loading ?? this.loading
@@ -76,7 +76,6 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
     await credentialManager.setCredential(
       CredentialData(
         authCode: state.authCode,
-        mode: state.isUsingDni ? CredentialDataType.dni : CredentialDataType.pin
       )
     );
     setLoading(false);
@@ -100,7 +99,7 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
     state.pageController.jumpToPage(3);
   }
 
-  void setCodeAuth(String? text) => state = state.copyWith(codeAuth: text);
+  void setCodeAuth(String? text) => state = state.copyWith(authCode: text);
   void setLoading(bool value) => state = state.copyWith(loading: value);
 
   String? get codeAuthErrorText {
@@ -120,7 +119,7 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
       isUsingDni: value ?? false,
       pinErrorText: ''
     );
-    state = state.copyWith(codeAuth: '');
+    state = state.copyWith(authCode: '');
   }
 
   @override
