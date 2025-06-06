@@ -75,12 +75,12 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
 
   Future<void> saveAndContinue() async {
     setLoading(true);
-    // await GetIt.I.isReady<SecureCredentialManager>();
     final credentialManager = GetIt.I<SecureCredentialManager>();
 
     await credentialManager.setCredential(
       CredentialData(
         authCode: state.authCode,
+        mode: state.isUsingDni ? CredentialDataType.dni : CredentialDataType.pin
       )
     );
     setLoading(false);
@@ -122,8 +122,6 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
     if(text != state.authCode) return 'Las claves deben ser iguales';
     return null;
   }
-
-  // bool get isValidatePin => state.codeAuth.isNotEmpty;
 
   void onPageChanged(int index) => state = state.copyWith(currentPage: index);
 

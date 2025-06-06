@@ -9,21 +9,26 @@ class CodeAuthDisplay extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     final authCodeState = ref.watch(authCodeProvider);
+    final modeAuth = ref.watch(initModeProvider);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        authCodeState.maxLength,
-        (index) => Container(
-          margin: const EdgeInsets.all(8),
-          width: 20,
-          height: 20,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: index < authCodeState.code.length ? Colors.black : Colors.grey[300],
+    return modeAuth.when(
+      loading: () => const CircularProgressIndicator(),
+      error: (_, __) => const Text('Ha ocurrido un error inesperado', style: TextStyle(color: Colors.red)),
+      data: (_) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          authCodeState.mode?.length ?? 4,
+          (index) => Container(
+            margin: const EdgeInsets.all(8),
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: index < authCodeState.code.length ? Colors.black : Colors.grey[300],
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 }

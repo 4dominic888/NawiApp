@@ -11,11 +11,10 @@ class AuthScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final authCodeNotifier = ref.read(authCodeProvider.notifier);
     final authCodeState = ref.watch(authCodeProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Autenticación por ${authCodeState.isDni ? 'DNI' : 'PIN'}')),
+      appBar: AppBar(title: Text('Autenticación por ${authCodeState.mode?.name ?? '...'}')),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -23,19 +22,6 @@ class AuthScreen extends ConsumerWidget {
 
             const CodeAuthDisplay(),
 
-            const SizedBox(height: 10),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Checkbox(
-                  value: authCodeState.isDni,
-                  onChanged: authCodeNotifier.changeMode,
-                ),
-                const Text('Usar DNI'),
-              ],
-            ),
-            
             const SizedBox(height: 10),
 
             if (authCodeState.isLoading) const CircularProgressIndicator(),

@@ -11,7 +11,7 @@ class SubmitCodeButton extends ConsumerWidget {
 
     final authCodeNotifier = ref.read(authCodeProvider.notifier);
     final authCodeState = ref.watch(authCodeProvider);
-    final bool isLenghtValid = authCodeState.code.length != authCodeState.maxLength;
+    final bool isLenghtValid = authCodeState.code.length != (authCodeState.mode?.length ?? 0);
     final bool isValid = authCodeState.isLoading || isLenghtValid;
 
     return ElevatedButton(
