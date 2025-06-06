@@ -9,6 +9,7 @@ import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
 import 'package:nawiapp/infrastructure/fonts/open_sans_font.dart';
 import 'package:nawiapp/infrastructure/in_memory_storage.dart';
+import 'package:nawiapp/infrastructure/secure_credential_manager.dart';
 import 'package:nawiapp/presentation/implementations/classroom_service_implement.dart';
 import 'package:nawiapp/presentation/implementations/register_book_service_implement.dart';
 import 'package:nawiapp/presentation/implementations/student_service_implement.dart';
@@ -53,4 +54,6 @@ void setupLocator() {
   locator.registerLazySingletonAsync<OpenSansFont>(() async => await OpenSansFont.load());
 
   locator.registerLazySingleton<InMemoryStorage>(() => InMemoryStorage());
+
+  locator.registerLazySingletonAsync<SecureCredentialManager>(() async => await SecureCredentialManager.init());
 }

@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:logger/logger.dart';
 import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
+import 'package:nawiapp/infrastructure/secure_credential_manager.dart';
 import 'package:nawiapp/presentation/features/search/widgets/search_filter_field.dart';
 import 'package:nawiapp/presentation/features/select_classroom/providers/count_classroom_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/providers/select_classroom_grid_provider.dart';
@@ -63,7 +66,8 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
       appBar: SearchFilterField(
         hintTextField: 'Búsqueda por nombre...',
         filterAction: () async {
-
+          await GetIt.I<SecureCredentialManager>().deleteAll();
+          Logger().i('Se ha reiniciado con exito las credenciales');
         },
         textOnChanged: (text) {
           debounce?.cancel();

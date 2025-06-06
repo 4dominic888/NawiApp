@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get_it/get_it.dart';
+import 'package:nawiapp/infrastructure/secure_credential_manager.dart';
 import 'package:nawiapp/locator.dart';
+import 'package:nawiapp/presentation/features/auth/screens/auth_screen.dart';
 import 'package:nawiapp/presentation/features/tutorial/screens/tutorial_screen.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -14,6 +17,7 @@ Future<void> main() async {
   setupLocator();
   await FlutterLocalization.instance.ensureInitialized();
   await initializeDateFormatting('es', null);
+  await GetIt.I.isReady<SecureCredentialManager>();
 
   //* Originalmente llamado Ñawi, pero para evitar futuros errores con caracteres especiales, se reemplaza la Ñ por N.
   runApp(ProviderScope(child: const NawiApp()));
@@ -37,7 +41,9 @@ class NawiApp extends StatelessWidget {
         ],
         title: 'Menu principal',
         debugShowCheckedModeBanner: false,
-        home: const TutorialScreen(),
+        home: GetIt.I<SecureCredentialManager>().tutorialSeen ?
+              const AuthScreen() : 
+              const TutorialScreen(),
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: NawiColorUtils.primaryColor, brightness: Brightness.light,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nawiapp/presentation/features/select_classroom/screens/select_classroom_screen.dart';
 import 'package:nawiapp/presentation/features/tutorial/providers/tutorial_slider_provider.dart';
 
 class TutorialNextPageButton extends ConsumerWidget {
@@ -9,16 +10,16 @@ class TutorialNextPageButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tutorialNotifier = ref.read(tutorialSliderProvider.notifier);
     final tutorialState = ref.watch(tutorialSliderProvider);
-    final bool isValidatePin = tutorialState.codeAuth.isNotEmpty && tutorialNotifier.codeAuthErrorText == null;
+    final bool isValidatePin = tutorialState.authCode.isNotEmpty && tutorialNotifier.codeAuthErrorText == null;
     return Positioned(
       right: 25,
       bottom: kBottomNavigationBarHeight - 25,
       child: ElevatedButton(
         onPressed: isValidatePin || !tutorialNotifier.isLastPage ? () => tutorialNotifier.nextPage(
           onComplete: () async {
-            tutorialNotifier.setLoading(true);
-            await Future.delayed(const Duration(seconds: 2));;
-            tutorialNotifier.setLoading(false);
+            await tutorialNotifier.saveAndContinue();
+            if(!context.mounted) return;
+            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const SelectClassroomScreen()));
           }
         ) : null,
         style: ElevatedButton.styleFrom(

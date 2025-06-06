@@ -1,11 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
+import 'package:nawiapp/domain/classes/credential_data.dart';
+import 'package:nawiapp/infrastructure/secure_credential_manager.dart';
 
 class TutorialSliderState {
   final int currentPage;
   final int totalPages;
   final PageController pageController;
-  final String codeAuth;
+  final String authCode;
   final bool isUsingDni;
   final bool isCodeAuthValid;
   final bool loading;
@@ -14,7 +17,7 @@ class TutorialSliderState {
     required this.currentPage,
     required this.totalPages,
     required this.pageController,
-    required this.codeAuth,
+    required this.authCode,
     this.isUsingDni = false,
     this.isCodeAuthValid = false,
     this.loading = false
@@ -34,7 +37,7 @@ class TutorialSliderState {
       currentPage: currentPage ?? this.currentPage,
       totalPages: totalPages ?? this.totalPages,
       pageController: pageController ?? this.pageController,
-      codeAuth: codeAuth ?? this.codeAuth,
+      authCode: codeAuth ?? this.authCode,
       isUsingDni: isUsingDni ?? this.isUsingDni,
       isCodeAuthValid: isCodeAuthValid ?? this.isCodeAuthValid,
       loading: loading ?? this.loading
@@ -47,7 +50,7 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
     currentPage: 0,
     totalPages: 4,
     pageController: PageController(),
-    codeAuth: ''
+    authCode: ''
   ));
 
   bool get isLastPage => state.currentPage == 3;
@@ -63,6 +66,20 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
     } else {
       onComplete?.call();
     }
+  }
+
+  Future<void> saveAndContinue() async {
+    setLoading(true);
+    // await GetIt.I.isReady<SecureCredentialManager>();
+    final credentialManager = GetIt.I<SecureCredentialManager>();
+
+    await credentialManager.setCredential(
+      CredentialData(
+        authCode: state.authCode,
+        mode: state.isUsingDni ? CredentialDataType.dni : CredentialDataType.pin
+      )
+    );
+    setLoading(false);
   }
 
   void previousPage() {
@@ -87,7 +104,7 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
   void setLoading(bool value) => state = state.copyWith(loading: value);
 
   String? get codeAuthErrorText {
-    final text = state.codeAuth.trim();
+    final text = state.authCode.trim();
     if(text.isEmpty) return null;
     final expectedLength = state.isUsingDni ? 8 : 4;
     if(text.length < expectedLength) return 'La longitud debe ser igual a $expectedLength';
