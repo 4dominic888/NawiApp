@@ -13,7 +13,6 @@ class SecureCredentialManager {
   static Future<SecureCredentialManager> init() async => SecureCredentialManager._(prefs: await SharedPreferences.getInstance());
 
   static const String _authCode = 'authCode';
-  static const String _mode = 'mode';
   static const String _tutorialSeen = 'tutorialSeen';
 
   bool get tutorialSeen => prefs.getBool(_tutorialSeen) ?? false;
@@ -27,7 +26,6 @@ class SecureCredentialManager {
   Future<void> setCredential(CredentialData data) async {
     await Future.wait([
       _storage.write(key: _authCode, value: _hashCode(data.authCode)),
-      _storage.write(key: _mode, value: data.mode.index.toString()),
       prefs.setBool(_tutorialSeen, true)
     ]);
   }
