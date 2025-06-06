@@ -3,16 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/presentation/features/tutorial/providers/tutorial_slider_provider.dart';
 
-class TutorialPinSlidePage extends ConsumerStatefulWidget {
-  const TutorialPinSlidePage({super.key});
+class TutorialCodeAuthSlidePage extends ConsumerStatefulWidget {
+  const TutorialCodeAuthSlidePage({super.key});
 
   @override
-  ConsumerState<TutorialPinSlidePage> createState() => _TutorialPinSlidePageState();
+  ConsumerState<TutorialCodeAuthSlidePage> createState() => _TutorialPinSlidePageState();
 }
 
-class _TutorialPinSlidePageState extends ConsumerState<TutorialPinSlidePage> {
+class _TutorialPinSlidePageState extends ConsumerState<TutorialCodeAuthSlidePage> {
 
   final _codeAuthController = TextEditingController();
+  final _verifyCodeAuthController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +40,27 @@ class _TutorialPinSlidePageState extends ConsumerState<TutorialPinSlidePage> {
             controller: _codeAuthController,
             maxLength: expectedLength,
             keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly
-            ],
+            inputFormatters: [ FilteringTextInputFormatter.digitsOnly ],
             onChanged: tutorialNotifier.setCodeAuth,
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(
               labelText: tutorialState.isUsingDni ? 'DNI' : 'PIN',
               counterText: '${_codeAuthController.text.length}',
               errorText: tutorialNotifier.codeAuthErrorText,
+            ),
+          ),
+
+          TextFormField(
+            controller: _verifyCodeAuthController,
+            maxLength: expectedLength,
+            keyboardType: TextInputType.number,
+            inputFormatters: [ FilteringTextInputFormatter.digitsOnly ],
+            onChanged: tutorialNotifier.setVerifyCodeAuth,
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
+            decoration: InputDecoration(
+              labelText: 'Verificar ${tutorialState.isUsingDni ? 'DNI' : 'PIN'}',
+              counterText: '${_verifyCodeAuthController.text.length}',
+              errorText: tutorialNotifier.verifyCodeAuthErrorText,
             ),
           ),
 
@@ -60,6 +73,7 @@ class _TutorialPinSlidePageState extends ConsumerState<TutorialPinSlidePage> {
                 onChanged: (value) {
                   tutorialNotifier.useDni(value);
                   _codeAuthController.clear();
+                  _verifyCodeAuthController.clear();
                 },
               ),
               const Text('Usar DNI'),
@@ -73,6 +87,7 @@ class _TutorialPinSlidePageState extends ConsumerState<TutorialPinSlidePage> {
   @override
   void dispose() {
     _codeAuthController.dispose();
+    _verifyCodeAuthController.dispose();
     super.dispose();
   }
 }

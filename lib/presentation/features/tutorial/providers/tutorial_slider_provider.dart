@@ -9,6 +9,7 @@ class TutorialSliderState {
   final int totalPages;
   final PageController pageController;
   final String authCode;
+  final String verifyAuthCode;
   final bool isUsingDni;
   final bool isCodeAuthValid;
   final bool loading;
@@ -18,9 +19,10 @@ class TutorialSliderState {
     required this.totalPages,
     required this.pageController,
     required this.authCode,
+    required this.verifyAuthCode,
     this.isUsingDni = false,
     this.isCodeAuthValid = false,
-    this.loading = false
+    this.loading = false,
   });
 
   TutorialSliderState copyWith({
@@ -28,6 +30,7 @@ class TutorialSliderState {
     int? totalPages,
     PageController? pageController,
     String? authCode,
+    String? verifyAuthCode,
     bool? isUsingDni,
     String? pinErrorText,
     bool? isCodeAuthValid,
@@ -37,10 +40,11 @@ class TutorialSliderState {
       currentPage: currentPage ?? this.currentPage,
       totalPages: totalPages ?? this.totalPages,
       pageController: pageController ?? this.pageController,
+      verifyAuthCode: verifyAuthCode ?? this.verifyAuthCode,
       authCode: authCode ?? this.authCode,
       isUsingDni: isUsingDni ?? this.isUsingDni,
       isCodeAuthValid: isCodeAuthValid ?? this.isCodeAuthValid,
-      loading: loading ?? this.loading
+      loading: loading ?? this.loading,
     );
   }
 }
@@ -50,7 +54,8 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
     currentPage: 0,
     totalPages: 4,
     pageController: PageController(),
-    authCode: ''
+    authCode: '',
+    verifyAuthCode: ''
   ));
 
   bool get isLastPage => state.currentPage == 3;
@@ -100,6 +105,7 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
   }
 
   void setCodeAuth(String? text) => state = state.copyWith(authCode: text);
+  void setVerifyCodeAuth(String? text) => state = state.copyWith(verifyAuthCode: text);
   void setLoading(bool value) => state = state.copyWith(loading: value);
 
   String? get codeAuthErrorText {
@@ -107,6 +113,13 @@ class TutorialSliderNotifier extends StateNotifier<TutorialSliderState> {
     if(text.isEmpty) return null;
     final expectedLength = state.isUsingDni ? 8 : 4;
     if(text.length < expectedLength) return 'La longitud debe ser igual a $expectedLength';
+    return null;
+  }
+
+  String? get verifyCodeAuthErrorText {
+    final text = state.verifyAuthCode.trim();
+    if(text.isEmpty) return null;
+    if(text != state.authCode) return 'Las claves deben ser iguales';
     return null;
   }
 

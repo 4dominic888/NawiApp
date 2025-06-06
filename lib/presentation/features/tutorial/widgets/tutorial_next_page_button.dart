@@ -10,12 +10,14 @@ class TutorialNextPageButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tutorialNotifier = ref.read(tutorialSliderProvider.notifier);
     final tutorialState = ref.watch(tutorialSliderProvider);
-    final bool isValidatePin = tutorialState.authCode.isNotEmpty && tutorialNotifier.codeAuthErrorText == null;
+    final bool fieldsNotEmpty = tutorialState.authCode.isNotEmpty && tutorialState.verifyAuthCode.isNotEmpty;
+    final bool hasError = tutorialNotifier.codeAuthErrorText == null && tutorialNotifier.verifyCodeAuthErrorText == null;
+    final bool isValidateCode = fieldsNotEmpty && hasError;
     return Positioned(
       right: 25,
       bottom: kBottomNavigationBarHeight - 25,
       child: ElevatedButton(
-        onPressed: isValidatePin || !tutorialNotifier.isLastPage ? () => tutorialNotifier.nextPage(
+        onPressed: isValidateCode || !tutorialNotifier.isLastPage ? () => tutorialNotifier.nextPage(
           onComplete: () async {
             await tutorialNotifier.saveAndContinue();
             if(!context.mounted) return;

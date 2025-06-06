@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nawiapp/presentation/features/tutorial/providers/tutorial_slider_provider.dart';
 import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_dot_navigation.dart';
 import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_next_page_button.dart';
-import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_pin_slide_page.dart';
+import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_code_auth_slide_page.dart';
 import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_previous_page_button.dart';
 import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_skip_button.dart';
 
@@ -40,7 +40,7 @@ class _TutorialScreenState extends ConsumerState<TutorialScreen> {
               _buildSlide('Bienvenido al tutorial.\nDesliz a la derecha para continuar ->'),
               _buildSlide('Aquí aprenderás a usar la app.'),
               _buildSlide('Recuerda siempre mantener tus datos seguros.'),
-              const TutorialPinSlidePage()
+              const TutorialCodeAuthSlidePage()
             ],
           ),
 
