@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
@@ -10,7 +9,6 @@ class AuthCodeState {
   final bool isLoading;
   final String resultMesssage;
   final CredentialDataType? mode;
-  // final int? maxLength;
 
   AuthCodeState({
     this.isLoading = false,
@@ -40,11 +38,10 @@ class AuthCodeNotifier extends StateNotifier<AuthCodeState> {
     AuthCodeState(
       code: [],
       resultMesssage: '',
-      isLoading: true,
+      mode: GetIt.I<SecureCredentialManager>().getMode()
     )
   );
 
-  set mode(CredentialDataType? mode) => state = state.copyWith(mode: mode, isLoading: false);
 
   void onNumberPressed(int number) {
     if(state.mode == null) return;
@@ -63,21 +60,21 @@ class AuthCodeNotifier extends StateNotifier<AuthCodeState> {
     }
   }
 
-  Future<bool> _verifyPin(String code) async {
+  bool _verifyPin(String code) {
     final bool isDni = state.mode == CredentialDataType.dni;
-    final bool validate = await GetIt.I<SecureCredentialManager>().validCredential(
+    final bool validate = GetIt.I<SecureCredentialManager>().validCredential(
       CredentialData(authCode: code, mode: isDni ? CredentialDataType.dni : CredentialDataType.pin)
     );
 
     return validate;
   }
 
-  Future<void> onSubmit({void Function()? onValid}) async {
+  void onSubmit({void Function()? onValid}) {
     if (state.code.length != state.mode?.length) return;
 
     state = state.copyWith(isLoading: true, resultMesssage: '');
 
-    final isValid = await _verifyPin(state.code.join());
+    final isValid = _verifyPin(state.code.join());
 
     state = state.copyWith(
       isLoading: false,
@@ -93,16 +90,3 @@ class AuthCodeNotifier extends StateNotifier<AuthCodeState> {
 final authCodeProvider = StateNotifierProvider<AuthCodeNotifier, AuthCodeState>(
   (ref) => AuthCodeNotifier()
 );
-
-
-
-class InitAuthModeNotifier extends AsyncNotifier<void> {
-
-  @override
-  Future<void> build() async {
-    final mode = await GetIt.I<SecureCredentialManager>().getMode();
-    ref.read(authCodeProvider.notifier).mode = mode;
-  }
-}
-
-final initModeProvider = AsyncNotifierProvider<InitAuthModeNotifier, void>(InitAuthModeNotifier.new);

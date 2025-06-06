@@ -49,11 +49,9 @@ dependencies:
     sdk: flutter
   speech_to_text: ^7.0.0
   smooth_page_indicator: ^1.2.1
-  flutter_secure_storage: ^4.2.1
   shared_preferences: ^2.5.3
   logger: ^2.5.0
   crypto: ^3.0.6
-  flutter_secure_storage_linux: ^2.0.1
 
 dev_dependencies:
   build_runner: ^2.4.15

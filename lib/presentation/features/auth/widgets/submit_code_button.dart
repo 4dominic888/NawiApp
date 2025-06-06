@@ -15,8 +15,8 @@ class SubmitCodeButton extends ConsumerWidget {
     final bool isValid = authCodeState.isLoading || isLenghtValid;
 
     return ElevatedButton(
-      onPressed: isValid ? null : () async {
-        await authCodeNotifier.onSubmit(
+      onPressed: isValid ? null : () {
+        authCodeNotifier.onSubmit(
           onValid: () => Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const SelectClassroomScreen())
           )

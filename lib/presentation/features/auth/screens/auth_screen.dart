@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:get_it/get_it.dart';
+// import 'package:nawiapp/infrastructure/secure_credential_manager.dart';
 import 'package:nawiapp/presentation/features/auth/providers/auth_code_provider.dart';
 import 'package:nawiapp/presentation/features/auth/widgets/code_auth_display.dart';
 import 'package:nawiapp/presentation/features/auth/widgets/keypad_code.dart';
@@ -12,6 +14,7 @@ class AuthScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     final authCodeState = ref.watch(authCodeProvider);
+    // GetIt.I<SecureCredentialManager>().deleteAll();
 
     return Scaffold(
       appBar: AppBar(title: Text('Autenticación por ${authCodeState.mode?.name ?? '...'}')),
