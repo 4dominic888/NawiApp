@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
+import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
+import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
+import 'package:nawiapp/domain/models/student/entity/student_age.dart';
+import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
+import 'package:nawiapp/presentation/features/select_classroom/widgets/classroom_element.dart';
 import 'package:nawiapp/presentation/features/tutorial/providers/tutorial_slider_provider.dart';
 import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_dot_navigation.dart';
 import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_next_page_button.dart';
 import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_code_auth_slide_page.dart';
 import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_previous_page_button.dart';
 import 'package:nawiapp/presentation/features/tutorial/widgets/tutorial_skip_button.dart';
+import 'package:nawiapp/presentation/widgets/register_book_element.dart';
+import 'package:nawiapp/presentation/widgets/student_element.dart';
 
 class TutorialScreen extends ConsumerStatefulWidget {
   const TutorialScreen({super.key});
@@ -16,11 +24,19 @@ class TutorialScreen extends ConsumerStatefulWidget {
 
 class _TutorialScreenState extends ConsumerState<TutorialScreen> {
 
-  Widget _buildSlide(String text) {
+  Widget _buildSlide(String text, {Widget? children}) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Text(text, style: const TextStyle(fontSize: 24), textAlign: TextAlign.center),
+        child: Column(
+          spacing: 20,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(text, style: const TextStyle(fontSize: 24), textAlign: TextAlign.center),
+            ...[children ?? const SizedBox.shrink()]
+          ],
+        ),
       ),
     );
   }
@@ -38,8 +54,31 @@ class _TutorialScreenState extends ConsumerState<TutorialScreen> {
             onPageChanged: tutorialNotifier.onPageChanged,
             children: [
               _buildSlide('Bienvenido al tutorial.\nDesliz a la derecha para continuar ->'),
-              _buildSlide('Aquí aprenderás a usar la app.'),
-              _buildSlide('Recuerda siempre mantener tus datos seguros.'),
+
+              _buildSlide('Comienza creando una clase, luego estudiantes y finalmente los registros', children: Column(spacing: 10,
+                children: [
+                  ClassroomElement(item: Classroom(name: 'Clase Ejemplo'), preview: true),
+
+                  StudentElement(item: StudentSummary(
+                    id: '*', name: 'Pedro Pablo', age: StudentAge.fourYears
+                  ), isPreview: true),
+
+                  RegisterBookElement(item: RegisterBookSummary(
+                    id: '*',
+                    action: 'Pedro Pablo y Jose Miguel han jugado',
+                    createdAt: DateTime(2025, 8, 3),
+                    type: RegisterBookType.register,
+                    mentions: [
+                      StudentSummary(id: '*', name: 'Pedro Pablo', age: StudentAge.fourYears),
+                      StudentSummary(id: '*', name: 'Jose Miguel', age: StudentAge.fiveYears),
+                    ]
+                  ), isPreview: true)
+                ],
+              )),
+
+              _buildSlide('Una vez registrados, ve a la vista de registros y filtra los que quieres y se exportarán en un archivo',
+                children: Image.asset('assets/images/export_example.png'),
+              ),
               const TutorialCodeAuthSlidePage()
             ],
           ),

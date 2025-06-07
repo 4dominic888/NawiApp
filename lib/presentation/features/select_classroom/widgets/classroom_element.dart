@@ -24,8 +24,9 @@ import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 class ClassroomElement extends StatelessWidget {
 
   final Classroom item;
+  final bool preview;
 
-  const ClassroomElement({ super.key, required this.item });
+  const ClassroomElement({ super.key, required this.item, this.preview = false });
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,7 @@ class ClassroomElement extends StatelessWidget {
                   child: Consumer(
                     builder: (_, ref, __) {
                       return ElevatedButton(
-                        onPressed: () {
+                        onPressed: !preview ? () {
                           GetIt.I<InMemoryStorage>().currentClassroom = item;
                           ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.search);
                           ref.read(studentFilterProvider.notifier).state = StudentFilter();
@@ -75,13 +76,13 @@ class ClassroomElement extends StatelessWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => HomeScreen())
                           );
-                        },
+                        } : () { },
                         child: const Text('Visitar aula')
                       );
                     }
                   ),
                 ),
-                _PopupClassroomOptions(item: item),
+                if(!preview) _PopupClassroomOptions(item: item),
               ],
             )
           ],
