@@ -63,7 +63,8 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
       appBar: SearchFilterField(
         hintTextField: 'Búsqueda por nombre...',
         filterAction: () async {
-
+          // await GetIt.I<SecureCredentialManager>().deleteAll();
+          // Logger().i('Se ha reiniciado con exito las credenciales');
         },
         textOnChanged: (text) {
           debounce?.cancel();

@@ -4,7 +4,7 @@ import 'package:nawiapp/domain/models/classroom/entity/classroom.dart';
 
 extension ClassroomMapper on Classroom {
   static Classroom fromTableData(ClassroomTableData data) {
-    return Classroom(id: data.id, name: data.name, iconCode: data.iconCode, createdAt: data.timestamp, description: data.description, status: data.status);
+    return Classroom(id: data.id, name: data.name, iconCode: data.iconCode, createdAt: data.timestamp, status: data.status);
   }
 
   ClassroomTableData get toTableData => ClassroomTableData(
@@ -13,7 +13,6 @@ extension ClassroomMapper on Classroom {
     status: status,
     iconCode: iconCode,
     timestamp: createdAt,
-    description: description
   );
 
   ClassroomTableCompanion toTableCompanion({bool withId = false}) => ClassroomTableCompanion(
@@ -22,6 +21,5 @@ extension ClassroomMapper on Classroom {
     iconCode: Value(iconCode),
     status: Value(status),
     timestamp: Value(createdAt),
-    description: Value(description)
   );
 }

@@ -17,9 +17,6 @@ class RegisterBook with _$RegisterBook {
   final RegisterBookType type;
 
   @override
-  final String? notes;
-
-  @override
   final Iterable<StudentSummary> mentions;
 
   @override
@@ -31,7 +28,7 @@ class RegisterBook with _$RegisterBook {
   RegisterBook({
     this.id = '*',
     required this.action, this.mentions = const [], this.classroomId = '*',
-    this.type = RegisterBookType.register, this.notes,
+    this.type = RegisterBookType.register,
     required this.createdAt
   });
 }

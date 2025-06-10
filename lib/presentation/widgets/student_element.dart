@@ -26,7 +26,7 @@ class StudentElement extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: backgroundColor.withAlpha(20),
+        color: backgroundColor.withAlpha(40),
         borderRadius: const BorderRadius.all(Radius.circular(16)),
         border: Border.all(
           color: backgroundColor.withAlpha(30),
@@ -36,7 +36,7 @@ class StudentElement extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          _StudentCircularAvatar(backgroundColor: backgroundColor, item: item),
+          _StudentCircularAvatar(backgroundColor: backgroundColor, item: item, isPreview: isPreview),
           
           const SizedBox(width: 12),
 
@@ -53,20 +53,22 @@ class _StudentCircularAvatar extends ConsumerWidget {
   const _StudentCircularAvatar({
     required this.backgroundColor,
     required this.item,
+    this.isPreview = false
   });
 
   final Color backgroundColor;
   final StudentSummary item;
+  final bool isPreview;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return InkResponse(
       containedInkWell: true,
       customBorder: const CircleBorder(),
-      onTap: () {
+      onTap: !isPreview ? () {
         ref.read(registerBookFilterProvider.notifier).state = ref.read(registerBookFilterProvider.notifier).state.copyWith(searchByStudentsId: [item.id]);
         ref.read(selectableElementForSearchProvider.notifier).state = RegisterBook;
-      },
+      } : null,
       child: CircleAvatar(
         backgroundColor: backgroundColor,
         child: Text(item.initalsName),

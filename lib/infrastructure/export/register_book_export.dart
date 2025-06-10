@@ -1,14 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
-import 'package:nawiapp/data/mappers/register_book_mapper.dart';
 import 'package:nawiapp/domain/models/register_book/summary/register_book_summary.dart';
 import 'package:nawiapp/domain/models/student/entity/student_age.dart';
 import 'package:nawiapp/domain/models/student/summary/student_summary.dart';
 import 'package:nawiapp/infrastructure/export/export_report_manager.dart';
+import 'package:nawiapp/utils/nawi_general_utils.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
-
-
 
 class RegisterBookExportByDate extends ExportReportManager {
 
@@ -26,7 +24,7 @@ class RegisterBookExportByDate extends ExportReportManager {
   @override
   List<Widget> buildContent(Context context, Iterable<RegisterBookSummary> data) {
     final dataOrderedPerDay = groupBy(
-      data, (e) => DateFormat('EEEE, d MMMM y').format(DateTime(e.createdAt.year, e.createdAt.month, e.createdAt.day))
+      data, (e) => NawiGeneralUtils.getFormattedDate(DateTime(e.createdAt.year, e.createdAt.month, e.createdAt.day))
     );
 
     return dataOrderedPerDay.entries.map((entry) => [
@@ -38,7 +36,7 @@ class RegisterBookExportByDate extends ExportReportManager {
             Expanded(
               child: Container(
                 color: const PdfColor.fromInt(0xe9e9e9),
-                child: Bullet(text: element.actionUnslug),
+                child: Bullet(text: element.action),
               )
             ),
 
@@ -91,13 +89,13 @@ class RegisterBookExportByStudent extends ExportReportManager {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Bullet(text: element.actionUnslug, textAlign: TextAlign.start),
+                    Bullet(text: element.action, textAlign: TextAlign.start),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Expanded(
                           child: Text(
-                            DateFormat('EEEE, d MMMM y').format(element.createdAt),
+                            NawiGeneralUtils.getFormattedDate(element.createdAt),
                             style: TextStyle().copyWith(fontSize: 8, color: const PdfColor.fromInt(0x2e2e2e)),
                             textAlign: TextAlign.end
                           )

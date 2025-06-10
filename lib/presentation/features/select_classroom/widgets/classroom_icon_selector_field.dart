@@ -81,7 +81,7 @@ class _ClassroomIconSelectorFieldState extends State<ClassroomIconSelectorField>
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.2) : null,
+                  color: isSelected ? Theme.of(context).primaryColor.withAlpha((0.2 * 255).toInt()) : null,
                   border: Border.all(
                     color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
                     width: isSelected ? 2 : 1,

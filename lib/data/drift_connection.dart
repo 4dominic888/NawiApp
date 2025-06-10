@@ -30,7 +30,7 @@ part 'drift_connection.g.dart';
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final folder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(folder.path, 'nawidb.sqlite'));
+    final file = File(p.join(folder.path, 'nawidb2.sqlite'));
 
     // if(await file.exists()) await file.delete();; //! Resetea la base de datos
 

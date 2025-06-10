@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:nawiapp/data/local/tables/register_book_table.dart';
 
 class HiddenRegisterBookTable extends Table {
-  late final hiddenRegisterBookId = text().named('hidden_register_book_id').references(RegisterBookTable, #id)();
+  late final hiddenRegisterBookId = text().named('hidden_register_book_id').references(RegisterBookTable, #id, onDelete: KeyAction.cascade)();
 
   @override
   String? get tableName => "hidden_register_book_table";

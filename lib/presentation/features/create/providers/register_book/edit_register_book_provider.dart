@@ -9,6 +9,8 @@ import 'package:nawiapp/presentation/features/home/providers/general_loading_pro
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
 
+
+
 final editRegisterBookProvider = Provider((ref) {
   return (String registerBookId) async {
     final loading = ref.read(generalLoadingProvider.notifier);
@@ -29,5 +31,11 @@ final editRegisterBookProvider = Provider((ref) {
         ref.read(selectableElementForCreateProvider.notifier).state = RegisterBook;
       }
     );
+  };
+});
+
+final editRegisterBookProviderWithoutRedirect = Provider((ref) {
+  return (RegisterBook data) {
+    ref.read(initialRegisterBookFormDataProvider.notifier).state = data;
   };
 });

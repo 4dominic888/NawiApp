@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get_it/get_it.dart';
+import 'package:nawiapp/infrastructure/secure_credential_manager.dart';
 import 'package:nawiapp/locator.dart';
-import 'package:nawiapp/presentation/features/select_classroom/screens/select_classroom_screen.dart';
+import 'package:nawiapp/presentation/features/auth/screens/auth_screen.dart';
+import 'package:nawiapp/presentation/features/tutorial/screens/tutorial_screen.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main(){
+Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
-
   setupLocator();
-
-  // await findSystemLocale(); //* Initialize the systems locale. If not, users might see AM/PM even when they configured their system to use 24h format.
+  await FlutterLocalization.instance.ensureInitialized();
+  await initializeDateFormatting('es', null);
+  await GetIt.I.isReady<SecureCredentialManager>();
 
   //* Originalmente llamado Ñawi, pero para evitar futuros errores con caracteres especiales, se reemplaza la Ñ por N.
   runApp(ProviderScope(child: const NawiApp()));
@@ -24,9 +30,20 @@ class NawiApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return OverlaySupport.global(
       child: MaterialApp(
+        locale: const Locale('es', 'ES'),
+        supportedLocales: const [
+          Locale('es', 'ES'),
+        ],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         title: 'Menu principal',
         debugShowCheckedModeBanner: false,
-        home: const MenuApp(),
+        home: GetIt.I<SecureCredentialManager>().tutorialSeen ?
+              const AuthScreen() : 
+              const TutorialScreen(),
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: NawiColorUtils.primaryColor, brightness: Brightness.light,
@@ -53,21 +70,5 @@ class NawiApp extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class MenuApp extends StatefulWidget {
-  const MenuApp({super.key});
-
-  @override
-  State<MenuApp> createState() => _MenuAppState();
-}
-
-class _MenuAppState extends State<MenuApp> {
-  
-  @override
-  Widget build(BuildContext context) {
-    // return HomeScreen();
-    return SelectClassroomScreen();
   }
 }

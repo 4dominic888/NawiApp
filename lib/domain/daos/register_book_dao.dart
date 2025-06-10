@@ -78,8 +78,6 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
     return Expression.and(expressions);
   }
 
-  
-
   @override
   Future<Result<Iterable<RegisterBookViewSummaryVersionData>>> getAll(RegisterBookFilter params) async {
     try {
@@ -171,21 +169,14 @@ class RegisterBookDAO extends DatabaseAccessor<NawiDatabase> with _$RegisterBook
   }
 
   @override
-  Future<Result<RegisterBookTableData>> deleteOne(String id) {
-    return transaction<Result<RegisterBookTableData>>(() async {
-      try {
-        final deleteStatement = delete(hiddenRegisterBookTable)..where((tbl) => tbl.hiddenRegisterBookId.equals(id));
-        await deleteStatement.go();
+  Future<Result<RegisterBookTableData>> deleteOne(String id) async {
+    try {
+      final deleteRegisterBookQuery = delete(registerBookTable)..where((tbl) => tbl.id.equals(id));
+      final registerBookTableData = (await deleteRegisterBookQuery.goAndReturn()).firstOrNull;
+      if(registerBookTableData == null) throw NawiError.onDAO(message: "Cuaderno de registro no encontrado");
 
-        return Success(data: ( await (
-            delete(registerBookTable)
-              ..where((tbl) => tbl.id.equals(id))
-            ).goAndReturn()
-          ).first
-        );
-
-      } catch (e) { return NawiDAOUtils.onCatch(e); }
-    });
+      return Success(data: registerBookTableData);
+    } catch (e) { return NawiDAOUtils.onCatch(e); }
   }
 
   @override

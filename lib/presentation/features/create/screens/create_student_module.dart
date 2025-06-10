@@ -22,20 +22,17 @@ class CreateStudentModule extends ConsumerStatefulWidget {
 class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
 
   late final TextEditingController _nameController;
-  late final TextEditingController _notesController;
 
   @override
   void initState() {
     super.initState();
     final Student? initialValue = widget.data;
     _nameController = TextEditingController(text: initialValue?.name ?? '');
-    _notesController = TextEditingController(text: initialValue?.notes ?? '');    
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _notesController.dispose();
     super.dispose();
   }
 
@@ -49,7 +46,6 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
         onSuccess: () {
           ref.read(studentFormProvider(widget.data).notifier).clearAll();
           _nameController.clear();
-          _notesController.clear();
           ref.read(selectableElementForSearchProvider.notifier).state = Student;
           ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.search);
         },
@@ -79,11 +75,6 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
                   ),
                   onPressed: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
                   child: Text(widget.data == null ? "Agregar" : "Editar")
-                  // color: widget.data == null ? NawiColorUtils.primaryColor : Colors.blue.shade400,
-                  // controller: _submitBtnController,
-                  // proccess: formNotifier.isValid ? () async => await formNotifier.submit(idToEdit: widget.data?.id) : null,
-                  // label: Text(widget.data == null ? "Agregar" : "Editar"),
-                  // onReset: () => formNotifier.setStatus(SubmitStatus.idle),
                 ),
               )
             ],
@@ -112,36 +103,20 @@ class _CreateStudentModuleState extends ConsumerState<CreateStudentModule> {
             ),
           ),
       
-          const SizedBox(height: 20),
-      
-          TextFormField(
-            controller: _notesController,
-            onChanged: formNotifier.setNotes,
-            onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            maxLines: 2,
-            decoration: InputDecoration(
-              labelText: 'Notas',
-              hintText: 'Ingrese detalles adicionales (Opcional)',
-              suffix: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  formNotifier.clearNotes();
-                  _notesController.clear();
-                }
-              ),
-              filled: true,
-              fillColor: NawiColorUtils.secondaryColor.withAlpha(110),
-              floatingLabelBehavior: FloatingLabelBehavior.always
-            ),
-          ),
-      
           const SizedBox(height: 25),
       
           SegmentedButton<StudentAge>(
             segments: NawiGeneralUtils.studentAges.map(
-              (e) => ButtonSegment(value: e, label: Text(e.name))
+              (e) => ButtonSegment(
+                value: e,
+                label: Text(e.name),
+              )
             ).toList(),
             selected: { studentFormState.age },
+            style: SegmentedButton.styleFrom(
+              selectedBackgroundColor: NawiColorUtils.buttonColor,
+              backgroundColor: Colors.white
+            ),
             onSelectionChanged: formNotifier.setAge,
             multiSelectionEnabled: false,
           ),

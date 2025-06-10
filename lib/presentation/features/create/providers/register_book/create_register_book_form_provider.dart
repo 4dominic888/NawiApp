@@ -32,7 +32,6 @@ class _RegisterBookFormState {
       type: type ?? data.type,
       mentions: mentions ?? data.mentions,
       createdAt: createdAt ?? data.createdAt,
-      notes: notes ?? data.notes,
       classroomId: classroomId ?? data.classroomId
     ),
     status: status ?? this.status

@@ -9,7 +9,7 @@ class Student with _$Student {
   Student({
     this.id = '*',
     required this.name, required this.age,
-    this.notes, this.classroomId = '*', DateTime? timestamp
+    this.classroomId = '*', DateTime? timestamp
   }) : timestamp = timestamp ?? DateTime.now();
 
   Student.empty() : this(name: '', age: StudentAge.threeYears);
@@ -22,9 +22,6 @@ class Student with _$Student {
 
   @override
   final StudentAge age;
-
-  @override
-  final String? notes;
 
   @override
   final DateTime timestamp;

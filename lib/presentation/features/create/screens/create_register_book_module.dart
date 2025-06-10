@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book_type.dart';
 import 'package:nawiapp/presentation/features/create/providers/register_book/create_register_book_form_provider.dart';
-import 'package:nawiapp/presentation/features/create/widgets/mention_student_field.dart';
+import 'package:nawiapp/presentation/features/create/providers/register_book/initial_register_book_form_data_provider.dart';
+import 'package:nawiapp/presentation/features/create/screens/another_create_action.dart';
 import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/selectable_element_for_search_provider.dart';
@@ -25,31 +26,18 @@ class CreateRegisterBookModule extends ConsumerStatefulWidget {
 class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookModule> {
 
   late final TextEditingController _actionController;
-  late final TextEditingController _notesController;
   final _scrollController = ScrollController();
-
-  void _scrollToBotton() {
-    Future.delayed(const Duration(milliseconds: 700), () {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    });
-  }
 
   @override
   void initState() {
     super.initState();
     final RegisterBook? initialValue = widget.data;
     _actionController = TextEditingController(text: initialValue?.action ?? '');
-    _notesController = TextEditingController(text: initialValue?.notes ?? '');
   }
 
   @override
   void dispose() {
     _actionController.dispose();
-    _notesController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -59,18 +47,22 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
 
     final registerBookFormState = ref.watch(registerBookFormProvider(widget.data).select((e) => e.data));
     final formNotifier = ref.read(registerBookFormProvider(widget.data).notifier);
+    
     ref.listen(registerBookFormProvider(widget.data).select((e) => e.status), (_, next) =>
       NawiFormUtils.handleSubmitStatus(
         status: next,
         onSuccess: () {
           ref.read(registerBookFormProvider(widget.data).notifier).clearAll();
           _actionController.clear();
-          _notesController.clear();
           ref.read(selectableElementForSearchProvider.notifier).state = RegisterBook;
           ref.read(tabMenuProvider.notifier).goTo(NawiMenuTabs.search);
         },
       )
     );
+
+    ref.listen(initialRegisterBookFormDataProvider.select((e) => e?.action), (_, next) {
+      _actionController.text = next ?? '';
+    });
 
     return SingleChildScrollView(
       child: Column(
@@ -121,6 +113,20 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
           ),
       
           const SizedBox(height: 20),
+
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+                children: (registerBookFormState.mentions.toSet()).map((student) => 
+                  Chip(
+                    label: Text(student.name, style: const TextStyle(fontSize: 10)),
+                    backgroundColor: NawiColorUtils.studentColorByAge(student.age.value).withAlpha(80),
+                    labelStyle: const TextStyle(fontWeight: FontWeight.bold)
+                  )
+                ).toList(),
+          ),
+
+          const SizedBox(height: 20),
       
           TextFormField(
             controller: _actionController,
@@ -128,10 +134,14 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
             readOnly: true,
             onTap: () async {
               final actionMentionsRecord = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => MentionStudentField(
+                MaterialPageRoute(builder: (context) => AnotherCreateAction(
                   action: registerBookFormState.action,
                   mentions: registerBookFormState.mentions,
                 ))
+                // MaterialPageRoute(builder: (context) => MentionStudentField(
+                //   action: registerBookFormState.action,
+                //   mentions: registerBookFormState.mentions,
+                // ))
               );
       
               if(actionMentionsRecord != null) {
@@ -176,35 +186,7 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
             ),
           ),
       
-          const SizedBox(height: 20),
-      
-          TextFormField(
-            controller: _notesController,
-            onTap: _scrollToBotton,
-            onChanged: formNotifier.setNotes,
-            onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            maxLines: 2,
-            decoration: InputDecoration(
-              labelText: 'Notas',
-              hintText: 'Ingrese detalles adicionales (Opcional)',
-              suffix: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  _notesController.clear();
-                  formNotifier.clearNotes();
-                }
-              ),
-              filled: true,
-              fillColor: NawiColorUtils.secondaryColor.withAlpha(110),
-              floatingLabelBehavior: FloatingLabelBehavior.always
-            ),
-          ),
-      
-          const SizedBox(height: 80),
-        
-          // if(NawiGeneralUtils.isKeyboardVisible(context)) Padding(
-          //   padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom * 1.1)
-          // )
+          const SizedBox(height: 60)
         ],
       ),
     );

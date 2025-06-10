@@ -19,7 +19,7 @@ void main() {
   test('Registro de un aula', () async {
     final service = GetIt.I<ClassroomServiceBase>();
 
-    final classroom = Classroom(name: 'Clase C', iconCode: 12745, description: 'Aula para el grado C');
+    final classroom = Classroom(name: 'Clase C', iconCode: 12745);
     final errorClassroom = Classroom(id: '6615024f-0153-4492-b06e-0cb108f90ac6', name: 'Clase D', iconCode: 12345);
 
     final result = await Future.wait([
@@ -83,7 +83,7 @@ void main() {
       )
     );
 
-    final updatedResult = await service.updateOne(addedResult.getValue!.copyWith(name: 'Clase Y', description: 'Some desc', iconCode: 12369));
+    final updatedResult = await service.updateOne(addedResult.getValue!.copyWith(name: 'Clase Y', iconCode: 12369));
     final getResult = await service.getOne(addedResult.getValue!.id);
 
     testil.customExpect(updatedResult, isA<Success>(),
