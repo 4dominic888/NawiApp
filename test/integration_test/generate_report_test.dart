@@ -13,7 +13,7 @@ void main() {
   setUp(() async => await testil.setupIntegrationTestLocator(withRegisterBook: true));
   tearDown(testil.onTearDownSetupIntegrationTestLocator);  
   test("Correcta estructura de pdf", () async {
-    final query = RegisterBookFilter(orderBy: RegisterBookViewOrderByType.timestampOldy);
+    final query = RegisterBookFilter(orderBy: RegisterBookViewOrderByType.timestampOldy, classroomId: '6615024f-0153-4492-b06e-0cb108f90ac6');
     final ExportReportManager exporter = RegisterBookExportByDate();
     
     final result = await exporter.generate(query);

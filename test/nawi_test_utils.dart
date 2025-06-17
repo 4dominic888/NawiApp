@@ -3,6 +3,7 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/data/mappers/student_mapper.dart';
 import 'package:nawiapp/domain/classes/filter/register_book_filter.dart';
@@ -60,6 +61,8 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
     if(withRegisterBook) _locator.registerLazySingletonAsync<OpenSansFont>(() async => await OpenSansFont.load());
 
     await addingTestData(withRegisterBook);
+
+    await initializeDateFormatting('es', null);
   }
 
   Future<void> onTearDownSetupIntegrationTestLocator() async {
