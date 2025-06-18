@@ -16,7 +16,8 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
 
 final GetIt locator = GetIt.instance;
 
-void setupLocator() {
+/// Agrega todos los singletons necesarios para la conexión a la base de datos
+void setupDatabaseStuffsLocator() {
   //* DB
   locator.registerLazySingleton<NawiDatabase>(() => NawiDatabase());
 
@@ -49,6 +50,12 @@ void setupLocator() {
   locator.registerLazySingleton<ClassroomServiceBase>(() => ClassroomServiceImplement(
     locator<ClassroomDAO>()
   ));
+}
+
+/// Inicialización de GetIt por defecto
+void setupLocator() {
+
+  setupDatabaseStuffsLocator();
 
   //* Extra
   locator.registerLazySingletonAsync<OpenSansFont>(() async => await OpenSansFont.load());
@@ -56,4 +63,17 @@ void setupLocator() {
   locator.registerLazySingleton<InMemoryStorage>(() => InMemoryStorage());
 
   locator.registerLazySingletonAsync<SecureCredentialManager>(() async => await SecureCredentialManager.init());
+}
+
+/// Elimina todos los singletons necesarios para la conexión a la base de datos
+void unregisterDatabaseStuffsLocator() {
+  locator.unregister<StudentServiceBase>();
+  locator.unregister<RegisterBookServiceBase>();
+  locator.unregister<ClassroomServiceBase>();
+
+  locator.unregister<StudentDAO>();
+  locator.unregister<RegisterBookDAO>();
+  locator.unregister<ClassroomDAO>();
+
+  locator.unregister<NawiDatabase>();
 }
