@@ -5,3 +5,17 @@
 Este proyecto usa algunas características a resaltar por ser algo fuera del framework de Flutter, tales como:
 - Drift (Un ORM para Sqlite3): https://drift.simonbinder.eu/setup/
 - build_runner (Generador de código que usa Drift y Freezed): Aca cada cambio en las tablas, vistas o el archivo drift_connecion.dart, es necesario aplicar en consola `dart run build_runner build`, para refrescar el contenido de los .g.dart y freezed.dart. (Es obligatorio hacer esto al compilar la aplicación, ya que estos archivos autogenerados no estan versionados en el repositorio)
+
+## Backups
+
+Para poder realizar backups de la base de datos, se ha implementado un servicio que usa el algoritmo de cifrado AES-256 y el algoritmo de hash SHA-256. Este algoritmo se encuentra en el archivo `backup_crypto_aes_256.dart` y se puede modificar para adaptarse a otros algoritmos de cifrado y hash.
+
+Es necesario definir un archivo `.env` con las siguientes variables:
+
+```
+// Encriptación ejemplo
+ENCRYPTION_KEY=12345678901234567890123456789012
+ENCRYPTION_IV=12345678901234567890123456789012
+```
+
+Para los tests es necesario definir un archivo `.test.env` con las mismas variables.

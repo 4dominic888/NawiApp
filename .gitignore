@@ -55,3 +55,6 @@ app.*.map.json
 
 # Report generate
 /test/pdf_test_output/
+
+# Environment variables
+*.env
