@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -18,6 +19,7 @@ Future<void> main() async {
   await FlutterLocalization.instance.ensureInitialized();
   await initializeDateFormatting('es', null);
   await GetIt.I.isReady<SecureCredentialManager>();
+  await dotenv.load(fileName: ".env");
 
   //* Originalmente llamado Ñawi, pero para evitar futuros errores con caracteres especiales, se reemplaza la Ñ por N.
   runApp(ProviderScope(child: const NawiApp()));
