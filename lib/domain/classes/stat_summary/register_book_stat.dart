@@ -6,7 +6,7 @@ class RegisterBookStat {
   final CountRatio registerCount;
   final int total;
 
-  RegisterBookStat({
+  const RegisterBookStat({
     required this.incidentCount,
     required this.anecdoteCount,
     required this.registerCount,
