@@ -16,6 +16,7 @@ import 'package:nawiapp/presentation/features/search/providers/register_book/sea
 import 'package:nawiapp/presentation/features/search/providers/student/search_student_list_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/providers/select_classroom_grid_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/screens/add_classroom_modal.dart';
+import 'package:nawiapp/presentation/features/select_classroom/widgets/classroom_mock_sub_stat_element.dart';
 import 'package:nawiapp/presentation/features/select_classroom/widgets/classroom_sub_stat_element.dart';
 import 'package:nawiapp/presentation/widgets/loading_process_button.dart';
 import 'package:nawiapp/presentation/widgets/warning_awesome_dialog.dart';
@@ -38,7 +39,6 @@ class ClassroomElement extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Align(
               alignment: Alignment.centerLeft,
@@ -55,7 +55,7 @@ class ClassroomElement extends StatelessWidget {
               ),
             ),
 
-            ClassroomSubStatElement(item: item),
+            !preview ? ClassroomSubStatElement(item: item) : const ClassroomMockSubStatElement(),
 
             Divider(),
 
