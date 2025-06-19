@@ -4,9 +4,12 @@ import 'package:nawiapp/domain/daos/classroom_dao.dart';
 import 'package:nawiapp/domain/daos/register_book_dao.dart';
 import 'package:nawiapp/domain/daos/student_register_book_dao.dart';
 import 'package:nawiapp/domain/daos/student_dao.dart';
+import 'package:nawiapp/domain/services/backup_service_base.dart';
 import 'package:nawiapp/domain/services/classroom_service_base.dart';
 import 'package:nawiapp/domain/services/register_book_service_base.dart';
 import 'package:nawiapp/domain/services/student_service_base.dart';
+import 'package:nawiapp/infrastructure/backups/backup_crypto_aes_256.dart';
+import 'package:nawiapp/infrastructure/backups/backup_service_implement.dart';
 import 'package:nawiapp/infrastructure/fonts/open_sans_font.dart';
 import 'package:nawiapp/infrastructure/in_memory_storage.dart';
 import 'package:nawiapp/infrastructure/secure_credential_manager.dart';
@@ -17,9 +20,11 @@ import 'package:nawiapp/presentation/implementations/student_service_implement.d
 final GetIt locator = GetIt.instance;
 
 /// Agrega todos los singletons necesarios para la conexión a la base de datos
-void setupDatabaseStuffsLocator() {
+void setupDatabaseStuffsLocator({String? dbFolderPath}) {
   //* DB
-  locator.registerLazySingleton<NawiDatabase>(() => NawiDatabase());
+  locator.registerLazySingleton<NawiDatabase>(() => dbFolderPath != null ?
+    NawiDatabase.fromPath(dbFolderPath) : NawiDatabase()
+  );
 
   //* Repositories
   locator.registerLazySingleton<StudentDAO>(() => StudentDAO(
@@ -50,6 +55,10 @@ void setupDatabaseStuffsLocator() {
   locator.registerLazySingleton<ClassroomServiceBase>(() => ClassroomServiceImplement(
     locator<ClassroomDAO>()
   ));
+
+  locator.registerLazySingleton<BackupServiceBase>(() => BackupServiceImplement(
+    cryptoStrategy: BackupCryptoAes256()
+  ));
 }
 
 /// Inicialización de GetIt por defecto
@@ -67,6 +76,8 @@ void setupLocator() {
 
 /// Elimina todos los singletons necesarios para la conexión a la base de datos
 void unregisterDatabaseStuffsLocator() {
+  locator.unregister<BackupServiceBase>();
+
   locator.unregister<StudentServiceBase>();
   locator.unregister<RegisterBookServiceBase>();
   locator.unregister<ClassroomServiceBase>();
@@ -74,6 +85,7 @@ void unregisterDatabaseStuffsLocator() {
   locator.unregister<StudentDAO>();
   locator.unregister<RegisterBookDAO>();
   locator.unregister<ClassroomDAO>();
+  locator.unregister<StudentRegisterBookDAO>();
 
   locator.unregister<NawiDatabase>();
 }
