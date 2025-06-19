@@ -53,8 +53,9 @@ app.*.map.json
 *.freezed.dart
 *.g.dart
 
-# Report generate
+# Test output generate
 /test/pdf_test_output/
+/test/backup_test_output/
 
 # Environment variables
 *.env
