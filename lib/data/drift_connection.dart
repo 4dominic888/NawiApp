@@ -27,16 +27,16 @@ import 'package:nawiapp/utils/nawi_general_utils.dart';
 
 part 'drift_connection.g.dart';
 
-LazyDatabase _openConnection() {
+LazyDatabase _openConnection({String? folderPath}) {
   return LazyDatabase(() async {
-    final folder = await getApplicationDocumentsDirectory();
+    final folder = folderPath != null ? Directory(folderPath) : await getApplicationDocumentsDirectory();
     final file = File(p.join(folder.path, 'nawidb2.sqlite'));
 
     // if(await file.exists()) await file.delete();; //! Resetea la base de datos
 
     if(Platform.isAndroid) await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
 
-    sqlite3.tempDirectory = (await getTemporaryDirectory()).path;
+    if(folderPath == null) sqlite3.tempDirectory = (await getTemporaryDirectory()).path;
     return NativeDatabase.createInBackground(file);
   });
 }
@@ -50,6 +50,13 @@ LazyDatabase _openConnection() {
 )
 class NawiDatabase extends _$NawiDatabase {
   NawiDatabase([QueryExecutor? e]) : super(e ?? _openConnection());
+
+  NawiDatabase.fromPath(String folderPath) : super(_openConnection(folderPath: folderPath));
+
+  static Future<String> folderPath({bool isTest = false}) async { 
+    if(isTest) return 'test/backup_test_output';
+    return (await getApplicationDocumentsDirectory()).path;
+  }
   
   @override
   int get schemaVersion => 1;
