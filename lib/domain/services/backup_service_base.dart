@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
 import 'package:nawiapp/domain/services/backup_crypto_strategy.dart';
@@ -16,5 +17,6 @@ abstract class BackupServiceBase {
   }
 
   Future<Result<File>> backupDatabase(String path, {bool isTest = false});
+  Future<Result<Uint8List>> backupDatabaseAndroid(String name);
   Future<Result<void>> restoreDatabase(String backupPath, {bool isTest = false});
 }

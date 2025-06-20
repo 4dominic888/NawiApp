@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/data/drift_connection.dart';
@@ -23,6 +24,21 @@ interface class BackupServiceImplement extends BackupServiceBase {
       await backupFile.writeAsBytes(encryptedBytes, flush: true);
       
       return Success(data: backupFile, message: 'Se ha creado el backup correctamente');
+    } catch (e) {
+      return NawiError.onService(message: 'Error al crear el backup: $e');
+    }
+  }
+
+  @override
+  Future<Result<Uint8List>> backupDatabaseAndroid(String name) async {
+    try {
+      final dbFile = await getDatabaseFile();
+      if (!await dbFile.exists()) throw Exception('El archivo de la base de datos no existe');
+
+      final dbBytes = await dbFile.readAsBytes();
+      final encryptedBytes = cryptoStrategy.encrypt(dbBytes);
+      
+      return Success(data: encryptedBytes, message: 'Se ha creado el backup correctamente');
     } catch (e) {
       return NawiError.onService(message: 'Error al crear el backup: $e');
     }
