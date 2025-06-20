@@ -4,6 +4,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nawiapp/infrastructure/nawi_options.dart';
 import 'package:nawiapp/infrastructure/secure_credential_manager.dart';
 import 'package:nawiapp/locator.dart';
 import 'package:nawiapp/presentation/features/auth/screens/auth_screen.dart';
@@ -20,6 +21,7 @@ Future<void> main() async {
   await FlutterLocalization.instance.ensureInitialized();
   await initializeDateFormatting('es', null);
   await GetIt.I.isReady<SecureCredentialManager>();
+  await GetIt.I.isReady<NawiOptions>();
   await dotenv.load(fileName: ".env");
 
   //* Originalmente llamado Ñawi, pero para evitar futuros errores con caracteres especiales, se reemplaza la Ñ por N.
