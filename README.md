@@ -56,3 +56,11 @@ sonar.sourceEncoding=UTF-8
 # exclude generated files
 sonar.exclusions=test/**/*_test.mocks.dart,lib/**/*.g.dart
 ```
+## Generación del apk
+
+Para generar el apk, se debe ejecutar `flutter build apk --release --no-tree-shake-icons --obfuscate --split-debug-info=build/app/outputs/symbols`.
+
+`--no-tree-shake-icons` se utiliza para evitar errores en una funcionalidad de iconos dinamicos sin el uso de const.
+`--obfuscate --split-debug-info=build/app/outputs/symbols` se utiliza para evitar que el código fuente sea visible en el apk. Se puede omitir para pruebas, pero es recomendable hacer pruebas en un dispositivo real, para asegurar de que el código ofuscado no cause problemas de funcionalidad.
+
+> Nota: Esta aplicación aun no esta lista para lanzarse en la Play Store, por lo que no se puede generar el appbundle.
