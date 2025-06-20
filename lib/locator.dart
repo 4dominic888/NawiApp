@@ -12,6 +12,7 @@ import 'package:nawiapp/infrastructure/backups/backup_crypto_aes_256.dart';
 import 'package:nawiapp/infrastructure/backups/backup_service_implement.dart';
 import 'package:nawiapp/infrastructure/fonts/open_sans_font.dart';
 import 'package:nawiapp/infrastructure/in_memory_storage.dart';
+import 'package:nawiapp/infrastructure/nawi_options.dart';
 import 'package:nawiapp/infrastructure/secure_credential_manager.dart';
 import 'package:nawiapp/presentation/implementations/classroom_service_implement.dart';
 import 'package:nawiapp/presentation/implementations/register_book_service_implement.dart';
@@ -72,6 +73,7 @@ void setupLocator() {
   locator.registerLazySingleton<InMemoryStorage>(() => InMemoryStorage());
 
   locator.registerLazySingletonAsync<SecureCredentialManager>(() async => await SecureCredentialManager.init());
+  locator.registerLazySingletonAsync<NawiOptions>(() async => await NawiOptions.init());
 }
 
 /// Elimina todos los singletons necesarios para la conexión a la base de datos

@@ -1,11 +1,8 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:nawiapp/infrastructure/nawi_options.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-
-enum MicMode {
-  holdToSpeak,
-  toggleToSpeak,
-}
 
 class VoiceInputField extends StatefulWidget {
   final TextEditingController textController;
@@ -25,7 +22,7 @@ class _VoiceInputFieldState extends State<VoiceInputField> {
   late stt.SpeechToText _speech;
   bool _isListening = false;
   bool _shouldKeepListening = false;
-  MicMode _micMode = MicMode.holdToSpeak;
+  MicMode _micMode = MicMode.values.firstWhere((e) => e.value == GetIt.I<NawiOptions>().microphoneMode);
 
   @override
   void initState() {
@@ -98,7 +95,10 @@ class _VoiceInputFieldState extends State<VoiceInputField> {
       runSpacing: 10,
       children: [
         PopupMenuButton<MicMode>(
-          onSelected: (mode) => setState(() => _micMode = mode),
+          onSelected: (mode) async {
+            GetIt.I<NawiOptions>().setMicrophoneMode(mode);
+            setState(() => _micMode = mode);
+          },
           itemBuilder: (context) => [
             const PopupMenuItem(
               value: MicMode.holdToSpeak,

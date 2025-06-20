@@ -35,18 +35,21 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
       endDrawer: MenuDrawer(),
       drawerScrimColor: Colors.black45.withAlpha(130),
       persistentFooterButtons: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(10),
-              topRight: Radius.circular(10)
-            )
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          child: classroomCountNotifier.when(
-            data: (count) => Text('Total de aulas registradas: $count', style: const TextStyle(fontSize: 16)),
-            error: (error, stack) => const Text('Error al cargar los datos', style: TextStyle(fontSize: 16)),
-            loading: () => const Center(child: CircularProgressIndicator())
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10)
+              )
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            child: classroomCountNotifier.when(
+              data: (count) => Text('Aulas: $count', style: const TextStyle(fontSize: 16)),
+              error: (error, stack) => const Text('Error al cargar los datos', style: TextStyle(fontSize: 16)),
+              loading: () => const Center(child: CircularProgressIndicator())
+            ),
           ),
         )
       ],
@@ -93,9 +96,18 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
             ),
             firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
             newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
-            noItemsFoundIndicatorBuilder: (_) => const Center(child: Text("No hay aulas registradas, registre una ahora")),
-            firstPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información")),
-            newPageErrorIndicatorBuilder: (_) => const Center(child: Text("Ha ocurrido un error al cargar la información"))
+            noItemsFoundIndicatorBuilder: (_) => const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Center(child: Text("No hay aulas registradas, registre una ahora")),
+            ),
+            firstPageErrorIndicatorBuilder: (_) => const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Center(child: Text("Ha ocurrido un error al cargar la información")),
+            ),
+            newPageErrorIndicatorBuilder: (_) => const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(child: Text("Ha ocurrido un error al cargar la información")),
+            )
           ),
         ),
       ),

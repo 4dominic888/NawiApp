@@ -43,9 +43,9 @@ class _AnotherCreateActionState extends State<AnotherCreateAction> {
           child: Column(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: 5,
+                child: ListView(
+                  // crossAxisAlignment: CrossAxisAlignment.stretch,
+                  // spacing: 5,
                   children: [
                     MultiSelectStudentField(
                       initialSelectedStudents: _selectedMentions,
@@ -76,22 +76,20 @@ class _AnotherCreateActionState extends State<AnotherCreateAction> {
                     
                     Divider(),
                     
-                    Flexible(
-                      child: Consumer(
-                        builder: (_, ref, __) {
-                          return ElevatedButton(
-                            onPressed: () {
-                              if(_selectedMentions.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Debe seleccionar al menos un estudiante")));
-                                return;
-                              }
-                                                
-                              Navigator.pop(context, (_actionController.text.trim(), _selectedMentions) );
-                            },
-                            child: const Text("Aceptar"),
-                          );
-                        }
-                      ),
+                    Consumer(
+                      builder: (_, ref, __) {
+                        return ElevatedButton(
+                          onPressed: () {
+                            if(_selectedMentions.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Debe seleccionar al menos un estudiante")));
+                              return;
+                            }
+                                              
+                            Navigator.pop(context, (_actionController.text.trim(), _selectedMentions) );
+                          },
+                          child: const Text("Aceptar"),
+                        );
+                      }
                     ),
                   ],
                 ),

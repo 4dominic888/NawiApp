@@ -130,7 +130,7 @@ class _CreateRegisterBookModuleState extends ConsumerState<CreateRegisterBookMod
       
           TextFormField(
             controller: _actionController,
-            maxLines: 3,
+            maxLines: 6,
             readOnly: true,
             onTap: () async {
               final actionMentionsRecord = await Navigator.of(context).push(
