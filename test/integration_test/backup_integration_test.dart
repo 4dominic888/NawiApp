@@ -27,7 +27,7 @@ void main() {
     ]);
     await registerBookService.deleteOne('e0449ae1-ec4d-4eec-a0c2-3b6be2ff46f6');
 
-    final backupResult = await backupService.backupDatabase('test/backup_test_output/backup.nwdb');
+    final backupResult = await backupService.backupDatabase('test/backup_test_output/backup.nwdb', isTest: true);
 
     testil.customExpect(backupResult, isA<Success>(),
       about: 'Proceso de backup exitoso', n: 1
@@ -48,7 +48,7 @@ void main() {
   test('Restaurar backup', () async {
     final backupService = GetIt.I<BackupServiceBase>();
 
-    final backupRestoreResult = await backupService.restoreDatabase('test/backup_test_output/backup.nwdb');
+    final backupRestoreResult = await backupService.restoreDatabase('test/backup_test_output/backup.nwdb', isTest: true);
 
     testil.customExpect(backupRestoreResult, isA<Success>(),
       about: 'Proceso de restauracion exitoso', n: 1

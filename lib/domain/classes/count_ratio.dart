@@ -2,5 +2,5 @@ class CountRatio {
   final int count;
   final double percent;
 
-  CountRatio({required this.count, required this.percent});
+  const CountRatio({required this.count, required this.percent});
 }

@@ -8,6 +8,7 @@ import 'package:nawiapp/infrastructure/secure_credential_manager.dart';
 import 'package:nawiapp/locator.dart';
 import 'package:nawiapp/presentation/features/auth/screens/auth_screen.dart';
 import 'package:nawiapp/presentation/features/tutorial/screens/tutorial_screen.dart';
+import 'package:nawiapp/presentation/widgets/restart_widget.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -22,7 +23,12 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
 
   //* Originalmente llamado Ñawi, pero para evitar futuros errores con caracteres especiales, se reemplaza la Ñ por N.
-  runApp(ProviderScope(child: const NawiApp()));
+  runApp(RestartWidget(
+    child: UncontrolledProviderScope(
+      container: ProviderContainer(),
+      child: NawiApp())
+    )
+  );
 }
 
 class NawiApp extends StatelessWidget {

@@ -9,7 +9,7 @@ class StudentStat {
   // final CountRatio ratedstudent;
   // final CountRatio mentionedStudents;
 
-  StudentStat({
+  const StudentStat({
     required this.threeAgeCount,
     required this.fourAgeCount,
     required this.fiveAgeCount,

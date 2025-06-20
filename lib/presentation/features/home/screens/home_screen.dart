@@ -5,7 +5,6 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:nawiapp/domain/models/register_book/entity/register_book.dart';
 import 'package:nawiapp/domain/models/student/entity/student.dart';
 import 'package:nawiapp/infrastructure/in_memory_storage.dart';
-import 'package:nawiapp/presentation/features/backups/screens/backups_screen.dart';
 import 'package:nawiapp/presentation/features/create/providers/register_book/initial_register_book_form_data_provider.dart';
 import 'package:nawiapp/presentation/features/create/providers/selectable_element_for_create_provider.dart';
 import 'package:nawiapp/presentation/features/create/providers/student/initial_student_form_data_provider.dart';
@@ -40,9 +39,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
       },
       NawiMenuTabs.export => {
         BottomNavigationBarItem(label: "Exportar", icon: const Icon(Icons.download) ) : ExportScreen(),
-      },
-      NawiMenuTabs.backups => {
-        BottomNavigationBarItem(label: "Backups", icon: const Icon(Icons.language) ) : BackupsScreen(),
       }
     };
   }

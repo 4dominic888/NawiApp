@@ -8,6 +8,7 @@ import 'package:nawiapp/presentation/features/search/widgets/search_filter_field
 import 'package:nawiapp/presentation/features/select_classroom/providers/count_classroom_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/providers/select_classroom_grid_provider.dart';
 import 'package:nawiapp/presentation/features/select_classroom/screens/add_classroom_modal.dart';
+import 'package:nawiapp/presentation/features/select_classroom/screens/menu_drawer.dart';
 import 'package:nawiapp/presentation/features/select_classroom/widgets/classroom_element.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 
@@ -31,6 +32,8 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
 
     return Scaffold(
       persistentFooterAlignment: AlignmentDirectional.bottomCenter,
+      endDrawer: MenuDrawer(),
+      drawerScrimColor: Colors.black45.withAlpha(130),
       persistentFooterButtons: [
         Container(
           decoration: BoxDecoration(
@@ -62,7 +65,7 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
       ),
       appBar: SearchFilterField(
         hintTextField: 'Búsqueda por nombre...',
-        filterAction: () async {
+        filterAction: () {
           // await GetIt.I<SecureCredentialManager>().deleteAll();
           // Logger().i('Se ha reiniciado con exito las credenciales');
         },

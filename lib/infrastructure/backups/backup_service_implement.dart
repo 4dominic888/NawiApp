@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/data/drift_connection.dart';
@@ -11,22 +12,13 @@ interface class BackupServiceImplement extends BackupServiceBase {
   BackupServiceImplement({required super.cryptoStrategy});
 
   @override
-  Future<Result<File>> backupDatabase(String path) async {
+  Future<Result<File>> backupDatabase(String path, {bool isTest = false}) async {
     try {
-      final dbFile = await getDatabaseFile;
+      final dbFile = await getDatabaseFile(isTest: isTest);
       if (!await dbFile.exists()) throw Exception('El archivo de la base de datos no existe');
 
       final dbBytes = await dbFile.readAsBytes();
       final encryptedBytes = cryptoStrategy.encrypt(dbBytes);
-
-      // String? selectedPath = await FilePicker.platform.saveFile(
-      //   dialogTitle: 'Guardar backup como',
-      //   fileName: 'backup_${DateTime.now().toIso8601String()}.nwdb',
-      //   type: FileType.custom,
-      //   allowedExtensions: ['nwdb'],
-      // );
-
-      // if (selectedPath == null) throw Exception('No se ha seleccionado ningún archivo');
 
       final backupFile = File(path);
       await backupFile.writeAsBytes(encryptedBytes, flush: true);
@@ -38,18 +30,23 @@ interface class BackupServiceImplement extends BackupServiceBase {
   }
 
   @override
-  Future<Result<void>> restoreDatabase(String backupPath) async {
+  Future<Result<Uint8List>> backupDatabaseAndroid(String name) async {
     try {
-      // final result = await FilePicker.platform.pickFiles(
-      //   dialogTitle: 'Selecciona un archivo de backup para restaurar',
-      //   type: FileType.custom,
-      //   allowedExtensions: ['nwdb'],
-      // );
+      final dbFile = await getDatabaseFile();
+      if (!await dbFile.exists()) throw Exception('El archivo de la base de datos no existe');
 
-      // if (result == null || result.files.single.path == null) throw Exception('No se ha seleccionado ningún archivo');
+      final dbBytes = await dbFile.readAsBytes();
+      final encryptedBytes = cryptoStrategy.encrypt(dbBytes);
+      
+      return Success(data: encryptedBytes, message: 'Se ha creado el backup correctamente');
+    } catch (e) {
+      return NawiError.onService(message: 'Error al crear el backup: $e');
+    }
+  }
 
-      // final backupFile = File(result.files.single.path!);
-
+  @override
+  Future<Result<void>> restoreDatabase(String backupPath, {bool isTest = false}) async {
+    try {
       final backupFile = File(backupPath);
       final encryptedBytes = await backupFile.readAsBytes();
 
@@ -58,10 +55,10 @@ interface class BackupServiceImplement extends BackupServiceBase {
       await GetIt.I<NawiDatabase>().close();
       unregisterDatabaseStuffsLocator();
 
-      final dbFile = await getDatabaseFile;
+      final dbFile = await getDatabaseFile(isTest: isTest);
       await dbFile.writeAsBytes(decryptedBytes, flush: true);
 
-      setupDatabaseStuffsLocator(dbFolderPath: 'test/backup_test_output');
+      setupDatabaseStuffsLocator(dbFolderPath: isTest ? 'test/backup_test_output' : null);
 
       return Success(data: null, message: 'Se ha restaurado el backup correctamente');
 
