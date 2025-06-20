@@ -27,3 +27,5 @@ Para los tests es necesario definir un archivo `.test.env` con las mismas variab
 Para generar los iconos, se ha utilizado el paquete `icons_launcher`, hay un archivo `icons_launcher_dev.yaml` que se puede modificar para personalizar el icono y la plataforma en la que se generarán los iconos. Para generar los iconos, se debe ejecutar `dart run icons_launcher:create --path icons_launcher_dev.yaml`.
 
 En la carpeta `assets/images` se encuentra un archivo `ic_logo.jpeg` que es el icono que se utiliza en la aplicación, es modificable a gusto.
+
+Adicionalmente, se ha creado un archivo `ic_logo_splash.png` que es el icono que se utiliza en la pantalla de inicio de la aplicación. Para generar el icono, se debe ejecutar `dart run flutter_native_splash:create`.
