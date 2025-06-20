@@ -29,3 +29,30 @@ Para generar los iconos, se ha utilizado el paquete `icons_launcher`, hay un arc
 En la carpeta `assets/images` se encuentra un archivo `ic_logo.jpeg` que es el icono que se utiliza en la aplicación, es modificable a gusto.
 
 Adicionalmente, se ha creado un archivo `ic_logo_splash.png` que es el icono que se utiliza en la pantalla de inicio de la aplicación. Para generar el icono, se debe ejecutar `dart run flutter_native_splash:create`.
+
+## Análisis con SonarQube
+
+Se necesitará crear un archivo `sonar-project.properties` en la raíz del proyecto con el siguiente contenido:
+PD: Esta configuración variará dependiendo de la instalación de SonarQube en tu equipo.
+
+```
+# Project identification, either hardcode it or use Environment variables
+sonar.projectKey=NawiApp
+sonar.projectName=NawiApp
+sonar.login=tucodigo-generadoporsonarqube
+
+# The host URL
+sonar.host.url=http://tu-url-de-sonarqube
+
+# Source code location.
+# Path is relative to the sonar-project.properties file. Defaults to .
+# Use commas to specify more than one folder.
+sonar.sources=lib
+sonar.tests=test
+
+# Encoding of the source code. Default is default system encoding.
+sonar.sourceEncoding=UTF-8
+
+# exclude generated files
+sonar.exclusions=test/**/*_test.mocks.dart,lib/**/*.g.dart
+```
