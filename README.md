@@ -8,7 +8,7 @@ Este proyecto usa algunas características a resaltar por ser algo fuera del fra
 
 ## Backups
 
-Para poder realizar backups de la base de datos, se ha implementado un servicio que usa el algoritmo de cifrado AES-256 y el algoritmo de hash SHA-256. Este algoritmo se encuentra en el archivo `backup_crypto_aes_256.dart` y se puede modificar para adaptarse a otros algoritmos de cifrado y hash.
+Para poder realizar backups de la base de datos, se ha implementado un servicio que usa el algoritmo de cifrado AES-256. Este algoritmo se encuentra en el archivo `backup_crypto_aes_256.dart` y se puede modificar para adaptarse a otros algoritmos de cifrado y hash.
 
 Es necesario definir un archivo `.env` con las siguientes variables:
 ENCRYPTION_KEY: Debe tener una longitud de 32 caracteres
