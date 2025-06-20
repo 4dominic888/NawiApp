@@ -10,11 +10,11 @@ abstract class BackupServiceBase {
 
   final BackupCryptoStrategy cryptoStrategy;
 
-  Future<File> get getDatabaseFile async {
-    final dbPath = path.join(await NawiDatabase.folderPath(isTest: true), 'nawidb2.sqlite');
+  Future<File> getDatabaseFile({bool isTest = false}) async {
+    final dbPath = path.join(await NawiDatabase.folderPath(isTest: isTest), 'nawidb2.sqlite');
     return File(dbPath);
   }
 
-  Future<Result<File>> backupDatabase(String path);
-  Future<Result<void>> restoreDatabase(String backupPath);
+  Future<Result<File>> backupDatabase(String path, {bool isTest = false});
+  Future<Result<void>> restoreDatabase(String backupPath, {bool isTest = false});
 }
