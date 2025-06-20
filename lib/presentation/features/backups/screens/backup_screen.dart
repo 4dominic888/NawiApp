@@ -10,6 +10,32 @@ import 'package:restart_app/restart_app.dart';
 class BackupScreen extends ConsumerWidget {
   const BackupScreen({super.key});
 
+  Future<bool?> showRestartDialog(BuildContext context) async {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false, // No se puede cerrar tocando fuera
+      builder: (context) {
+        return PopScope(
+          canPop: false,
+          child: AlertDialog(
+            title: Text('Reiniciar aplicación'),
+            content: Text('Para aplicar el respaldo de datos, es necesario reiniciar la aplicación. ¿Desea continuar?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text('Reiniciar'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(backupControllerProvider);
@@ -33,6 +59,7 @@ class BackupScreen extends ConsumerWidget {
 
             ElevatedButton.icon(
               onPressed: isProcessing? null : () => ref.read(backupControllerProvider.notifier).restoreBackup(
+                before: () async => await showRestartDialog(context),
                 onRestored: () {
                   if(Platform.isAndroid) {
                     Restart.restartApp(
