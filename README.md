@@ -40,8 +40,8 @@ dart run flutter_native_splash:create
 ## Análisis con SonarQube
 
 Se necesitará crear un archivo `sonar-project.properties` en la raíz del proyecto con el siguiente contenido:
-
-PD: Esta configuración variará dependiendo de la instalación de SonarQube en tu equipo.
+> [!NOTE] 
+> Esta configuración variará dependiendo de la instalación de SonarQube en tu equipo.
 
 ```properties
 sonar.projectKey=NawiApp
@@ -72,12 +72,13 @@ Posterior a eso, necesitaras generar archivos de cobertura para que SonarQube pu
 dart analyze > build/reports/analysis-report.txt`.
 
 # Generar cobertura de los tets
-`flutter test --machine --coverage > tests.output`.
+flutter test --machine --coverage > tests.output.
 
 # Publicar los cambios en SonarQube
 sonar-scanner
 ```
 
+> [!NOTE]  
 > Los nombres de los archivos generados se pueden cambiar, pero deben ser acordes con el archivo `sonar-project.properties`. (Si se modifica los nombres, también deben ser agregados en `.gitignore`)
 
 ## Generación del apk
@@ -92,6 +93,8 @@ flutter build apk \
 ```
 
 `--no-tree-shake-icons` se utiliza para evitar errores en una funcionalidad de iconos dinamicos sin el uso de const.
+
 `--obfuscate --split-debug-info=build/app/outputs/symbols` se utiliza para evitar que el código fuente sea visible en el apk. Se puede omitir para pruebas, pero es recomendable hacer pruebas en un dispositivo real, para asegurar de que el código ofuscado no cause problemas de funcionalidad.
 
-> Nota: Esta aplicación aun no esta lista para lanzarse en la Play Store, por lo que no se puede generar el appbundle.
+> [!IMPORTANT] 
+> Esta aplicación aun no esta lista para lanzarse en la Play Store, por lo que no se puede generar el appbundle.
