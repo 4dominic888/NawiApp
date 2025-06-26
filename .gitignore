@@ -59,3 +59,8 @@ app.*.map.json
 
 # Environment variables
 *.env
+
+# SonarQube output
+.scannerwork/
+coverage/
+tests.output
