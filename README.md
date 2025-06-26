@@ -24,41 +24,72 @@ Para los tests es necesario definir un archivo `.test.env` con las mismas variab
 
 ## Generación de iconos
 
-Para generar los iconos, se ha utilizado el paquete `icons_launcher`, hay un archivo `icons_launcher_dev.yaml` que se puede modificar para personalizar el icono y la plataforma en la que se generarán los iconos. Para generar los iconos, se debe ejecutar `dart run icons_launcher:create --path icons_launcher_dev.yaml`.
+Para generar los iconos, se ha utilizado el paquete `icons_launcher`, hay un archivo `icons_launcher_dev.yaml` que se puede modificar para personalizar el icono y la plataforma en la que se generarán los iconos. Para generar los iconos, se debe ejecutar 
+
+```bash
+dart run icons_launcher:create --path icons_launcher_dev.yaml
+```
 
 En la carpeta `assets/images` se encuentra un archivo `ic_logo.jpeg` que es el icono que se utiliza en la aplicación, es modificable a gusto.
 
-Adicionalmente, se ha creado un archivo `ic_logo_splash.png` que es el icono que se utiliza en la pantalla de inicio de la aplicación. Para generar el icono, se debe ejecutar `dart run flutter_native_splash:create`.
+Adicionalmente, se ha creado un archivo `ic_logo_splash.png` que es el icono que se utiliza en la pantalla de inicio de la aplicación. Para generar el icono, se debe ejecutar.
+```bash
+dart run flutter_native_splash:create
+```
 
 ## Análisis con SonarQube
 
 Se necesitará crear un archivo `sonar-project.properties` en la raíz del proyecto con el siguiente contenido:
+
 PD: Esta configuración variará dependiendo de la instalación de SonarQube en tu equipo.
 
-```
-# Project identification, either hardcode it or use Environment variables
+```properties
 sonar.projectKey=NawiApp
 sonar.projectName=NawiApp
-sonar.login=tucodigo-generadoporsonarqube
+sonar.login=tu-codigo-generado-por-sonarqube
 
-# The host URL
 sonar.host.url=http://tu-url-de-sonarqube
 
-# Source code location.
-# Path is relative to the sonar-project.properties file. Defaults to .
-# Use commas to specify more than one folder.
-sonar.sources=lib
+sonar.sources=lib,pubspec.yaml
 sonar.tests=test
-
-# Encoding of the source code. Default is default system encoding.
 sonar.sourceEncoding=UTF-8
 
-# exclude generated files
-sonar.exclusions=test/**/*_test.mocks.dart,lib/**/*.g.dart
+# Exclude generated files
+sonar.coverage.exclusions=test/**/*_test.mocks.dart,lib/**/*.g.dart,lib/**/*.freezed.dart
+sonar.coverage.exclusions=**/*.g.dart,**/*.freezed.dart
+
+# Extra
+sonar.dart.analyzer.mode=MANUAL
+sonar.dart.analyzer.options.override=false
+sonar.dart.analyzer.report.mode=LEGACY
+sonar.dart.analyzer.report.path=build/reports/analysis-report.txt
 ```
+
+Posterior a eso, necesitaras generar archivos de cobertura para que SonarQube pueda analizar los tests y otro adicional para el analizador de código.
+
+```bash
+# Generar archivo de análisis de código
+dart analyze > build/reports/analysis-report.txt`.
+
+# Generar cobertura de los tets
+`flutter test --machine --coverage > tests.output`.
+
+# Publicar los cambios en SonarQube
+sonar-scanner
+```
+
+> Los nombres de los archivos generados se pueden cambiar, pero deben ser acordes con el archivo `sonar-project.properties`. (Si se modifica los nombres, también deben ser agregados en `.gitignore`)
+
 ## Generación del apk
 
-Para generar el apk, se debe ejecutar `flutter build apk --release --no-tree-shake-icons --obfuscate --split-debug-info=build/app/outputs/symbols`.
+Para generar el apk, se debe ejecutar: 
+```bash
+flutter build apk \
+--release
+--no-tree-shake-icons \ # Solución de iconos material dinámicos
+--obfuscate \ # Por seguridad
+--split-debug-info=build/app/outputs/symbols # Complemento de --obfuscate
+```
 
 `--no-tree-shake-icons` se utiliza para evitar errores en una funcionalidad de iconos dinamicos sin el uso de const.
 `--obfuscate --split-debug-info=build/app/outputs/symbols` se utiliza para evitar que el código fuente sea visible en el apk. Se puede omitir para pruebas, pero es recomendable hacer pruebas en un dispositivo real, para asegurar de que el código ofuscado no cause problemas de funcionalidad.
