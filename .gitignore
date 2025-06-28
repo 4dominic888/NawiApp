@@ -64,3 +64,6 @@ app.*.map.json
 .scannerwork/
 coverage/
 tests.output
+
+# Manual scripts 
+.scripts/
