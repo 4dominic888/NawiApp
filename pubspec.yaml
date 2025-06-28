@@ -2,7 +2,7 @@ name: nawiapp
 description: "Una herramienta pedagógica digital para docentes de inicial"
 publish_to: 'none'
 
-version: 1.0.0-alpha.2+1
+version: 1.0.0-alpha.3+1
 
 environment:
   sdk: ^3.6.0
