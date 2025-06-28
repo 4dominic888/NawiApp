@@ -85,29 +85,31 @@ class _SelectClassroomScreenState extends ConsumerState<SelectClassroomScreen> {
         },
       ),
 
-      body: RefreshIndicator(
-        onRefresh: searchNotifier.refresh,
-        child: PagedListView(
-          pagingController: controller,
-          builderDelegate: PagedChildBuilderDelegate<Classroom>(
-            itemBuilder: (_, item, __) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClassroomElement(item: item),
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: searchNotifier.refresh,
+          child: PagedListView(
+            pagingController: controller,
+            builderDelegate: PagedChildBuilderDelegate<Classroom>(
+              itemBuilder: (_, item, __) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClassroomElement(item: item),
+              ),
+              firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+              newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
+              noItemsFoundIndicatorBuilder: (_) => const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(child: Text("No hay aulas registradas, registre una ahora")),
+              ),
+              firstPageErrorIndicatorBuilder: (_) => const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(child: Text("Ha ocurrido un error al cargar la información")),
+              ),
+              newPageErrorIndicatorBuilder: (_) => const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Center(child: Text("Ha ocurrido un error al cargar la información")),
+              )
             ),
-            firstPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
-            newPageProgressIndicatorBuilder: (_) => const Center(child: CircularProgressIndicator()),
-            noItemsFoundIndicatorBuilder: (_) => const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(child: Text("No hay aulas registradas, registre una ahora")),
-            ),
-            firstPageErrorIndicatorBuilder: (_) => const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(child: Text("Ha ocurrido un error al cargar la información")),
-            ),
-            newPageErrorIndicatorBuilder: (_) => const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Center(child: Text("Ha ocurrido un error al cargar la información")),
-            )
           ),
         ),
       ),

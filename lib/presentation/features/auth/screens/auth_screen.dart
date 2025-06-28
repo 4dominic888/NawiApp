@@ -18,34 +18,36 @@ class AuthScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text('Autenticación por ${authCodeState.mode?.name ?? '...'}')),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-
-            const CodeAuthDisplay(),
-
-            const SizedBox(height: 10),
-
-            if (authCodeState.isLoading) const CircularProgressIndicator(),
-
-            if (authCodeState.resultMesssage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(
-                  authCodeState.resultMesssage,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: authCodeState.resultMesssage.contains('Ingresando')
-                      ? Colors.green : Colors.red,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+        
+              const CodeAuthDisplay(),
+        
+              const SizedBox(height: 10),
+        
+              if (authCodeState.isLoading) const CircularProgressIndicator(),
+        
+              if (authCodeState.resultMesssage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    authCodeState.resultMesssage,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: authCodeState.resultMesssage.contains('Ingresando')
+                        ? Colors.green : Colors.red,
+                    ),
                   ),
                 ),
-              ),
-
-            const Spacer(),
-
-            const KeypadCode()
-          ],
+        
+              const Spacer(),
+        
+              const KeypadCode()
+            ],
+          ),
         ),
       ),
     );
