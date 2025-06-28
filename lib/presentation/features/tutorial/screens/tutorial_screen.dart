@@ -17,7 +17,8 @@ import 'package:nawiapp/presentation/widgets/scroll_hint.dart';
 import 'package:nawiapp/presentation/widgets/student_element.dart';
 
 class TutorialScreen extends ConsumerStatefulWidget {
-  const TutorialScreen({super.key});
+  final bool reviewMode;
+  const TutorialScreen({super.key, this.reviewMode = false});
 
   @override
   ConsumerState<TutorialScreen> createState() => _TutorialScreenState();
@@ -58,6 +59,7 @@ class _TutorialScreenState extends ConsumerState<TutorialScreen> {
     final tutorialNotifier = ref.read(tutorialSliderProvider.notifier);
 
     return Scaffold(
+      appBar: widget.reviewMode ? AppBar(title: const SizedBox.shrink()) : null,
       body: SafeArea(
         child: Stack(
           children: [
@@ -92,12 +94,12 @@ class _TutorialScreenState extends ConsumerState<TutorialScreen> {
                   children: Image.asset('assets/images/export_example.png'),
                 ),
                 
-                const TutorialCodeAuthSlidePage()
+                if(!widget.reviewMode) const TutorialCodeAuthSlidePage()
               ],
             ),
             
             if(!tutorialNotifier.isLastPage) const TutorialSkipButton(),
-            const TutorialDotNavigation(),
+            if(!widget.reviewMode) const TutorialDotNavigation(),
             const TutorialNextPageButton(),
             if(!tutorialNotifier.isFirstPage) const TutorialPreviousPageButton()
           ],

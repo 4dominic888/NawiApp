@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nawiapp/presentation/features/backups/screens/backup_screen.dart';
+import 'package:nawiapp/presentation/features/tutorial/screens/tutorial_screen.dart';
 
 class MenuDrawer extends StatelessWidget {
   const MenuDrawer({ super.key });
@@ -47,7 +48,7 @@ class MenuDrawer extends StatelessWidget {
               title: const Text('Volver a ver el tutorial'),
               onTap: () {
                 Navigator.pop(context);
-                // Agrega tu lógica aquí
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const TutorialScreen(reviewMode: true)));
               },
             ),
             // TODO: Algun dia implementar esto xddddddddddddd
