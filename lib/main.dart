@@ -40,9 +40,10 @@ class NawiApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return OverlaySupport.global(
       child: MaterialApp(
-        locale: const Locale('es', 'ES'),
+        locale: const Locale('es'),
         supportedLocales: const [
-          Locale('es', 'ES'),
+          Locale('es'),
+          Locale('en'),
         ],
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
