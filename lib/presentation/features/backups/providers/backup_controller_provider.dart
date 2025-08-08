@@ -1,7 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
-import 'package:nawiapp/domain/services/backup_service_base.dart';
+import 'package:nawiapp/core/ports/backup/backup_service_base.dart';
 import 'package:nawiapp/presentation/widgets/notification_message.dart';
 
 class BackupController extends AsyncNotifier<void> {

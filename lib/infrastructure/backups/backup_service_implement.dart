@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:get_it/get_it.dart';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/services/backup_service_base.dart';
+import 'package:nawiapp/core/ports/backup/backup_service_base.dart';
 import 'package:nawiapp/locator.dart';
 
 interface class BackupServiceImplement extends BackupServiceBase {

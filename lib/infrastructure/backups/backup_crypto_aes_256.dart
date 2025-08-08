@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:nawiapp/domain/services/backup_crypto_strategy.dart';
+import 'package:nawiapp/core/ports/backup/backup_crypto_strategy.dart';
 
 class BackupCryptoAes256 implements BackupCryptoStrategy {
 

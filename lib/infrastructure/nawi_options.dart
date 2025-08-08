@@ -1,12 +1,5 @@
+import 'package:nawiapp/core/ports/speech_to_text/mic_mode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-enum MicMode {
-  holdToSpeak("holdToSpeak"),
-  toggleToSpeak("toggleToSpeak");
-
-  final String value;
-  const MicMode(this.value);
-}
 
 class NawiOptions {
   final SharedPreferences prefs;

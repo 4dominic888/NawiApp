@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:nawiapp/data/drift_connection.dart';
 import 'package:nawiapp/domain/classes/result.dart';
-import 'package:nawiapp/domain/services/backup_crypto_strategy.dart';
+import 'package:nawiapp/core/ports/backup/backup_crypto_strategy.dart';
 import 'package:path/path.dart' as path;
 
 abstract class BackupServiceBase {
