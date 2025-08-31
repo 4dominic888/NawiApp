@@ -36,7 +36,25 @@ class RegisterBookExportByDate extends ExportReportManager {
             Expanded(
               child: Container(
                 color: const PdfColor.fromInt(0xe9e9e9),
-                child: Bullet(text: element.action),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Bullet(text: element.action, textAlign: TextAlign.start),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            element.mentions.map((student) => student.name).join(', '),
+                            style: TextStyle().copyWith(fontSize: 8, color: const PdfColor.fromInt(0x2e2e2e)),
+                            textAlign: TextAlign.end
+                          )
+                        ),
+                        SizedBox(width: 8.0)
+                      ]
+                    )
+                  ]
+                ),
               )
             ),
 
