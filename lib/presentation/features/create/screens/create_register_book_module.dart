@@ -10,7 +10,6 @@ import 'package:nawiapp/presentation/features/create/screens/another_create_acti
 import 'package:nawiapp/presentation/features/home/extra/menu_tabs.dart';
 import 'package:nawiapp/presentation/features/home/providers/tab_index_provider.dart';
 import 'package:nawiapp/presentation/features/search/providers/selectable_element_for_search_provider.dart';
-import 'package:nawiapp/presentation/widgets/dropdown_menu_form_field.dart';
 import 'package:nawiapp/utils/nawi_color_utils.dart';
 import 'package:nawiapp/utils/nawi_form_utils.dart';
 
